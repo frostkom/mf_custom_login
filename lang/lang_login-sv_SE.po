@@ -1,0 +1,127 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: MF User Role\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-11-25 11:29+0100\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Martin Fors\n"
+"Language-Team: Martin Fors\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: sv_SE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: esc_html__;esc_html_e;esc_attr__;esc_attr_e;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ..\n"
+
+#: ../include/functions.php:7
+msgid "You haven't set a text to be displayed here"
+msgstr "Du har inte valt en text att visa här"
+
+#: ../include/functions.php:8
+msgid "Choose a text by going to the settings page"
+msgstr "Välj en text genom att gå till sidan för inställningar"
+
+#: ../include/functions.php:46
+msgid "Custom Login Message"
+msgstr "Anpassat loginmeddelande"
+
+#: ../include/functions.php:52
+msgid "Page"
+msgstr "Sida"
+
+#: ../include/functions.php:70
+msgid "Choose page here"
+msgstr "Välj sida här"
+
+#~ msgid "City"
+#~ msgstr "Din adress"
+
+#~ msgid "Keep saved location"
+#~ msgstr ""
+#~ "Spara ny adress men behåll även den gamla (Upp till två adresser kan "
+#~ "sparas samtidigt)"
+
+#~ msgid "Keep none"
+#~ msgstr "Spara ingen"
+
+#~ msgid "Search for your location"
+#~ msgstr "Skriv in din adress så att dina kunder kan hitta dig lättare"
+
+#~ msgid "Groups"
+#~ msgstr "Grupper"
+
+#~ msgid "Upgrade user"
+#~ msgstr "Uppgradera användare"
+
+#~ msgid "Group"
+#~ msgstr "Grupp"
+
+#~ msgid "No results"
+#~ msgstr "Det finns inga användare att visa"
+
+#~ msgid "The user has been upgraded to"
+#~ msgstr "Användaren har blivit uppgraderad till"
+
+#~ msgid "Search User"
+#~ msgstr "Sök användare"
+
+#~ msgid "or"
+#~ msgstr "eller"
+
+#~ msgid "Start typing a name"
+#~ msgstr "Börja skriva ett namn"
+
+#~ msgid "Choose users"
+#~ msgstr "Välj användare"
+
+#~ msgid "Select/deselect users"
+#~ msgstr "Markera/avmarkera användare"
+
+#~ msgid "User missing info"
+#~ msgstr ""
+#~ "Om personen du söker saknas i listan har denne sannolikt inte registrerat "
+#~ "sig och finns inte i systemet."
+
+#~ msgid "Action"
+#~ msgstr "Åtgärd"
+
+#~ msgid "Upgrade user to"
+#~ msgstr "Uppgradera användare till"
+
+#~ msgid "instructor-trainee"
+#~ msgstr "instruktor-trainee"
+
+#~ msgid "member"
+#~ msgstr "medlem"
+
+#~ msgid "Upgrade"
+#~ msgstr "Uppgradera"
+
+#~ msgid "Change role info"
+#~ msgstr ""
+#~ "Diplomerad MediYoga Instruktör uppgraderas till Instruktör från "
+#~ "Instruktör Trainee. Under utbildning till Mediyogaterapeut uppgraderas "
+#~ "till Yogaterapeut Trainee. Diplomerad Mediyogaterapeut uppgraderas till "
+#~ "Yogaterapeut. "
+
+#~ msgid "Add to group"
+#~ msgstr "Lägg in i grupp"
+
+#~ msgid "Confirm"
+#~ msgstr "Bekräfta"
+
+#~ msgid "Add group info"
+#~ msgstr ""
+#~ "Vid start av ny utbildning ska alla deltagare läggas in i ny grupp. "
+
+#~ msgid "Search"
+#~ msgstr "Sök"
+
+#~ msgid "...or"
+#~ msgstr "...eller"
+
+#~ msgid "Change group"
+#~ msgstr "Byt grupp"
