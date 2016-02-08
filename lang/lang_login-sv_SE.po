@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MF User Role\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 11:29+0100\n"
+"POT-Creation-Date: 2016-02-08 13:25+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: Martin Fors\n"
@@ -24,15 +24,19 @@ msgstr "Du har inte valt en text att visa här"
 msgid "Choose a text by going to the settings page"
 msgstr "Välj en text genom att gå till sidan för inställningar"
 
-#: ../include/functions.php:46
-msgid "Custom Login Message"
-msgstr "Anpassat loginmeddelande"
+#: ../include/functions.php:41
+msgid "Settings"
+msgstr "Inställningar"
 
-#: ../include/functions.php:52
+#: ../include/functions.php:59
 msgid "Page"
 msgstr "Sida"
 
-#: ../include/functions.php:70
+#: ../include/functions.php:72
+msgid "Custom Login Message"
+msgstr "Anpassat loginmeddelande"
+
+#: ../include/functions.php:80
 msgid "Choose page here"
 msgstr "Välj sida här"
 

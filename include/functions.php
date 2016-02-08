@@ -36,6 +36,13 @@ function message_custom_login($message)
 	}
 }
 
+function add_action_custom_login($links)
+{
+	$links[] = "<a href='".admin_url('options-general.php?page=settings_mf_base#settings_custom_login')."'>".__("Settings", 'lang_login')."</a>";
+
+	return $links;
+}
+
 function settings_custom_login()
 {
 	$options_page = "settings_mf_base";
@@ -62,8 +69,7 @@ function settings_custom_login()
 
 function settings_custom_login_callback()
 {
-	echo "<div id='settings_custom_login'>&nbsp;</div>
-	<a href='#settings_custom_login'><h3>".__("Custom Login Message", 'lang_login')."</h3></a>";
+	echo settings_header('settings_custom_login', __("Custom Login Message", 'lang_login'));
 }
 
 function settings_custom_login_page_callback()

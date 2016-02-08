@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: 
 Description: 
-Version: 1.0.4
+Version: 1.0.5
 Author: Martin Fors
 Author URI: http://frostkom.se
 */
@@ -14,6 +14,8 @@ add_action('init', 'init_custom_login');
 
 if(is_admin())
 {
+	add_filter('plugin_action_links_'.plugin_basename(__FILE__), 'add_action_custom_login');
+	add_filter('network_admin_plugin_action_links_'.plugin_basename(__FILE__), 'add_action_custom_login');
 	add_action('admin_init', 'settings_custom_login');
 }
 
