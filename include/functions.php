@@ -45,15 +45,9 @@ function add_action_custom_login($links)
 
 function settings_custom_login()
 {
-	$options_page = "settings_mf_base";
 	$options_area = "settings_custom_login";
 
-	add_settings_section(
-		$options_area,
-		"",
-		'settings_custom_login_callback',
-		$options_page
-	);
+	add_settings_section($options_area, "", $options_area."_callback", BASE_OPTIONS_PAGE);
 
 	$arr_settings = array(
 		"settings_custom_login_page" => __("Page", 'lang_login'),
@@ -61,15 +55,15 @@ function settings_custom_login()
 
 	foreach($arr_settings as $handle => $text)
 	{
-		add_settings_field($handle, $text, $handle."_callback", $options_page, $options_area);
+		add_settings_field($handle, $text, $handle."_callback", BASE_OPTIONS_PAGE, $options_area);
 
-		register_setting($options_page, $handle);
+		register_setting(BASE_OPTIONS_PAGE, $handle);
 	}
 }
 
 function settings_custom_login_callback()
 {
-	echo settings_header('settings_custom_login', __("Custom Login Message", 'lang_login'));
+	echo settings_header('settings_custom_login', __("Login Message", 'lang_login'));
 }
 
 function settings_custom_login_page_callback()
