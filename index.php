@@ -29,5 +29,5 @@ load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."
 function init_custom_login()
 {
 	wp_enqueue_style('style_custom_login', plugins_url()."/".dirname(plugin_basename(__FILE__))."/include/style.css");
-	mf_enqueue_script('script_custom_login', plugins_url()."/".dirname(plugin_basename(__FILE__))."/include/script.js");
+	//mf_enqueue_script('script_custom_login', plugins_url()."/".dirname(plugin_basename(__FILE__))."/include/script.js"); //This brings all pages to the top...everywhere, which means #[insert_any_id_here] does not work properly
 }
