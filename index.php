@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: 
 Description: 
-Version: 1.0.8
+Version: 1.2.1
 Author: Martin Fors
 Author URI: http://frostkom.se
 */
@@ -14,8 +14,8 @@ add_action('init', 'init_custom_login');
 
 if(is_admin())
 {
-	add_filter('plugin_action_links_'.plugin_basename(__FILE__), 'add_action_custom_login');
-	add_filter('network_admin_plugin_action_links_'.plugin_basename(__FILE__), 'add_action_custom_login');
+	register_uninstall_hook(__FILE__, 'uninstall_custom_login');
+
 	add_action('admin_init', 'settings_custom_login');
 }
 
@@ -26,8 +26,9 @@ else
 
 load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
 
-function init_custom_login()
+function uninstall_custom_login()
 {
-	wp_enqueue_style('style_custom_login', plugins_url()."/".dirname(plugin_basename(__FILE__))."/include/style.css");
-	//mf_enqueue_script('script_custom_login', plugins_url()."/".dirname(plugin_basename(__FILE__))."/include/script.js"); //This brings all pages to the top...everywhere, which means #[insert_any_id_here] does not work properly
+	mf_uninstall_plugin(array(
+		'options' => array('settings_custom_login_page'),
+	));
 }

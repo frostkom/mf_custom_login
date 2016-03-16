@@ -1,11 +1,18 @@
 <?php
 
+function init_custom_login()
+{
+	wp_enqueue_style('style_custom_login', plugin_dir_url(__FILE__)."style.css");
+}
+
 function message_custom_login($message)
 {
 	global $wpdb;
 
+	mf_enqueue_script('script_custom_login', plugin_dir_url(__FILE__)."/script.js");
+
 	$post_title = __("You haven't set a text to be displayed here", 'lang_login');
-	$post_content = "<a href='/wp-admin/options-general.php?page=settings_mf_base#mf_custom_login_settings'>".__("Choose a text by going to the settings page", 'lang_login')."</a>";
+	$post_content = "<a href='".admin_url("options-general.php?page=settings_mf_base#settings_custom_login")."'>".__("Choose a text by going to the settings page", 'lang_login')."</a>";
 
 	$post_id = get_option('settings_custom_login_page');
 
@@ -36,13 +43,6 @@ function message_custom_login($message)
 	}
 }
 
-function add_action_custom_login($links)
-{
-	$links[] = "<a href='".admin_url('options-general.php?page=settings_mf_base#settings_custom_login')."'>".__("Settings", 'lang_login')."</a>";
-
-	return $links;
-}
-
 function settings_custom_login()
 {
 	$options_area = "settings_custom_login";
@@ -63,14 +63,16 @@ function settings_custom_login()
 
 function settings_custom_login_callback()
 {
-	echo settings_header('settings_custom_login', __("Login Message", 'lang_login'));
+	$setting_key = get_setting_key(__FUNCTION__);
+
+	echo settings_header($setting_key, __("Login Message", 'lang_login'));
 }
 
 function settings_custom_login_page_callback()
 {
 	$current_post_id = get_option('settings_custom_login_page');
 
-	echo "<select name='settings_custom_login_page' id='mf_custom_login_settings'>
+	echo "<select name='settings_custom_login_page'>
 		<option value=''>-- ".__("Choose page here", 'lang_login')." --</option>"
 		.get_post_children(array('current_id' => $current_post_id))
 	."</select>";
