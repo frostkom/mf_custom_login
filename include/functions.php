@@ -65,15 +65,24 @@ function settings_custom_login_callback()
 {
 	$setting_key = get_setting_key(__FUNCTION__);
 
-	echo settings_header($setting_key, __("Login Message", 'lang_login'));
+	echo settings_header($setting_key, __("Login", 'lang_login'));
 }
 
 function settings_custom_login_page_callback()
 {
-	$current_post_id = get_option('settings_custom_login_page');
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key);
 
-	echo "<select name='settings_custom_login_page'>
+	$arr_data = array();
+
+	$arr_data[] = array("", "-- ".__("Choose here", 'lang_login')." --");
+
+	get_post_children(array('output_array' => true), $arr_data);
+
+	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'compare' => $option, 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
+
+	/*echo "<select name='settings_custom_login_page'>
 		<option value=''>-- ".__("Choose page here", 'lang_login')." --</option>"
-		.get_post_children(array('current_id' => $current_post_id))
-	."</select>";
+		.get_post_children(array('current_id' => $option))
+	."</select>";*/
 }

@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: MF Custom Login
-Plugin URI: 
+Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 1.2.1
+Version: 1.2.4
 Author: Martin Fors
 Author URI: http://frostkom.se
 */

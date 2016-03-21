@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MF User Role\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-09 14:56+0100\n"
+"POT-Creation-Date: 2016-03-18 09:39+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: Martin Fors\n"
@@ -16,29 +16,35 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
-#: ../include/functions.php:7
+#: ../include/functions.php:14
 msgid "You haven't set a text to be displayed here"
 msgstr "Du har inte valt en text att visa här"
 
-#: ../include/functions.php:8
+#: ../include/functions.php:15
 msgid "Choose a text by going to the settings page"
 msgstr "Välj en text genom att gå till sidan för inställningar"
-
-#: ../include/functions.php:41
-msgid "Settings"
-msgstr "Inställningar"
 
 #: ../include/functions.php:53
 msgid "Page"
 msgstr "Sida"
 
-#: ../include/functions.php:66
-msgid "Login Message"
-msgstr "Loginmeddelande"
+#: ../include/functions.php:68
+msgid "Login"
+msgstr ""
 
-#: ../include/functions.php:74
-msgid "Choose page here"
-msgstr "Välj sida här"
+#: ../include/functions.php:78
+msgid "Choose here"
+msgstr "Välj här"
+
+#: ../include/functions.php:82
+msgid "The content from this page is displayed next to the login screen"
+msgstr "Innehållet från denna sida visas bredvid loginformuläret"
+
+#~ msgid "Settings"
+#~ msgstr "Inställningar"
+
+#~ msgid "Login Message"
+#~ msgstr "Loginmeddelande"
 
 #~ msgid "City"
 #~ msgstr "Din adress"
