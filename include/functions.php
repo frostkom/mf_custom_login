@@ -45,7 +45,7 @@ function message_custom_login($message)
 
 function settings_custom_login()
 {
-	$options_area = "settings_custom_login";
+	$options_area = __FUNCTION__;
 
 	add_settings_section($options_area, "", $options_area."_callback", BASE_OPTIONS_PAGE);
 
@@ -74,15 +74,9 @@ function settings_custom_login_page_callback()
 	$option = get_option($setting_key);
 
 	$arr_data = array();
-
-	$arr_data[] = array("", "-- ".__("Choose here", 'lang_login')." --");
+	$arr_data[''] = "-- ".__("Choose here", 'lang_login')." --";
 
 	get_post_children(array('output_array' => true), $arr_data);
 
 	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'compare' => $option, 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
-
-	/*echo "<select name='settings_custom_login_page'>
-		<option value=''>-- ".__("Choose page here", 'lang_login')." --</option>"
-		.get_post_children(array('current_id' => $option))
-	."</select>";*/
 }
