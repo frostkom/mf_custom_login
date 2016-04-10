@@ -9,7 +9,7 @@ function message_custom_login($message)
 {
 	global $wpdb;
 
-	mf_enqueue_script('script_custom_login', plugin_dir_url(__FILE__)."/script.js");
+	mf_enqueue_script('script_custom_login', plugin_dir_url(__FILE__)."script.js");
 
 	$post_title = __("You haven't set a text to be displayed here", 'lang_login');
 	$post_content = "<a href='".admin_url("options-general.php?page=settings_mf_base#settings_custom_login")."'>".__("Choose a text by going to the settings page", 'lang_login')."</a>";
@@ -18,7 +18,7 @@ function message_custom_login($message)
 
 	if($post_id > 0)
 	{
-		$result = $wpdb->get_results("SELECT post_title, post_content FROM ".$wpdb->posts." WHERE ID = '".$post_id."' AND post_type = 'page' AND post_status = 'publish'");
+		$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, post_content FROM ".$wpdb->posts." WHERE ID = '%d' AND post_type = 'page' AND post_status = 'publish'", $post_id));
 
 		foreach($result as $r)
 		{
