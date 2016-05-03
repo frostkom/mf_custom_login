@@ -78,5 +78,5 @@ function settings_custom_login_page_callback()
 
 	get_post_children(array('output_array' => true), $arr_data);
 
-	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'compare' => $option, 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
+	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'compare' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
 }
