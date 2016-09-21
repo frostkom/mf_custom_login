@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 1.2.12
+Version: 1.2.13
 Author: Martin Fors
 Author URI: http://frostkom.se
 Text Domain: lang_login
