@@ -14,7 +14,29 @@ function message_custom_login($message)
 	$post_title = __("You haven't set a text to be displayed here", 'lang_login');
 	$post_content = "<a href='".admin_url("options-general.php?page=settings_mf_base#settings_custom_login")."'>".__("Choose a text by going to the settings page", 'lang_login')."</a>";
 
-	$post_id = get_option('settings_custom_login_page');
+	$action = check_var('action');
+
+	$post_id = 0;
+
+	switch($action)
+	{
+		case 'register':
+			$post_id = get_option('setting_custom_login_register');
+		break;
+
+		case 'lostpassword':
+			$post_id = get_option('setting_custom_login_lostpassword');
+		break;
+
+		case 'rp':
+			$post_id = get_option('setting_custom_login_recoverpassword');
+		break;
+	}
+
+	if(!($post_id > 0))
+	{
+		$post_id = get_option('settings_custom_login_page');
+	}
 
 	if($post_id > 0)
 	{
@@ -27,20 +49,15 @@ function message_custom_login($message)
 		}
 	}
 
-	$additional_message = "<div id='mf_custom_login'>
-		<h2>".$post_title."</h2>
-		<p>".$post_content."</p>
-	</div>";
-
-	if(empty($message))
+	if($post_content != '')
 	{
-		return $additional_message;
+		$message .= "<div id='mf_custom_login'>
+			<h2>".$post_title."</h2>
+			<p>".$post_content."</p>
+		</div>";
 	}
 
-	else
-	{
-		return $message.$additional_message;
-	}
+	return $message;
 }
 
 function settings_custom_login()
@@ -49,9 +66,16 @@ function settings_custom_login()
 
 	add_settings_section($options_area, "", $options_area."_callback", BASE_OPTIONS_PAGE);
 
-	$arr_settings = array(
-		"settings_custom_login_page" => __("Page", 'lang_login'),
-	);
+	$arr_settings = array();
+
+	$arr_settings['settings_custom_login_page'] = __("General", 'lang_login');
+
+	if(get_option('settings_custom_login_page') > 0)
+	{
+		$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
+		$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
+		$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
+	}
 
 	foreach($arr_settings as $handle => $text)
 	{
@@ -74,9 +98,40 @@ function settings_custom_login_page_callback()
 	$option = get_option($setting_key);
 
 	$arr_data = array();
-	$arr_data[''] = "-- ".__("Choose here", 'lang_login')." --";
-
-	get_post_children(array('output_array' => true), $arr_data);
+	get_post_children(array('add_choose_here' => true, 'output_array' => true), $arr_data);
 
 	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
+}
+
+function setting_custom_login_register_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key);
+
+	$arr_data = array();
+	get_post_children(array('add_choose_here' => true, 'output_array' => true), $arr_data);
+
+	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the register screen", 'lang_login')));
+}
+
+function setting_custom_login_lostpassword_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key);
+
+	$arr_data = array();
+	get_post_children(array('add_choose_here' => true, 'output_array' => true), $arr_data);
+
+	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the lost password screen", 'lang_login')));
+}
+
+function setting_custom_login_recoverpassword_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key);
+
+	$arr_data = array();
+	get_post_children(array('add_choose_here' => true, 'output_array' => true), $arr_data);
+
+	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
 }

@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 1.2.13
+Version: 2.0.2
 Author: Martin Fors
 Author URI: http://frostkom.se
 Text Domain: lang_login
@@ -33,6 +33,6 @@ load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."
 function uninstall_custom_login()
 {
 	mf_uninstall_plugin(array(
-		'options' => array('settings_custom_login_page'),
+		'options' => array('settings_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword'),
 	));
 }

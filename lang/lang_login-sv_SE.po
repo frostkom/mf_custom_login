@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-10 16:55+0100\n"
+"POT-Creation-Date: 2016-12-15 11:28+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -24,21 +24,47 @@ msgstr "Du har inte valt en text att visa här"
 msgid "Choose a text by going to the settings page"
 msgstr "Välj en text genom att gå till sidan för inställningar"
 
-#: ../include/functions.php:53
-msgid "Page"
-msgstr "Sida"
+#: ../include/functions.php:71
+msgid "General"
+msgstr "Allmänt"
 
-#: ../include/functions.php:68
+#: ../include/functions.php:75
+msgid "Register"
+msgstr "Registrering"
+
+#: ../include/functions.php:76
+msgid "Lost Password"
+msgstr "Glömt lösenord"
+
+#: ../include/functions.php:77
+msgid "Recover Password"
+msgstr "Återställ lösenord"
+
+#: ../include/functions.php:92
 msgid "Login"
 msgstr "Inloggning"
 
-#: ../include/functions.php:77
-msgid "Choose here"
-msgstr "Välj här"
-
-#: ../include/functions.php:81
+#: ../include/functions.php:103
 msgid "The content from this page is displayed next to the login screen"
 msgstr "Innehållet från denna sida visas bredvid loginformuläret"
+
+#: ../include/functions.php:114
+msgid "The content from this page is displayed next to the register screen"
+msgstr "Innehållet från denna sida visas bredvid registreringsformuläret"
+
+#: ../include/functions.php:125
+msgid "The content from this page is displayed next to the lost password screen"
+msgstr "Innehållet från denna sida visas bredvid formuläret för glömt lösenord"
+
+#: ../include/functions.php:136
+msgid "The content from this page is displayed next to the recover password screen"
+msgstr "Innehållet från denna sida visas bredvid formuläret för att återställa lösenord"
+
+#~ msgid "Page"
+#~ msgstr "Sida"
+
+#~ msgid "Choose here"
+#~ msgstr "Välj här"
 
 #~ msgid "Settings"
 #~ msgstr "Inställningar"
