@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-15 11:28+0100\n"
+"POT-Creation-Date: 2017-02-01 11:23+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -60,104 +60,3 @@ msgstr "Innehållet från denna sida visas bredvid formuläret för glömt löse
 msgid "The content from this page is displayed next to the recover password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för att återställa lösenord"
 
-#~ msgid "Page"
-#~ msgstr "Sida"
-
-#~ msgid "Choose here"
-#~ msgstr "Välj här"
-
-#~ msgid "Settings"
-#~ msgstr "Inställningar"
-
-#~ msgid "Login Message"
-#~ msgstr "Loginmeddelande"
-
-#~ msgid "City"
-#~ msgstr "Din adress"
-
-#~ msgid "Keep saved location"
-#~ msgstr ""
-#~ "Spara ny adress men behåll även den gamla (Upp till två adresser kan "
-#~ "sparas samtidigt)"
-
-#~ msgid "Keep none"
-#~ msgstr "Spara ingen"
-
-#~ msgid "Search for your location"
-#~ msgstr "Skriv in din adress så att dina kunder kan hitta dig lättare"
-
-#~ msgid "Groups"
-#~ msgstr "Grupper"
-
-#~ msgid "Upgrade user"
-#~ msgstr "Uppgradera användare"
-
-#~ msgid "Group"
-#~ msgstr "Grupp"
-
-#~ msgid "No results"
-#~ msgstr "Det finns inga användare att visa"
-
-#~ msgid "The user has been upgraded to"
-#~ msgstr "Användaren har blivit uppgraderad till"
-
-#~ msgid "Search User"
-#~ msgstr "Sök användare"
-
-#~ msgid "or"
-#~ msgstr "eller"
-
-#~ msgid "Start typing a name"
-#~ msgstr "Börja skriva ett namn"
-
-#~ msgid "Choose users"
-#~ msgstr "Välj användare"
-
-#~ msgid "Select/deselect users"
-#~ msgstr "Markera/avmarkera användare"
-
-#~ msgid "User missing info"
-#~ msgstr ""
-#~ "Om personen du söker saknas i listan har denne sannolikt inte registrerat "
-#~ "sig och finns inte i systemet."
-
-#~ msgid "Action"
-#~ msgstr "Åtgärd"
-
-#~ msgid "Upgrade user to"
-#~ msgstr "Uppgradera användare till"
-
-#~ msgid "instructor-trainee"
-#~ msgstr "instruktor-trainee"
-
-#~ msgid "member"
-#~ msgstr "medlem"
-
-#~ msgid "Upgrade"
-#~ msgstr "Uppgradera"
-
-#~ msgid "Change role info"
-#~ msgstr ""
-#~ "Diplomerad MediYoga Instruktör uppgraderas till Instruktör från "
-#~ "Instruktör Trainee. Under utbildning till Mediyogaterapeut uppgraderas "
-#~ "till Yogaterapeut Trainee. Diplomerad Mediyogaterapeut uppgraderas till "
-#~ "Yogaterapeut. "
-
-#~ msgid "Add to group"
-#~ msgstr "Lägg in i grupp"
-
-#~ msgid "Confirm"
-#~ msgstr "Bekräfta"
-
-#~ msgid "Add group info"
-#~ msgstr ""
-#~ "Vid start av ny utbildning ska alla deltagare läggas in i ny grupp. "
-
-#~ msgid "Search"
-#~ msgstr "Sök"
-
-#~ msgid "...or"
-#~ msgstr "...eller"
-
-#~ msgid "Change group"
-#~ msgstr "Byt grupp"
