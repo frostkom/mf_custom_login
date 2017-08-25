@@ -2,7 +2,10 @@
 
 function init_custom_login()
 {
-	mf_enqueue_style('style_custom_login', plugin_dir_url(__FILE__)."style.css", get_plugin_version(__FILE__));
+	if(!is_admin())
+	{
+		mf_enqueue_style('style_custom_login', plugin_dir_url(__FILE__)."style.css", get_plugin_version(__FILE__));
+	}
 }
 
 function message_custom_login($message)
