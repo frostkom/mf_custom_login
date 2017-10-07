@@ -4,7 +4,7 @@ function init_custom_login()
 {
 	if(!is_admin())
 	{
-		mf_enqueue_style('style_custom_login', plugin_dir_url(__FILE__)."style.css", get_plugin_version(__FILE__));
+		mf_enqueue_style('style_custom_login', plugin_dir_url(__FILE__)."style.php", get_plugin_version(__FILE__));
 	}
 }
 
@@ -14,8 +14,10 @@ function message_custom_login($message)
 
 	mf_enqueue_script('script_custom_login', plugin_dir_url(__FILE__)."script.js", get_plugin_version(__FILE__));
 
-	$post_title = __("You haven't set a text to be displayed here", 'lang_login');
-	$post_content = "<a href='".admin_url("options-general.php?page=settings_mf_base#settings_custom_login")."'>".__("Choose a text by going to the settings page", 'lang_login')."</a>";
+	$post_title = $post_content = "";
+
+	//$post_title = __("You haven't set a text to be displayed here", 'lang_login');
+	//$post_content = "<a href='".admin_url("options-general.php?page=settings_mf_base#settings_custom_login")."'>".__("Choose a text by going to the settings page", 'lang_login')."</a>";
 
 	$action = check_var('action');
 
@@ -70,6 +72,13 @@ function settings_custom_login()
 	add_settings_section($options_area, "", $options_area."_callback", BASE_OPTIONS_PAGE);
 
 	$arr_settings = array();
+	$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
+
+	if(get_option('setting_custom_login_display_theme_logo') == 'no')
+	{
+		$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
+	}
+
 	$arr_settings['settings_custom_login_page'] = __("General", 'lang_login');
 
 	if(get_option('settings_custom_login_page') > 0)
@@ -87,6 +96,22 @@ function settings_custom_login_callback()
 	$setting_key = get_setting_key(__FUNCTION__);
 
 	echo settings_header($setting_key, __("Login", 'lang_login'));
+}
+
+function setting_custom_login_display_theme_logo_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key, 'no');
+
+	echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+}
+
+function setting_custom_login_custom_logo_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key);
+
+	echo get_file_button(array('name' => $setting_key, 'value' => $option));
 }
 
 function settings_custom_login_page_callback()

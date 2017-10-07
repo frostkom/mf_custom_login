@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-22 10:53+0100\n"
+"POT-Creation-Date: 2017-10-07 15:27+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -16,47 +16,47 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
-#: ../include/functions.php:14
-msgid "You haven't set a text to be displayed here"
-msgstr "Du har inte valt en text att visa här"
+#: ../include/functions.php:75
+msgid "Display Theme Logo"
+msgstr "Visa temats logga"
 
-#: ../include/functions.php:15
-msgid "Choose a text by going to the settings page"
-msgstr "Välj en text genom att gå till sidan för inställningar"
+#: ../include/functions.php:79
+msgid "Custom Logo"
+msgstr "Egen logga"
 
-#: ../include/functions.php:70
+#: ../include/functions.php:82
 msgid "General"
 msgstr "Allmänt"
 
-#: ../include/functions.php:74
+#: ../include/functions.php:86
 msgid "Register"
 msgstr "Registrering"
 
-#: ../include/functions.php:75
+#: ../include/functions.php:87
 msgid "Lost Password"
 msgstr "Glömt lösenord"
 
-#: ../include/functions.php:76
+#: ../include/functions.php:88
 msgid "Recover Password"
 msgstr "Återställ lösenord"
 
-#: ../include/functions.php:86
+#: ../include/functions.php:98
 msgid "Login"
 msgstr "Inloggning"
 
-#: ../include/functions.php:97
+#: ../include/functions.php:125
 msgid "The content from this page is displayed next to the login screen"
 msgstr "Innehållet från denna sida visas bredvid loginformuläret"
 
-#: ../include/functions.php:108
+#: ../include/functions.php:136
 msgid "The content from this page is displayed next to the register screen"
 msgstr "Innehållet från denna sida visas bredvid registreringsformuläret"
 
-#: ../include/functions.php:119
+#: ../include/functions.php:147
 msgid "The content from this page is displayed next to the lost password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för glömt lösenord"
 
-#: ../include/functions.php:130
+#: ../include/functions.php:158
 msgid "The content from this page is displayed next to the recover password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för att återställa lösenord"
 
