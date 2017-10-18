@@ -1,12 +1,19 @@
 <?php
 
-header("Content-Type: text/css; charset=utf-8");
+$is_standalone = !defined('ABSPATH');
 
-if(!defined('ABSPATH'))
+if($is_standalone)
 {
+	header("Content-Type: text/css; charset=utf-8");
+
 	$folder = str_replace("/wp-content/plugins/mf_custom_login/include", "/", dirname(__FILE__));
 
 	require_once($folder."wp-load.php");
+}
+
+else
+{
+	global $options, $options_fonts;
 }
 
 $settings_custom_login_page = get_option('settings_custom_login_page');
@@ -63,46 +70,49 @@ else
 	}
 }
 
-echo "@media all
-{";
+if($login_mobile_logo_css != '' || $settings_custom_login_page > 0)
+{
+	echo "@media all
+	{";
 
-	if($login_mobile_logo_css != '')
-	{
-		echo ".login h1 a
-		{"
-			.$login_mobile_logo_css
-		."}";
-	}
-
-	if($settings_custom_login_page > 0)
-	{
-		echo "#mf_custom_login
+		if($login_mobile_logo_css != '')
 		{
-			background: #fff;
-			box-shadow: 0 1px 3px rgba(0, 0, 0, .13);
-			margin-bottom: 20px;
-			padding: 26px 24px;
+			echo ".login h1 a
+			{"
+				.$login_mobile_logo_css
+			."}";
 		}
 
-			#mf_custom_login > h2
+		if($settings_custom_login_page > 0)
+		{
+			echo "#mf_custom_login
 			{
-				line-height: 1.3em;
+				background: #fff;
+				box-shadow: 0 1px 3px rgba(0, 0, 0, .13);
+				margin-bottom: 20px;
+				padding: 26px 24px;
 			}
 
-			#mf_custom_login > p
-			{
-				margin-top: 1em;
-			}
+				#mf_custom_login > h2
+				{
+					line-height: 1.3em;
+				}
 
-			#mf_custom_login img
-			{
-				max-width: 100%;
-			}";
-	}
+				#mf_custom_login > p
+				{
+					margin-top: 1em;
+				}
 
-echo "}
+				#mf_custom_login img
+				{
+					max-width: 100%;
+				}";
+		}
 
-@media (min-width: 740px)
+	echo "}";
+}
+
+echo "@media (min-width: 740px)
 {";
 
 	if($login_logo_css != '')
