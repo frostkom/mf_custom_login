@@ -40,7 +40,7 @@ function message_custom_login($message)
 
 	if(!($post_id > 0))
 	{
-		$post_id = get_option('settings_custom_login_page');
+		$post_id = get_option('setting_custom_login_page');
 	}
 
 	if($post_id > 0)
@@ -79,9 +79,9 @@ function settings_custom_login()
 		$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
 	}
 
-	$arr_settings['settings_custom_login_page'] = __("General", 'lang_login');
+	$arr_settings['setting_custom_login_page'] = __("General", 'lang_login');
 
-	if(get_option('settings_custom_login_page') > 0)
+	if(get_option('setting_custom_login_page') > 0)
 	{
 		$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 		$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
@@ -114,7 +114,7 @@ function setting_custom_login_custom_logo_callback()
 	echo get_file_button(array('name' => $setting_key, 'value' => $option));
 }
 
-function settings_custom_login_page_callback()
+function setting_custom_login_page_callback()
 {
 	$setting_key = get_setting_key(__FUNCTION__);
 	$option = get_option($setting_key);

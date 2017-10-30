@@ -16,7 +16,7 @@ else
 	global $options, $options_fonts;
 }
 
-$settings_custom_login_page = get_option('settings_custom_login_page');
+$setting_custom_login_page = get_option('setting_custom_login_page');
 
 $login_logo_css = $login_mobile_logo_css = "";
 
@@ -70,7 +70,7 @@ else
 	}
 }
 
-if($login_mobile_logo_css != '' || $settings_custom_login_page > 0)
+if($login_mobile_logo_css != '' || $setting_custom_login_page > 0)
 {
 	echo "@media all
 	{";
@@ -83,7 +83,7 @@ if($login_mobile_logo_css != '' || $settings_custom_login_page > 0)
 			."}";
 		}
 
-		if($settings_custom_login_page > 0)
+		if($setting_custom_login_page > 0)
 		{
 			echo "#mf_custom_login
 			{
@@ -123,7 +123,7 @@ echo "@media (min-width: 740px)
 		."}";
 	}
 
-	if($settings_custom_login_page > 0)
+	if($setting_custom_login_page > 0)
 	{
 		echo "#login
 		{
