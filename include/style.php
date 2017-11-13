@@ -28,16 +28,18 @@ if(get_option('setting_custom_login_display_theme_logo') == 'yes')
 	{
 		if($options['header_logo'] != '')
 		{
-			$login_logo_css = "background-image: url(".$options['header_logo'].");
-			background-size: cover;
-			width: 100%;";
+			list($image_width, $image_height) = getimagesize($options['header_logo']);
+
+			$login_mobile_logo_css = $login_logo_css = "background-image: url(".$options['header_logo'].");
+			background-size: contain;
+			width: auto;";
 		}
 
 		if($options['header_mobile_logo'] != '')
 		{
 			$login_mobile_logo_css = "background-image: url(".$options['header_mobile_logo'].");
-			background-size: cover;
-			width: 100%;";
+			background-size: contain;
+			width: auto;";
 		}
 	}
 
