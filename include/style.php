@@ -28,8 +28,6 @@ if(get_option('setting_custom_login_display_theme_logo') == 'yes')
 	{
 		if($options['header_logo'] != '')
 		{
-			list($image_width, $image_height) = getimagesize($options['header_logo']);
-
 			$login_mobile_logo_css = $login_logo_css = "background-image: url(".$options['header_logo'].");
 			background-size: contain;
 			width: auto;";
