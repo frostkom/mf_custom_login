@@ -148,6 +148,12 @@ echo "@media (min-width: 740px)
 				margin-bottom: 20px;
 			}
 
+		#mf_custom_login + #login_error
+		{
+			box-sizing: border-box;	
+			width: 48%;
+		}
+
 		#loginform
 		{
 			margin-top: 0;
