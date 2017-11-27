@@ -1,8 +1,6 @@
 <?php
 
-$is_standalone = !defined('ABSPATH');
-
-if($is_standalone)
+if(!defined('ABSPATH'))
 {
 	header("Content-Type: text/css; charset=utf-8");
 
@@ -11,31 +9,31 @@ if($is_standalone)
 	require_once($folder."wp-load.php");
 }
 
-else
+if(!isset($obj_theme_core))
 {
-	global $options, $options_fonts;
+	$obj_theme_core = new mf_theme_core();
 }
 
 $setting_custom_login_page = get_option('setting_custom_login_page');
 
 $login_logo_css = $login_mobile_logo_css = "";
 
-list($options_params, $options) = get_params();
+$obj_theme_core->get_params();
 
 if(get_option('setting_custom_login_display_theme_logo') == 'yes')
 {
-	if($options['header_logo'] != '')
+	if($obj_theme_core->options['header_logo'] != '')
 	{
-		if($options['header_logo'] != '')
+		if($obj_theme_core->options['header_logo'] != '')
 		{
-			$login_mobile_logo_css = $login_logo_css = "background-image: url(".$options['header_logo'].");
+			$login_mobile_logo_css = $login_logo_css = "background-image: url(".$obj_theme_core->options['header_logo'].");
 			background-size: contain;
 			width: auto;";
 		}
 
-		if($options['header_mobile_logo'] != '')
+		if($obj_theme_core->options['header_mobile_logo'] != '')
 		{
-			$login_mobile_logo_css = "background-image: url(".$options['header_mobile_logo'].");
+			$login_mobile_logo_css = "background-image: url(".$obj_theme_core->options['header_mobile_logo'].");
 			background-size: contain;
 			width: auto;";
 		}
@@ -43,15 +41,13 @@ if(get_option('setting_custom_login_display_theme_logo') == 'yes')
 
 	else
 	{
-		$options_fonts = get_theme_fonts();
-
-		echo show_font_face($options_params, $options_fonts, $options);
+		echo $obj_theme_core->show_font_face();
 
 		$login_logo_css = "background: none;"
-		.render_css(array('property' => 'font-family', 'value' => 'logo_font'))
+		.$obj_theme_core->render_css(array('property' => 'font-family', 'value' => 'logo_font'))
 		."font-size: 40px;
 		font-weight: bold;"
-		.render_css(array('property' => 'color', 'value' => 'logo_color'))
+		.$obj_theme_core->render_css(array('property' => 'color', 'value' => 'logo_color'))
 		."height: auto;
 		text-indent: unset;
 		width: auto;";
