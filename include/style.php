@@ -43,7 +43,7 @@ if(get_option('setting_custom_login_display_theme_logo') == 'yes')
 	{
 		echo $obj_theme_core->show_font_face();
 
-		$login_logo_css = "background: none;"
+		$login_mobile_logo_css = "background: none;"
 		.$obj_theme_core->render_css(array('property' => 'font-family', 'value' => 'logo_font'))
 		."font-size: 40px;
 		font-weight: bold;"
