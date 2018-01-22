@@ -146,7 +146,7 @@ echo "@media (min-width: 740px)
 
 		#mf_custom_login + #login_error
 		{
-			box-sizing: border-box;	
+			box-sizing: border-box;
 			width: 48%;
 		}
 
