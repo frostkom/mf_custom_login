@@ -111,7 +111,8 @@ function setting_custom_login_custom_logo_callback()
 	$setting_key = get_setting_key(__FUNCTION__);
 	$option = get_option($setting_key);
 
-	echo get_file_button(array('name' => $setting_key, 'value' => $option));
+	//echo get_file_button(array('name' => $setting_key, 'value' => $option));
+	echo get_media_library(array('name' => $setting_key, 'value' => $option, 'type' => 'image'));
 }
 
 function setting_custom_login_page_callback()
