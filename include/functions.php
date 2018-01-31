@@ -79,7 +79,7 @@ function settings_custom_login()
 		$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
 	}
 
-	$arr_settings['setting_custom_login_page'] = __("General", 'lang_login');
+	$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
 
 	if(get_option('setting_custom_login_page') > 0)
 	{
@@ -87,6 +87,9 @@ function settings_custom_login()
 		$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
 		$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
 	}
+
+	$arr_settings['setting_custom_login_allow_direct_link'] = __("Allow Direct Link to Login", 'lang_login');
+	//$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password", 'lang_login');
 
 	show_settings_fields(array('area' => $options_area, 'settings' => $arr_settings));
 }
@@ -111,7 +114,6 @@ function setting_custom_login_custom_logo_callback()
 	$setting_key = get_setting_key(__FUNCTION__);
 	$option = get_option($setting_key);
 
-	//echo get_file_button(array('name' => $setting_key, 'value' => $option));
 	echo get_media_library(array('name' => $setting_key, 'value' => $option, 'type' => 'image'));
 }
 
@@ -158,3 +160,19 @@ function setting_custom_login_recoverpassword_callback()
 
 	echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
 }
+
+function setting_custom_login_allow_direct_link_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key, 'no');
+
+	echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'suffix' => __("This will allow users to get a direct link to use instead of username and password", 'lang_login')));
+}
+
+/*function setting_custom_login_email_lost_password_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key);
+
+	echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'placeholder' => "[user_login], [user_email], [blogname], [siteurl], [loginurl]", 'description' => __("This text replaces the original Lost Password email", 'lang_login')));
+}*/

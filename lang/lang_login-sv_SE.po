@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-07 15:27+0100\n"
+"POT-Creation-Date: 2018-01-30 14:54+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -16,6 +16,10 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
+#: ../include/classes.php:115
+msgid "To login directly without setting a password, visit the following link"
+msgstr "För att logga in direkt utan att välja ett lösenord, besök följande länk"
+
 #: ../include/functions.php:75
 msgid "Display Theme Logo"
 msgstr "Visa temats logga"
@@ -25,8 +29,9 @@ msgid "Custom Logo"
 msgstr "Egen logga"
 
 #: ../include/functions.php:82
-msgid "General"
-msgstr "Allmänt"
+#: ../include/functions.php:101
+msgid "Login"
+msgstr "Inloggning"
 
 #: ../include/functions.php:86
 msgid "Register"
@@ -40,23 +45,27 @@ msgstr "Glömt lösenord"
 msgid "Recover Password"
 msgstr "Återställ lösenord"
 
-#: ../include/functions.php:98
-msgid "Login"
-msgstr "Inloggning"
+#: ../include/functions.php:91
+msgid "Allow Direct Link to Login"
+msgstr "Tillåt direktlänk till login"
 
-#: ../include/functions.php:125
+#: ../include/functions.php:128
 msgid "The content from this page is displayed next to the login screen"
 msgstr "Innehållet från denna sida visas bredvid loginformuläret"
 
-#: ../include/functions.php:136
+#: ../include/functions.php:139
 msgid "The content from this page is displayed next to the register screen"
 msgstr "Innehållet från denna sida visas bredvid registreringsformuläret"
 
-#: ../include/functions.php:147
+#: ../include/functions.php:150
 msgid "The content from this page is displayed next to the lost password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för glömt lösenord"
 
-#: ../include/functions.php:158
+#: ../include/functions.php:161
 msgid "The content from this page is displayed next to the recover password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för att återställa lösenord"
+
+#: ../include/functions.php:169
+msgid "This will allow users to get a direct link to use instead of username and password"
+msgstr "Detta tillåter användare att få en direktlänk att använda istället för användarnamn och lösenord"
 

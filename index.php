@@ -3,17 +3,21 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 2.2.3
+Version: 2.3.2
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: http://frostkom.se
 Text Domain: lang_login
 Domain Path: /lang
 
+Depends: MF Base
 GitHub Plugin URI: frostkom/mf_custom_login
 */
 
+include_once("include/classes.php");
 include_once("include/functions.php");
+
+$obj_custom_login = new mf_custom_login();
 
 add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
 
@@ -31,6 +35,12 @@ else
 {
 	add_filter('login_message', 'message_custom_login');
 }
+
+add_action('login_init', array($obj_custom_login, 'login_init'));
+add_action('wp_login_errors', array($obj_custom_login, 'wp_login_errors'));
+add_action('wp_login', array($obj_custom_login, 'wp_login'));
+add_action('wp_logout', array($obj_custom_login, 'wp_logout'));
+add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
 
 load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
 
