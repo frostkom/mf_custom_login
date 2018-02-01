@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-30 14:54+0100\n"
+"POT-Creation-Date: 2018-02-01 16:06+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -16,56 +16,87 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
-#: ../include/classes.php:115
+#: ../include/classes.php:30
+#, php-format
+msgid "I could not log in %s for you. If the problem persists, please contact an admin"
+msgstr "Jag kunde inte logga in %s åt dig. Om problemet kvarstår, kontakta en administratör"
+
+#: ../include/classes.php:36
+#, php-format
+msgid "It looks like the authorization key for %s has expired so I can not let you in"
+msgstr "Det ser ut som att nyckeln för %s har gått ut så jag kan inte släppa in dig"
+
+#: ../include/classes.php:119
 msgid "To login directly without setting a password, visit the following link"
 msgstr "För att logga in direkt utan att välja ett lösenord, besök följande länk"
 
-#: ../include/functions.php:75
+#: ../include/classes.php:154
+msgid "Lost Password? Click to get a secure direct link to login instantly"
+msgstr "Glömt lösenord? Klicka för att få en säker direktlänk för att logga in omgående"
+
+#: ../include/classes.php:174
+#, php-format
+msgid "[%s] Here comes you link to direct login"
+msgstr "[%s] Här kommer länken för direktinloggning"
+
+#: ../include/classes.php:182
+msgid "I successfully sent the message to your email. Follow the link in it, and you will be logged in before you know it"
+msgstr "Jag skickade meddelandet till din e-post. Följ länk i det, så kommer du att vara inloggad innan du anar det"
+
+#: ../include/classes.php:187
+msgid "I could not send the email"
+msgstr "Jag kunde inte skicka meddelandet"
+
+#: ../include/classes.php:193
+msgid "I could not find an email corresponding to the username you entered"
+msgstr "Jag kunde inte hitta en e-post som stämde överens med det användarnamn som du angav"
+
+#: ../include/functions.php:69
 msgid "Display Theme Logo"
 msgstr "Visa temats logga"
 
-#: ../include/functions.php:79
+#: ../include/functions.php:73
 msgid "Custom Logo"
 msgstr "Egen logga"
 
-#: ../include/functions.php:82
-#: ../include/functions.php:101
+#: ../include/functions.php:76
+#: ../include/functions.php:95
 msgid "Login"
 msgstr "Inloggning"
 
-#: ../include/functions.php:86
+#: ../include/functions.php:80
 msgid "Register"
 msgstr "Registrering"
 
-#: ../include/functions.php:87
+#: ../include/functions.php:81
 msgid "Lost Password"
 msgstr "Glömt lösenord"
 
-#: ../include/functions.php:88
+#: ../include/functions.php:82
 msgid "Recover Password"
 msgstr "Återställ lösenord"
 
-#: ../include/functions.php:91
+#: ../include/functions.php:85
 msgid "Allow Direct Link to Login"
 msgstr "Tillåt direktlänk till login"
 
-#: ../include/functions.php:128
+#: ../include/functions.php:122
 msgid "The content from this page is displayed next to the login screen"
 msgstr "Innehållet från denna sida visas bredvid loginformuläret"
 
-#: ../include/functions.php:139
+#: ../include/functions.php:133
 msgid "The content from this page is displayed next to the register screen"
 msgstr "Innehållet från denna sida visas bredvid registreringsformuläret"
 
-#: ../include/functions.php:150
+#: ../include/functions.php:144
 msgid "The content from this page is displayed next to the lost password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för glömt lösenord"
 
-#: ../include/functions.php:161
+#: ../include/functions.php:155
 msgid "The content from this page is displayed next to the recover password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för att återställa lösenord"
 
-#: ../include/functions.php:169
+#: ../include/functions.php:163
 msgid "This will allow users to get a direct link to use instead of username and password"
 msgstr "Detta tillåter användare att få en direktlänk att använda istället för användarnamn och lösenord"
 

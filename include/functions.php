@@ -12,16 +12,10 @@ function message_custom_login($message)
 {
 	global $wpdb;
 
-	mf_enqueue_script('script_custom_login', plugin_dir_url(__FILE__)."script.js", get_plugin_version(__FILE__));
-
-	$post_title = $post_content = "";
-
-	//$post_title = __("You haven't set a text to be displayed here", 'lang_login');
-	//$post_content = "<a href='".admin_url("options-general.php?page=settings_mf_base#settings_custom_login")."'>".__("Choose a text by going to the settings page", 'lang_login')."</a>";
-
 	$action = check_var('action');
 
 	$post_id = 0;
+	$post_title = $post_content = "";
 
 	switch($action)
 	{

@@ -114,6 +114,16 @@ class mf_custom_login
 		$this->delete_meta(get_current_user_id());
 	}
 
+	function direct_link_text($key, $user_login, $user_data)
+	{
+		$out = __("To login directly without setting a password, visit the following link", 'lang_login').":"
+		."\r\n\r\n".network_site_url("wp-login.php?type=link&auth=".$key."&username=".rawurlencode($user_login), 'login')."\r\n";
+
+		update_user_meta($user_data->ID, 'meta_login_auth', $key);
+
+		return $out;
+	}
+
 	function retrieve_password_message($message, $key, $user_login, $user_data)
 	{
 		/*$message_temp = get_option('setting_custom_login_email_lost_password');
@@ -132,13 +142,62 @@ class mf_custom_login
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
-			$message .= "\r\n"
-			.__("To login directly without setting a password, visit the following link", 'lang_login').":"
-			."\r\n\r\n".network_site_url("wp-login.php?type=link&auth=".$key."&username=".rawurlencode($user_login), 'login')."\r\n";
-
-			update_user_meta($user_data->ID, 'meta_login_auth', $key);
+			$message .= "\r\n".$this->direct_link_text($key, $user_login, $user_data);
 		}
 
 		return $message;
+	}
+
+	function login_form()
+	{
+		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		{
+			echo "<p id='direct_login_link' class='hide'>
+				<a href='#'>".__("Lost Password? Click to get a secure direct link to login instantly", 'lang_login')."</a><br><br>
+			</p>";
+		}
+	}
+
+	function login_footer()
+	{
+		mf_enqueue_script('script_custom_login', plugin_dir_url(__FILE__)."script.js", array('ajax_url' => admin_url('admin-ajax.php'), 'allow_direct_link' => get_option('setting_custom_login_allow_direct_link')), get_plugin_version(__FILE__));
+	}
+
+	function send_direct_link_email()
+	{
+		$username = check_var('username');
+
+		$user = get_user_by('login', $username);
+
+		if($user->user_email != '')
+		{
+			$key = md5(AUTH_SALT.$username.$user->user_email);
+
+			$mail_to = $user->user_email;
+			$mail_subject = sprintf(__("[%s] Here comes you link to direct login", 'lang_login'), get_bloginfo('name'));
+			$mail_content = $this->direct_link_text($key, $username, $user);
+
+			$sent = send_email(array('to' => $mail_to, 'subject' => $mail_subject, 'content' => $mail_content));
+
+			if($sent)
+			{
+				$result['success'] = true;
+				$result['message'] = __("I successfully sent the message to your email. Follow the link in it, and you will be logged in before you know it", 'lang_login');
+			}
+
+			else
+			{
+				$result['error'] = __("I could not send the email", 'lang_login');
+			}
+		}
+
+		else
+		{
+			$result['error'] = __("I could not find an email corresponding to the username you entered", 'lang_login');
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($result);
+		die();
 	}
 }

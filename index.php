@@ -34,13 +34,20 @@ if(is_admin())
 else
 {
 	add_filter('login_message', 'message_custom_login');
+
+	/* Direct Link Login */
+	add_action('login_init', array($obj_custom_login, 'login_init'));
+	add_action('wp_login_errors', array($obj_custom_login, 'wp_login_errors'));
+	add_action('wp_login', array($obj_custom_login, 'wp_login'));
+	add_action('wp_logout', array($obj_custom_login, 'wp_logout'));
+	add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
+
+	add_action('login_form', array($obj_custom_login, 'login_form'));
+	add_action('login_footer', array($obj_custom_login, 'login_footer'));
 }
 
-add_action('login_init', array($obj_custom_login, 'login_init'));
-add_action('wp_login_errors', array($obj_custom_login, 'wp_login_errors'));
-add_action('wp_login', array($obj_custom_login, 'wp_login'));
-add_action('wp_logout', array($obj_custom_login, 'wp_logout'));
-add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
+add_action('wp_ajax_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
+add_action('wp_ajax_nopriv_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
 
 load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
 
