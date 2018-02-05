@@ -82,7 +82,21 @@ function settings_custom_login()
 		$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
 	}
 
-	$arr_settings['setting_custom_login_allow_direct_link'] = __("Allow Direct Link to Login", 'lang_login');
+	if(is_plugin_active('mf_auth/index.php') == false || get_option('setting_auth_active') == 'no')
+	{
+		$arr_settings['setting_custom_login_allow_direct_link'] = __("Allow Direct Link to Login", 'lang_login');
+
+		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		{
+			$arr_settings['setting_custom_login_direct_link_expire'] = __("Direct Link Expires After", 'lang_login');
+		}
+	}
+
+	else
+	{
+		delete_option('setting_custom_login_allow_direct_link');
+	}
+
 	//$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password", 'lang_login');
 
 	show_settings_fields(array('area' => $options_area, 'settings' => $arr_settings));
@@ -161,6 +175,14 @@ function setting_custom_login_allow_direct_link_callback()
 	$option = get_option($setting_key, 'no');
 
 	echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'suffix' => __("This will allow users to get a direct link to use instead of username and password", 'lang_login')));
+}
+
+function setting_custom_login_direct_link_expire_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key, 'no');
+
+	echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='0' max='240'", 'suffix' => __("minutes", 'lang_login')." (".__("0 means never", 'lang_login').")"));
 }
 
 /*function setting_custom_login_email_lost_password_callback()

@@ -59,10 +59,32 @@ class mf_custom_login
 		global $wpdb;
 
 		$user = get_user_by('login', $this->username);
+		
+		$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
 
-		if($this->auth == get_user_meta($user->ID, 'meta_login_auth', true))
+		if($this->auth == $meta_login_auth)
 		{
-			return true;
+			$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
+
+			if($setting_custom_login_direct_link_expire > 0)
+			{
+				list($meta_date, $rest) = explode("_", $meta_login_auth);
+
+				if($meta_date > date("YmdHis", strtotime("-".$setting_custom_login_direct_link_expire." minute")))
+				{
+					return true;
+				}
+
+				else
+				{
+					return false;
+				}
+			}
+
+			else
+			{
+				return true;
+			}
 		}
 
 		else
@@ -116,6 +138,13 @@ class mf_custom_login
 
 	function direct_link_text($key, $user_login, $user_data)
 	{
+		$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
+
+		if($setting_custom_login_direct_link_expire > 0)
+		{
+			$key = date("YmdHis")."_".$key;
+		}
+
 		$out = __("To login directly without setting a password, visit the following link", 'lang_login').":"
 		."\r\n\r\n".network_site_url("wp-login.php?type=link&auth=".$key."&username=".rawurlencode($user_login), 'login')."\r\n";
 

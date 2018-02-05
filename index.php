@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 2.3.2
+Version: 2.3.4
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: http://frostkom.se
@@ -54,6 +54,37 @@ load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."
 function activate_custom_login()
 {
 	replace_option(array('old' => 'settings_custom_login_page', 'new' => 'setting_custom_login_page'));
+
+	if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+	{
+		$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
+
+		if($setting_custom_login_direct_link_expire > 0)
+		{
+			$users = get_users(array(
+				'fields' => array('ID'),
+			));
+
+			$obj_custom_login = new mf_custom_login();
+
+			foreach($users as $user)
+			{
+				$meta_login_auth = get_option($user->ID, 'meta_login_auth');
+
+				if($meta_login_auth != '')
+				{
+					list($meta_date, $rest) = explode("_", $meta_login_auth);
+
+					if($meta_date < date("YmdHis", strtotime("-".$setting_custom_login_direct_link_expire." minute")))
+					{
+						$obj_custom_login->delete_meta($user->ID);
+
+						do_log("Removed meta_login_auth for ".$user->ID);
+					}
+				}
+			}
+		}
+	}
 }
 
 function uninstall_custom_login()

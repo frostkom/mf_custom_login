@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-01 16:06+0100\n"
+"POT-Creation-Date: 2018-02-05 12:38+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -30,24 +30,24 @@ msgstr "Det ser ut som att nyckeln för %s har gått ut så jag kan inte släppa
 msgid "To login directly without setting a password, visit the following link"
 msgstr "För att logga in direkt utan att välja ett lösenord, besök följande länk"
 
-#: ../include/classes.php:154
+#: ../include/classes.php:156
 msgid "Lost Password? Click to get a secure direct link to login instantly"
 msgstr "Glömt lösenord? Klicka för att få en säker direktlänk för att logga in omgående"
 
-#: ../include/classes.php:174
+#: ../include/classes.php:177
 #, php-format
 msgid "[%s] Here comes you link to direct login"
 msgstr "[%s] Här kommer länken för direktinloggning"
 
-#: ../include/classes.php:182
+#: ../include/classes.php:185
 msgid "I successfully sent the message to your email. Follow the link in it, and you will be logged in before you know it"
-msgstr "Jag skickade meddelandet till din e-post. Följ länk i det, så kommer du att vara inloggad innan du anar det"
+msgstr "Jag skickade meddelandet till din e-post. Följ länken i meddelandet, så blir du automatiskt inloggad"
 
-#: ../include/classes.php:187
+#: ../include/classes.php:190
 msgid "I could not send the email"
 msgstr "Jag kunde inte skicka meddelandet"
 
-#: ../include/classes.php:193
+#: ../include/classes.php:196
 msgid "I could not find an email corresponding to the username you entered"
 msgstr "Jag kunde inte hitta en e-post som stämde överens med det användarnamn som du angav"
 
@@ -60,7 +60,7 @@ msgid "Custom Logo"
 msgstr "Egen logga"
 
 #: ../include/functions.php:76
-#: ../include/functions.php:95
+#: ../include/functions.php:109
 msgid "Login"
 msgstr "Inloggning"
 
@@ -76,27 +76,39 @@ msgstr "Glömt lösenord"
 msgid "Recover Password"
 msgstr "Återställ lösenord"
 
-#: ../include/functions.php:85
+#: ../include/functions.php:87
 msgid "Allow Direct Link to Login"
 msgstr "Tillåt direktlänk till login"
 
-#: ../include/functions.php:122
+#: ../include/functions.php:91
+msgid "Direct Link Expires After"
+msgstr "Direktlänk går ut efter"
+
+#: ../include/functions.php:136
 msgid "The content from this page is displayed next to the login screen"
 msgstr "Innehållet från denna sida visas bredvid loginformuläret"
 
-#: ../include/functions.php:133
+#: ../include/functions.php:147
 msgid "The content from this page is displayed next to the register screen"
 msgstr "Innehållet från denna sida visas bredvid registreringsformuläret"
 
-#: ../include/functions.php:144
+#: ../include/functions.php:158
 msgid "The content from this page is displayed next to the lost password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för glömt lösenord"
 
-#: ../include/functions.php:155
+#: ../include/functions.php:169
 msgid "The content from this page is displayed next to the recover password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för att återställa lösenord"
 
-#: ../include/functions.php:163
+#: ../include/functions.php:177
 msgid "This will allow users to get a direct link to use instead of username and password"
 msgstr "Detta tillåter användare att få en direktlänk att använda istället för användarnamn och lösenord"
+
+#: ../include/functions.php:185
+msgid "minutes"
+msgstr "minuter"
+
+#: ../include/functions.php:185
+msgid "0 means never"
+msgstr "0 betyder aldrig"
 
