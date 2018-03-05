@@ -61,7 +61,7 @@ else
 	if($setting_custom_login_custom_logo != '')
 	{
 		$login_logo_css = "background-image: url(".$setting_custom_login_custom_logo.");
-		background-size: cover;
+		background-size: contain;
 		width: 100%;";
 	}
 }
