@@ -198,7 +198,7 @@ class mf_custom_login
 
 		$user = get_user_by('login', $username);
 
-		if($user->user_email != '')
+		if(isset($user->user_email) && $user->user_email != '')
 		{
 			$key = md5(AUTH_SALT.$username.$user->user_email);
 
