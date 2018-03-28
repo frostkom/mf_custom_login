@@ -38,7 +38,7 @@ class mf_custom_login
 			}
 		}
 	}
-	
+
 	function wp_login_errors($errors)
 	{
 		if($this->error != '')
@@ -59,7 +59,7 @@ class mf_custom_login
 		global $wpdb;
 
 		$user = get_user_by('login', $this->username);
-		
+
 		$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
 
 		if($this->auth == $meta_login_auth)

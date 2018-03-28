@@ -66,9 +66,13 @@ function settings_custom_login()
 	add_settings_section($options_area, "", $options_area."_callback", BASE_OPTIONS_PAGE);
 
 	$arr_settings = array();
-	$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
 
-	if(get_option('setting_custom_login_display_theme_logo') == 'no')
+	if(is_plugin_active('mf_theme_core/index.php'))
+	{
+		$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
+	}
+
+	if(get_option('setting_custom_login_display_theme_logo') != 'yes')
 	{
 		$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
 	}
