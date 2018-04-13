@@ -1,13 +1,5 @@
 <?php
 
-function init_custom_login()
-{
-	if(!is_admin())
-	{
-		mf_enqueue_style('style_custom_login', plugin_dir_url(__FILE__)."style.php", get_plugin_version(__FILE__));
-	}
-}
-
 function message_custom_login($message)
 {
 	global $wpdb;

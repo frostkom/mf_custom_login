@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 2.4.0
+Version: 2.4.2
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: http://frostkom.se
@@ -21,8 +21,6 @@ $obj_custom_login = new mf_custom_login();
 
 add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
 
-add_action('init', 'init_custom_login');
-
 if(is_admin())
 {
 	register_activation_hook(__FILE__, 'activate_custom_login');
@@ -33,10 +31,10 @@ if(is_admin())
 
 else
 {
+	add_action('login_init', array($obj_custom_login, 'login_init'));
 	add_filter('login_message', 'message_custom_login');
 
 	/* Direct Link Login */
-	add_action('login_init', array($obj_custom_login, 'login_init'));
 	add_action('wp_login_errors', array($obj_custom_login, 'wp_login_errors'));
 	add_action('wp_login', array($obj_custom_login, 'wp_login'));
 	add_action('wp_logout', array($obj_custom_login, 'wp_logout'));
