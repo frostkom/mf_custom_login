@@ -15,7 +15,7 @@ if(is_plugin_active('mf_theme_core/index.php'))
 	{
 		$obj_theme_core = new mf_theme_core();
 	}
-	
+
 	$obj_theme_core->get_params();
 }
 
