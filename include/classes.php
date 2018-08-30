@@ -7,6 +7,140 @@ class mf_custom_login
 		$this->error = "";
 	}
 
+	function settings_custom_login()
+	{
+		$options_area = __FUNCTION__;
+
+		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
+
+		$arr_settings = array();
+
+		if(is_plugin_active('mf_theme_core/index.php'))
+		{
+			$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
+		}
+
+		if(get_option('setting_custom_login_display_theme_logo') != 'yes')
+		{
+			$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
+		}
+
+		$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
+		$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
+		$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
+		$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
+
+		if(is_plugin_active('mf_auth/index.php') == false || get_option('setting_auth_active') == 'no')
+		{
+			$arr_settings['setting_custom_login_allow_direct_link'] = __("Allow Direct Link to Login", 'lang_login');
+
+			if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+			{
+				$arr_settings['setting_custom_login_direct_link_expire'] = __("Direct Link Expires After", 'lang_login');
+			}
+		}
+
+		else
+		{
+			delete_option('setting_custom_login_allow_direct_link');
+		}
+
+		//$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password", 'lang_login');
+
+		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
+	}
+
+	function settings_custom_login_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+
+		echo settings_header($setting_key, __("Login", 'lang_login'));
+	}
+
+	function setting_custom_login_display_theme_logo_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key, 'no');
+
+		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+	}
+
+	function setting_custom_login_custom_logo_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		echo get_media_library(array('name' => $setting_key, 'value' => $option, 'type' => 'image'));
+	}
+
+	function setting_custom_login_page_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		$arr_data = array();
+		get_post_children(array('add_choose_here' => true), $arr_data);
+
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
+	}
+
+	function setting_custom_login_register_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		$arr_data = array();
+		get_post_children(array('add_choose_here' => true), $arr_data);
+
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the register screen", 'lang_login')));
+	}
+
+	function setting_custom_login_lostpassword_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		$arr_data = array();
+		get_post_children(array('add_choose_here' => true), $arr_data);
+
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the lost password screen", 'lang_login')));
+	}
+
+	function setting_custom_login_recoverpassword_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		$arr_data = array();
+		get_post_children(array('add_choose_here' => true), $arr_data);
+
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-lg fa-plus'></i></a>", 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
+	}
+
+	function setting_custom_login_allow_direct_link_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key, 'no');
+
+		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'suffix' => __("This will allow users to get a direct link to use instead of username and password", 'lang_login')));
+	}
+
+	function setting_custom_login_direct_link_expire_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key, 'no');
+
+		echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='0' max='240'", 'suffix' => __("minutes", 'lang_login')." (".__("0 means never", 'lang_login').")"));
+	}
+
+	/*function setting_custom_login_email_lost_password_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'placeholder' => "[user_login], [user_email], [blogname], [siteurl], [loginurl]", 'description' => __("This text replaces the original Lost Password email", 'lang_login')));
+	}*/
+
 	function login_init()
 	{
 		$plugin_include_url = plugin_dir_url(__FILE__);
@@ -43,6 +177,57 @@ class mf_custom_login
 				}
 			}
 		}
+	}
+
+	function message_custom_login($message)
+	{
+		global $wpdb;
+
+		$action = check_var('action');
+
+		$post_id = 0;
+		$post_title = $post_content = "";
+
+		switch($action)
+		{
+			case 'register':
+				$post_id = get_option('setting_custom_login_register');
+			break;
+
+			case 'lostpassword':
+				$post_id = get_option('setting_custom_login_lostpassword');
+			break;
+
+			case 'rp':
+				$post_id = get_option('setting_custom_login_recoverpassword');
+			break;
+		}
+
+		if(!($post_id > 0))
+		{
+			$post_id = get_option('setting_custom_login_page');
+		}
+
+		if($post_id > 0)
+		{
+			$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, post_content FROM ".$wpdb->posts." WHERE ID = '%d' AND post_type = 'page' AND post_status = 'publish'", $post_id));
+
+			foreach($result as $r)
+			{
+				$post_title = $r->post_title;
+				$post_content = apply_filters('the_content', $r->post_content);
+			}
+		}
+
+		if($post_content != '')
+		{
+			$message .= "<div id='mf_custom_login'>
+				<h2>".$post_title."</h2>
+				<p>".$post_content."</p>
+			</div>";
+		}
+
+		return $message;
 	}
 
 	function wp_login_errors($errors)
@@ -229,5 +414,155 @@ class mf_custom_login
 		header('Content-Type: application/json');
 		echo json_encode($result);
 		die();
+	}
+
+	function widgets_init()
+	{
+		register_widget('widget_registration_form');
+	}
+}
+
+class widget_registration_form extends WP_Widget
+{
+	function __construct()
+	{
+		$widget_ops = array(
+			'classname' => 'registration_form',
+			'description' => __("Display a Registration Form", 'lang_login')
+		);
+
+		$this->arr_default = array(
+			'registration_heading' => '',
+			'registration_collect_name' => 'no',
+		);
+
+		parent::__construct('registration-widget', __("Registration Form", 'lang_login'), $widget_ops);
+	}
+
+	function widget($args, $instance)
+	{
+		global $wpdb, $error_text, $done_text;
+
+		extract($args);
+
+		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		$user_login = check_var('user_login');
+		$user_email = check_var('user_email', 'email');
+
+		if($instance['registration_collect_name'] == 'yes')
+		{
+			$first_name = check_var('first_name');
+			$last_name = check_var('last_name');
+		}
+
+		echo $before_widget;
+
+			if($instance['registration_heading'] != '')
+			{
+				echo $before_title
+					.$instance['registration_heading']
+				.$after_title;
+			}
+
+			$display_form = true;
+
+			if(isset($_POST['btnSendRegistration']))
+			{
+				if($user_login == '' || $user_email == '')
+				{
+					$error_text = __("You have to enter both Username and E-mail, then I can process the registration for you", 'lang_login');
+				}
+
+				else
+				{
+					$errors = register_new_user($user_login, $user_email);
+
+					if(is_wp_error($errors))
+					{
+						foreach($errors->errors as $error)
+						{
+							$error_text = $error[0];
+						}
+					}
+
+					else
+					{
+						$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with instructions on how to complete the registration.", 'lang_login');
+
+						$display_form = false;
+					}
+
+					//add_user() //Needs 'user_email' -> 'email'
+
+					/*INSERT INTO wp_users SET user_login = 'username', user_pass = MD5('password'), user_email = 'email', user_registered = NOW(), user_activation_key = '', user_status = '0';
+					INSERT INTO wp_usermeta SET user_id = (id), meta_key = 'wp_capabilities', meta_value = 'a:1:{s:13:'administrator';s:1:'1';}';
+					INSERT INTO wp_usermeta SET user_id = (id), meta_key = 'wp_user_level', meta_value = '10';*/
+
+					/*$user_password = "";
+
+					$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->users." SET user_login = %s, user_pass = MD5(%s), user_email = %s, user_registered = NOW(), user_activation_key = '', user_status = '0'", $user_login, $user_password, $user_email));
+					$user_id = $wpdb->insert_id;
+
+					update_user_meta($user_id, $wpdb->prefix.'capabilities', array(get_option('default_role')));
+					update_user_meta($user_id, $wpdb->prefix.'user_level', );
+
+					if($instance['registration_collect_name'] == 'yes')
+					{
+						update_user_meta($user_id, 'first_name', $first_name);
+						update_user_meta($user_id, 'last_name', $last_name);
+					}
+
+					//Send email*/
+				}
+			}
+
+			echo get_notification();
+
+			if($display_form == true)
+			{
+				echo "<form method='post' action='' class='mf_form'>"
+					.show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'required' => true))
+					.show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
+
+					if($instance['registration_collect_name'] == 'yes')
+					{
+						echo "<div class='flex_flow'>"
+							.show_textfield(array('name' => 'first_name', 'text' => __("First Name", 'lang_login'), 'value' => $first_name, 'required' => true))
+							.show_textfield(array('name' => 'last_name', 'text' => __("Last Name", 'lang_login'), 'value' => $last_name, 'required' => true))
+						."</div>";
+					}
+
+					echo "<div class='form_button'>"
+						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
+					."</div>
+				</form>";
+			}
+
+		echo $after_widget;
+	}
+
+	function update($new_instance, $old_instance)
+	{
+		$instance = $old_instance;
+
+		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
+
+		$instance['registration_heading'] = sanitize_text_field($new_instance['registration_heading']);
+		$instance['registration_collect_name'] = sanitize_text_field($new_instance['registration_collect_name']);
+
+		return $instance;
+	}
+
+	function form($instance)
+	{
+		global $wpdb;
+
+		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		echo "<div class='mf_form'>"
+			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
+			.show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']))
+		."</div>";
 	}
 }
