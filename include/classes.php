@@ -419,6 +419,123 @@ class mf_custom_login
 	function widgets_init()
 	{
 		register_widget('widget_registration_form');
+		register_widget('widget_login_form');
+		register_widget('widget_lost_password_form');
+	}
+}
+
+class widget_login_form extends WP_Widget
+{
+	function __construct()
+	{
+		$widget_ops = array(
+			'classname' => 'login_form',
+			'description' => __("Display a Login Form", 'lang_login')
+		);
+
+		$this->arr_default = array(
+			'login_heading' => '',
+		);
+
+		parent::__construct('login-widget', __("Login Form", 'lang_login'), $widget_ops);
+	}
+
+	function widget($args, $instance)
+	{
+		global $wpdb, $error_text, $done_text;
+
+		extract($args);
+
+		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		if(is_user_logged_in())
+		{
+			mf_redirect(admin_url());
+		}
+
+		else
+		{
+			$user_login = check_var('log');
+			$user_pass = check_var('pwd');
+			$user_remember = check_var('rememberme', 'char', true, 'forever');
+
+			echo $before_widget;
+
+				if($instance['login_heading'] != '')
+				{
+					echo $before_title
+						.$instance['login_heading']
+					.$after_title;
+				}
+
+				/*$display_form = true;
+
+				if(isset($_POST['btnSendLogin']))
+				{
+					if($user_login == '' || $user_pass == '')
+					{
+						$error_text = __("You have to enter both Username and Password, then I can process the login for you", 'lang_login');
+					}
+
+					else
+					{
+						$errors = register_new_user($user_login, $user_email);
+
+						if(is_wp_error($errors))
+						{
+							foreach($errors->errors as $error)
+							{
+								$error_text = $error[0];
+							}
+						}
+
+						else
+						{
+							$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with instructions on how to complete the registration.", 'lang_login');
+
+							$display_form = false;
+						}
+					}
+				}
+
+				echo get_notification();
+
+				if($display_form == true)
+				{*/
+					echo "<form method='post' action='".esc_url(site_url('wp-login.php', 'login_post'))."' class='mf_form'>"
+						.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'required' => true))
+						.show_password_field(array('name' => 'pwd', 'text' => __("Password", 'lang_login'), 'value' => $user_pass, 'required' => true))
+						.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
+						."<div class='form_button'>"
+							.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
+						."</div>
+					</form>";
+				//}
+
+			echo $after_widget;
+		}
+	}
+
+	function update($new_instance, $old_instance)
+	{
+		$instance = $old_instance;
+
+		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
+
+		$instance['login_heading'] = sanitize_text_field($new_instance['login_heading']);
+
+		return $instance;
+	}
+
+	function form($instance)
+	{
+		global $wpdb;
+
+		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		echo "<div class='mf_form'>"
+			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='registration-title'"))
+		."</div>";
 	}
 }
 
@@ -563,6 +680,180 @@ class widget_registration_form extends WP_Widget
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
 			.show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']))
+		."</div>";
+	}
+}
+
+class widget_lost_password_form extends WP_Widget
+{
+	function __construct()
+	{
+		$widget_ops = array(
+			'classname' => 'lost_password_form',
+			'description' => __("Display a Lost Password Form", 'lang_login')
+		);
+
+		$this->arr_default = array(
+			'lost_password_heading' => '',
+		);
+
+		parent::__construct('lost-password-widget', __("Lost Password Form", 'lang_login'), $widget_ops);
+	}
+
+	function retrieve_password($login)
+	{
+		$errors = new WP_Error();
+
+		$user_data = get_user_by((strpos($login, '@') ? 'email' : 'login'), $login);
+
+		if(!isset($user_data->user_login))
+		{
+			$errors->add('invalidcombo', __("Invalid Username or E-mail", 'lang_login'));
+
+			return $errors;
+		}
+
+		else
+		{
+			$user_login = $user_data->user_login;
+			$user_email = $user_data->user_email;
+			$key = get_password_reset_key($user_data);
+
+			if(is_wp_error($key))
+			{
+				return $key;
+			}
+
+			else
+			{
+				if(is_multisite())
+				{
+					$site_name = get_network()->site_name;
+				}
+				
+				else
+				{
+					/*
+					 * The blogname option is escaped with esc_html on the way into the database
+					 * in sanitize_option we want to reverse this for the plain text arena of emails.
+					 */
+					$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+				}
+
+				$lost_password_link = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
+
+				$message = "<p>"
+					.__("Someone has requested a password reset for the following account", 'lang_login').":<br>"
+					//.__("Site Name", 'lang_login').": ".$site_name."<br>"
+					.__("Username", 'lang_login').": ".$user_login
+				."</p>"
+				."<p>".__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."</p>"
+				."<p>"
+					.__("To reset your password, visit the following address").":<br>"
+					."<a href='".$lost_password_link."'>".$lost_password_link."</a>
+				</p>";
+
+				$title = sprintf(__("[%s] Password Reset", 'lang_login'), $site_name);
+
+				$title = apply_filters('retrieve_password_title', $title, $user_login, $user_data);
+				$message = apply_filters('retrieve_password_message', $message, $key, $user_login, $user_data);
+
+				if(send_email(array('to' => $user_email, 'subject' => wp_specialchars_decode($title), 'content' => $message)))
+				{
+					return true;
+				}
+
+				else
+				{
+					wp_die(__("The email could not be sent.", 'lang_login')."<br>\n".__("Possible reason: your host may have disabled the mail() function.", 'lang_login'));
+				}
+			}
+		}
+	}
+
+	function widget($args, $instance)
+	{
+		global $wpdb, $error_text, $done_text;
+
+		extract($args);
+
+		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		$user_login = check_var('user_login');
+
+		echo $before_widget;
+
+			if($instance['lost_password_heading'] != '')
+			{
+				echo $before_title
+					.$instance['lost_password_heading']
+				.$after_title;
+			}
+
+			$display_form = true;
+
+			if(isset($_POST['btnSendLostPassword']))
+			{
+				if($user_login == '')
+				{
+					$error_text = __("You have to enter the e-mail address, then I can process the request for you", 'lang_login');
+				}
+
+				else
+				{
+					$errors = $this->retrieve_password($user_login);
+					
+					if(is_wp_error($errors))
+					{
+						foreach($errors->errors as $error)
+						{
+							$error_text = $error[0];
+						}
+					}
+
+					else
+					{
+						$done_text = __("I found the account that you were looking for. Please, check your inbox for the confirmation link.", 'lang_login');
+
+						$display_form = false;
+					}
+				}
+			}
+
+			echo get_notification();
+
+			if($display_form == true)
+			{
+				echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
+					.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'required' => true))
+					."<div class='form_button'>"
+						.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
+					."</div>
+				</form>";
+			}
+
+		echo $after_widget;
+	}
+
+	function update($new_instance, $old_instance)
+	{
+		$instance = $old_instance;
+
+		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
+
+		$instance['lost_password_heading'] = sanitize_text_field($new_instance['lost_password_heading']);
+
+		return $instance;
+	}
+
+	function form($instance)
+	{
+		global $wpdb;
+
+		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		echo "<div class='mf_form'>"
+			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='registration-title'"))
 		."</div>";
 	}
 }
