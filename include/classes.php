@@ -179,7 +179,7 @@ class mf_custom_login
 		}
 	}
 
-	function message_custom_login($message)
+	function login_message($message)
 	{
 		global $wpdb;
 
