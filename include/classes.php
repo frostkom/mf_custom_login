@@ -490,8 +490,37 @@ class widget_login_form extends WP_Widget
 					.show_password_field(array('name' => 'pwd', 'text' => __("Password", 'lang_login'), 'value' => $user_pass, 'required' => true))
 					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
 					."<div class='form_button'>"
-						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
-					."</div>
+						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')));
+
+						if(is_plugin_active('mf_widget_logic_select/index.php'))
+						{
+							$registration_post_id = get_widget_search('registration-widget');
+							$lost_password_post_id = get_widget_search('lost-password-widget');
+
+							if($registration_post_id > 0 || $lost_password_post_id > 0)
+							{
+								echo "<p class='inline'>";
+
+									if($registration_post_id > 0)
+									{
+										echo "<a href='".get_permalink($registration_post_id)."'>".get_post_title($registration_post_id)."</a>";
+									}
+
+									if($lost_password_post_id > 0)
+									{
+										if($registration_post_id > 0)
+										{
+											echo "&nbsp;";
+										}
+
+										echo "<a href='".get_permalink($lost_password_post_id)."'>".get_post_title($lost_password_post_id)."</a>";
+									}
+
+								echo "</p>";
+							}
+						}
+
+					echo "</div>
 				</form>"
 			.$after_widget;
 		//}
@@ -650,8 +679,26 @@ class widget_registration_form extends WP_Widget
 					}
 
 					echo "<div class='form_button'>"
-						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
-					."</div>
+						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')));
+
+						if(is_plugin_active('mf_widget_logic_select/index.php'))
+						{
+							$login_post_id = get_widget_search('login-widget');
+
+							if($login_post_id > 0)
+							{
+								echo "<p class='inline'>";
+
+									if($login_post_id > 0)
+									{
+										echo "<a href='".get_permalink($login_post_id)."'>".get_post_title($login_post_id)."</a>";
+									}
+
+								echo "</p>";
+							}
+						}
+
+					echo "</div>
 				</form>";
 			}
 
@@ -843,8 +890,26 @@ class widget_lost_password_form extends WP_Widget
 				echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
 					.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'required' => true))
 					."<div class='form_button'>"
-						.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
-					."</div>
+						.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')));
+
+						if(is_plugin_active('mf_widget_logic_select/index.php'))
+						{
+							$login_post_id = get_widget_search('login-widget');
+
+							if($login_post_id > 0)
+							{
+								echo "<p class='inline'>";
+
+									if($login_post_id > 0)
+									{
+										echo "<a href='".get_permalink($login_post_id)."'>".get_post_title($login_post_id)."</a>";
+									}
+
+								echo "</p>";
+							}
+						}
+
+					echo "</div>
 				</form>";
 			}
 
