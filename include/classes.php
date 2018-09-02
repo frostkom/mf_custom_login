@@ -418,8 +418,13 @@ class mf_custom_login
 
 	function widgets_init()
 	{
-		register_widget('widget_registration_form');
 		register_widget('widget_login_form');
+
+		if(get_option('users_can_register'))
+		{
+			register_widget('widget_registration_form');
+		}
+
 		register_widget('widget_lost_password_form');
 	}
 }
@@ -435,6 +440,7 @@ class widget_login_form extends WP_Widget
 
 		$this->arr_default = array(
 			'login_heading' => '',
+			//'login_above_form' => '',
 		);
 
 		parent::__construct('login-widget', __("Login Form", 'lang_login'), $widget_ops);
@@ -450,11 +456,15 @@ class widget_login_form extends WP_Widget
 
 		if(is_user_logged_in())
 		{
-			mf_redirect(admin_url());
+			//mf_redirect(admin_url());
+
+			$user_data = get_userdata(get_current_user_id());
+
+			$error_text = sprintf(__("You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?", 'lang_login'), $user_data->user_login, "<a href='".admin_url()."'>", "</a>", "<a href='".wp_logout_url()."'>", "</a>");
 		}
 
-		else
-		{
+		/*else
+		{*/
 			$user_login = check_var('log');
 			$user_pass = check_var('pwd');
 			$user_remember = check_var('rememberme', 'char', true, 'forever');
@@ -468,52 +478,23 @@ class widget_login_form extends WP_Widget
 					.$after_title;
 				}
 
-				/*$display_form = true;
-
-				if(isset($_POST['btnSendLogin']))
-				{
-					if($user_login == '' || $user_pass == '')
-					{
-						$error_text = __("You have to enter both Username and Password, then I can process the login for you", 'lang_login');
-					}
-
-					else
-					{
-						$errors = register_new_user($user_login, $user_email);
-
-						if(is_wp_error($errors))
-						{
-							foreach($errors->errors as $error)
-							{
-								$error_text = $error[0];
-							}
-						}
-
-						else
-						{
-							$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with instructions on how to complete the registration.", 'lang_login');
-
-							$display_form = false;
-						}
-					}
-				}
-
 				echo get_notification();
 
-				if($display_form == true)
-				{*/
-					echo "<form method='post' action='".esc_url(site_url('wp-login.php', 'login_post'))."' class='mf_form'>"
-						.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'required' => true))
-						.show_password_field(array('name' => 'pwd', 'text' => __("Password", 'lang_login'), 'value' => $user_pass, 'required' => true))
-						.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
-						."<div class='form_button'>"
-							.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
-						."</div>
-					</form>";
-				//}
+				/*if($instance['login_above_form'] != '')
+				{
+					echo apply_filters('the_content', $instance['login_above_form']);
+				}*/
 
-			echo $after_widget;
-		}
+				echo "<form method='post' action='".esc_url(site_url('wp-login.php', 'login_post'))."' class='mf_form'>"
+					.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'required' => true))
+					.show_password_field(array('name' => 'pwd', 'text' => __("Password", 'lang_login'), 'value' => $user_pass, 'required' => true))
+					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
+					."<div class='form_button'>"
+						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
+					."</div>
+				</form>"
+			.$after_widget;
+		//}
 	}
 
 	function update($new_instance, $old_instance)
@@ -523,6 +504,7 @@ class widget_login_form extends WP_Widget
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
 		$instance['login_heading'] = sanitize_text_field($new_instance['login_heading']);
+		//$instance['login_above_form'] = sanitize_text_field($new_instance['login_above_form']);
 
 		return $instance;
 	}
@@ -535,6 +517,10 @@ class widget_login_form extends WP_Widget
 
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='registration-title'"))
+			/*.show_wp_editor(array('name' => $this->get_field_name('login_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['login_above_form'],
+				'textarea_rows' => 5,
+				'statusbar' => false,
+			))*/
 		."</div>";
 	}
 }
@@ -550,6 +536,7 @@ class widget_registration_form extends WP_Widget
 
 		$this->arr_default = array(
 			'registration_heading' => '',
+			//'registration_above_form' => '',
 			'registration_collect_name' => 'no',
 		);
 
@@ -563,6 +550,13 @@ class widget_registration_form extends WP_Widget
 		extract($args);
 
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		if(is_user_logged_in())
+		{
+			$user_data = get_userdata(get_current_user_id());
+
+			$error_text = sprintf(__("You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?", 'lang_login'), $user_data->user_login, "<a href='".admin_url()."'>", "</a>", "<a href='".wp_logout_url()."'>", "</a>");
+		}
 
 		$user_login = check_var('user_login');
 		$user_email = check_var('user_email', 'email');
@@ -638,6 +632,11 @@ class widget_registration_form extends WP_Widget
 
 			if($display_form == true)
 			{
+				/*if($instance['registration_above_form'] != '')
+				{
+					echo apply_filters('the_content', $instance['registration_above_form']);
+				}*/
+
 				echo "<form method='post' action='' class='mf_form'>"
 					.show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'required' => true))
 					.show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
@@ -679,6 +678,10 @@ class widget_registration_form extends WP_Widget
 
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
+			/*.show_wp_editor(array('name' => $this->get_field_name('registration_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['registration_above_form'],
+				'textarea_rows' => 5,
+				'statusbar' => false,
+			))*/
 			.show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']))
 		."</div>";
 	}
@@ -695,6 +698,7 @@ class widget_lost_password_form extends WP_Widget
 
 		$this->arr_default = array(
 			'lost_password_heading' => '',
+			//'lost_password_above_form' => '',
 		);
 
 		parent::__construct('lost-password-widget', __("Lost Password Form", 'lang_login'), $widget_ops);
@@ -779,6 +783,13 @@ class widget_lost_password_form extends WP_Widget
 
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
+		if(is_user_logged_in())
+		{
+			$user_data = get_userdata(get_current_user_id());
+
+			$error_text = sprintf(__("You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?", 'lang_login'), $user_data->user_login, "<a href='".admin_url()."'>", "</a>", "<a href='".wp_logout_url()."'>", "</a>");
+		}
+
 		$user_login = check_var('user_login');
 
 		echo $before_widget;
@@ -824,6 +835,11 @@ class widget_lost_password_form extends WP_Widget
 
 			if($display_form == true)
 			{
+				/*if($instance['lost_password_above_form'] != '')
+				{
+					echo apply_filters('the_content', $instance['lost_password_above_form']);
+				}*/
+
 				echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
 					.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'required' => true))
 					."<div class='form_button'>"
@@ -854,6 +870,10 @@ class widget_lost_password_form extends WP_Widget
 
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='registration-title'"))
+			/*.show_wp_editor(array('name' => $this->get_field_name('lost_password_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['lost_password_above_form'],
+				'textarea_rows' => 5,
+				'statusbar' => false,
+			))*/
 		."</div>";
 	}
 }
