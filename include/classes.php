@@ -25,19 +25,34 @@ class mf_custom_login
 
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
+		$login_post_id = $registration_post_id = $lost_password_post_id = 0;
+
+		if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_widget_search'))
+		{
+			$login_post_id = get_widget_search('login-widget');
+			$registration_post_id = get_widget_search('registration-widget');
+			$lost_password_post_id = get_widget_search('lost-password-widget');
+		}
+
 		$arr_settings = array();
 
-		if(is_plugin_active('mf_theme_core/index.php'))
+		if(!($login_post_id > 0) && !($registration_post_id > 0) && !($lost_password_post_id > 0))
 		{
-			$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
+			if(is_plugin_active('mf_theme_core/index.php'))
+			{
+				$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
+			}
+
+			if(get_option('setting_custom_login_display_theme_logo') != 'yes')
+			{
+				$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
+			}
 		}
 
-		if(get_option('setting_custom_login_display_theme_logo') != 'yes')
+		if(!($login_post_id > 0))
 		{
-			$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
+			$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
 		}
-
-		$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
 
 		if(is_multisite())
 		{
@@ -46,17 +61,24 @@ class mf_custom_login
 			if(get_option('users_can_register'))
 			{
 				$arr_settings['default_role'] = __("Default Role", 'lang_login');
-				$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
+
+				if(!($registration_post_id > 0))
+				{
+					$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
+				}
 			}
 		}
 
-		else
+		else if(!($registration_post_id > 0))
 		{
 			$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 		}
 
-		$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
-		$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
+		if(!($lost_password_post_id > 0))
+		{
+			$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
+			$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
+		}
 
 		if(is_plugin_active('mf_auth/index.php') == false || get_option('setting_auth_active') == 'no')
 		{
@@ -559,9 +581,7 @@ class widget_login_form extends WP_Widget
 
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
-		$obj_custom_login = new mf_custom_login();
-		$obj_custom_login->check_if_logged_in();
-
+		$action = check_var('action');
 		$user_login = check_var('log');
 		$user_pass = check_var('pwd');
 		$user_remember = check_var('rememberme', 'char', true, 'forever');
@@ -576,6 +596,25 @@ class widget_login_form extends WP_Widget
 				echo $before_title
 					.$instance['login_heading']
 				.$after_title;
+			}
+
+			switch($action)
+			{
+				case 'logout':
+					if(is_user_logged_in())
+					{
+						check_admin_referer('log-out');
+
+						wp_logout();
+
+						$done_text = __("You have been successfully logged out", 'lang_login');
+					}
+				break;
+
+				default:
+					$obj_custom_login = new mf_custom_login();
+					$obj_custom_login->check_if_logged_in();
+				break;
 			}
 
 			echo get_notification();
@@ -593,22 +632,17 @@ class widget_login_form extends WP_Widget
 
 				echo show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
 				."<div class='form_button'>"
-					.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')));
+					.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
+					."<p class='inline'>";
 
-					if(is_plugin_active('mf_widget_logic_select/index.php'))
-					{
-						echo "<p class='inline'>";
+						if(get_option('users_can_register'))
+						{
+							echo "<a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a>&nbsp;";
+						}
 
-							if(get_option('users_can_register'))
-							{
-								echo "<a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a>&nbsp;";
-							}
-
-							echo "<a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Lost your password?", 'lang_login')."</a>
-						</p>";
-					}
-
-				echo "</div>
+						echo "<a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Lost your password?", 'lang_login')."</a>
+					</p>
+				</div>
 			</form>"
 		.$after_widget;
 
@@ -771,16 +805,11 @@ class widget_registration_form extends WP_Widget
 					do_action('register_form');
 
 					echo "<div class='form_button'>"
-						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')));
-
-						if(is_plugin_active('mf_widget_logic_select/index.php'))
-						{
-							echo "<p class='inline'>
-								<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
-							</p>";
-						}
-
-					echo "</div>
+						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
+						."<p class='inline'>
+							<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
+						</p>
+					</div>
 				</form>";
 			}
 
@@ -970,16 +999,11 @@ class widget_lost_password_form extends WP_Widget
 				echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
 					.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
 					."<div class='form_button'>"
-						.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')));
-
-						if(is_plugin_active('mf_widget_logic_select/index.php'))
-						{
-							echo "<p class='inline'>
-								<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
-							</p>";
-						}
-
-					echo "</div>
+						.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
+						."<p class='inline'>
+							<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
+						</p>
+					</div>
 				</form>";
 			}
 
