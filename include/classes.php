@@ -422,6 +422,55 @@ class mf_custom_login
 		}
 	}
 
+	function login_url($url)
+	{
+		$post_id = get_widget_search('login-widget');
+
+		if($post_id > 0)
+		{
+			$url = get_permalink($post_id);
+		}
+
+		return $url;
+	}
+
+	function register_url($url)
+	{
+		$post_id = get_widget_search('registration-widget');
+		
+		if($post_id > 0)
+		{
+			$url = get_permalink($post_id);
+		}
+
+		return $url;
+	}
+
+	function lostpassword_url($url)
+	{
+		$post_id = get_widget_search('lost-password-widget');
+
+		if($post_id > 0)
+		{
+			$url = get_permalink($post_id);
+		}
+
+		return $url;
+	}
+
+	function logout_url($url)
+	{
+		$post_id = get_widget_search('login-widget');
+
+		if($post_id > 0)
+		{
+			$url = get_permalink($post_id)."?action=logout";
+			$url = wp_nonce_url($url, 'log-out');
+		}
+
+		return $url;
+	}
+
 	function send_direct_link_email()
 	{
 		$username = check_var('username');
@@ -536,30 +585,15 @@ class widget_login_form extends WP_Widget
 
 					if(is_plugin_active('mf_widget_logic_select/index.php'))
 					{
-						$registration_post_id = get_widget_search('registration-widget');
-						$lost_password_post_id = get_widget_search('lost-password-widget');
+						echo "<p class='inline'>";
 
-						if($registration_post_id > 0 || $lost_password_post_id > 0)
-						{
-							echo "<p class='inline'>";
+							if(get_option('users_can_register'))
+							{
+								echo "<a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a>&nbsp;";
+							}
 
-								if($registration_post_id > 0)
-								{
-									echo "<a href='".get_permalink($registration_post_id)."'>".get_post_title($registration_post_id)."</a>";
-								}
-
-								if($lost_password_post_id > 0)
-								{
-									if($registration_post_id > 0)
-									{
-										echo "&nbsp;";
-									}
-
-									echo "<a href='".get_permalink($lost_password_post_id).($user_login != '' ? "?user_login=".$user_login : '')."'>".get_post_title($lost_password_post_id)."</a>";
-								}
-
-							echo "</p>";
-						}
+							echo "<a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Lost your password?", 'lang_login')."</a>
+						</p>";
 					}
 
 				echo "</div>
@@ -729,19 +763,9 @@ class widget_registration_form extends WP_Widget
 
 						if(is_plugin_active('mf_widget_logic_select/index.php'))
 						{
-							$login_post_id = get_widget_search('login-widget');
-
-							if($login_post_id > 0)
-							{
-								echo "<p class='inline'>";
-
-									if($login_post_id > 0)
-									{
-										echo "<a href='".get_permalink($login_post_id)."'>".get_post_title($login_post_id)."</a>";
-									}
-
-								echo "</p>";
-							}
+							echo "<p class='inline'>
+								<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
+							</p>";
 						}
 
 					echo "</div>
@@ -938,19 +962,9 @@ class widget_lost_password_form extends WP_Widget
 
 						if(is_plugin_active('mf_widget_logic_select/index.php'))
 						{
-							$login_post_id = get_widget_search('login-widget');
-
-							if($login_post_id > 0)
-							{
-								echo "<p class='inline'>";
-
-									if($login_post_id > 0)
-									{
-										echo "<a href='".get_permalink($login_post_id)."'>".get_post_title($login_post_id)."</a>";
-									}
-
-								echo "</p>";
-							}
+							echo "<p class='inline'>
+								<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
+							</p>";
 						}
 
 					echo "</div>
