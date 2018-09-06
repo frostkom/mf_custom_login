@@ -95,7 +95,14 @@ class mf_custom_login
 			delete_option('setting_custom_login_allow_direct_link');
 		}
 
-		//$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password", 'lang_login');
+		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
+
+		if(get_option('users_can_register'))
+		{
+			$arr_settings['setting_custom_login_email_registration'] = __("Registration Email Content", 'lang_login');
+		}
+
+		$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password Email Content", 'lang_login');
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 	}
@@ -199,13 +206,32 @@ class mf_custom_login
 		echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='0' max='240'", 'suffix' => __("minutes", 'lang_login')." (".__("0 means never", 'lang_login').")"));
 	}
 
-	/*function setting_custom_login_email_lost_password_callback()
+	function setting_custom_login_info_callback()
+	{
+		$tags = array('[first_name]', '[user_login]', '[username]', '[user_email]', '[blog_title]', '[site_url]', '[confirm_link]', '[login_link]');
+
+		echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
+	}
+
+	function setting_custom_login_email_registration_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
-		$option = get_option($setting_key);
+		$option = get_option_or_default($setting_key, __("Username", 'lang_approve_user').": [user_login]\r\n\r\n"
+		.__("To set your password, visit the following address", 'lang_approve_user').": [confirm_link]");
 
-		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'placeholder' => "[user_login], [user_email], [blogname], [siteurl], [loginurl]", 'description' => __("This text replaces the original Lost Password email", 'lang_login')));
-	}*/
+		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'textarea_rows' => 10));
+	}
+
+	function setting_custom_login_email_lost_password_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option_or_default($setting_key, __("Someone has requested a password reset for the following account.", 'lang_login')."\r\n"
+		.__("Username", 'lang_login').": [user_login]\r\n\r\n"
+		.__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."\r\n\r\n"
+		.__("To reset your password, visit the following address", 'lang_login').": [confirm_link]");
+
+		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'textarea_rows' => 10));
+	}
 
 	function login_init()
 	{
@@ -393,7 +419,7 @@ class mf_custom_login
 		$this->delete_meta(get_current_user_id());
 	}
 
-	function direct_link_text($key, $user_login, $user_data)
+	function direct_link_text($key, $user_data) //, $user_login
 	{
 		$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
 
@@ -403,32 +429,111 @@ class mf_custom_login
 		}
 
 		$out = __("To login directly without setting a password, visit the following link. The link is personal and can only be used once. If this link falls into the wrong hands and you haven't used it they will be able to login to your account without a password.", 'lang_login').":"
-		."\r\n\r\n".network_site_url("wp-login.php?type=link&auth=".$key."&username=".rawurlencode($user_login), 'login')."\r\n";
+		."\r\n\r\n".network_site_url("wp-login.php?type=link&auth=".$key."&username=".rawurlencode($user_data->user_login), 'login')."\r\n";
 
 		update_user_meta($user_data->ID, 'meta_login_auth', $key);
 
 		return $out;
 	}
 
+	function get_registration_key($user)
+	{
+		global $wpdb, $wp_hasher;
+
+		$key = wp_generate_password(20, false);
+
+		do_action('retrieve_password_key', $user->user_login, $key);
+
+		if(empty($wp_hasher))
+		{
+			require_once ABSPATH.WPINC."/class-phpass.php";
+			$wp_hasher = new PasswordHash(8, true);
+		}
+
+		$hashed = time().":".$wp_hasher->HashPassword($key);
+
+		$wpdb->update($wpdb->users, array('user_activation_key' => $hashed), array('user_login' => $user->user_login));
+
+		return $key;
+	}
+
+	function email_replace_shortcodes($string, $user_data, $key = '')
+	{
+		if($key == '')
+		{
+			$key = $this->get_registration_key($user_data);
+		}
+
+		$blog_title = get_option('blogname');
+		$site_url = get_site_url(); //home_url()
+		$login_url = wp_login_url(); //network_site_url("wp-login.php?".$confirm_link_action, 'login')
+		$lost_password_url = wp_lostpassword_url();
+		$confirm_link_action = "action=rp&key=".$this->get_registration_key($user_data)."&login=".rawurlencode($user_data->user_login);
+
+		$exclude = $include = array();
+		$exclude[] = "[user_login]";		$include[] = $user_data->user_login;
+		$exclude[] = "[first_name]";		$include[] = $user_data->first_name;
+		$exclude[] = "[username]";			$include[] = $user_data->display_name;
+		$exclude[] = "[user_email]";		$include[] = $user_data->user_email;
+
+		//wp_new_user_notification_email
+		$exclude[] = "[blog_title]";		$include[] = $blog_title;
+		$exclude[] = "[site_url]";			$include[] = $site_url;
+		$exclude[] = "[confirm_link]";		$include[] = $lost_password_url."?".$confirm_link_action;
+		$exclude[] = "[login_link]";		$include[] = $login_url;
+
+		//retrieve_password_message
+		$exclude[] = "[blogname]";			$include[] = $blog_title; //Replace with blog_title
+		$exclude[] = "[siteurl]";			$include[] = $site_url; //Replace with site_url
+		$exclude[] = "[loginurl]";			$include[] = $lost_password_url."?".$confirm_link_action; //Replace with confirm_link
+
+		return str_replace($exclude, $include, $string);
+	}
+
+	function wp_new_user_notification_email($array, $user_data)
+	{
+		$setting_custom_login_email_registration = get_option('setting_custom_login_email_registration');
+
+		if($setting_custom_login_email_registration != '')
+		{
+			$array['message'] = $this->email_replace_shortcodes($setting_custom_login_email_registration, $user_data);
+
+			/*$array['message'] = $setting_custom_login_email_registration;
+
+			$confirm_link_action = "action=rp&key=".$this->get_registration_key($user_data)."&login=".rawurlencode($user_data->user_login);
+			
+			$array['message'] = str_replace('[blog_title]', get_option('blogname'), $array['message']);
+			$array['message'] = str_replace('[site_url]', get_site_url(), $array['message']); //home_url()
+			$array['message'] = str_replace('[first_name]', $user_data->first_name, $array['message']);
+			$array['message'] = str_replace("[username]", $user_data->user_login, $array['message']);
+			$array['message'] = str_replace("[confirm_link]", wp_login_url()."?".$confirm_link_action, $array['message']); //network_site_url("wp-login.php?".$confirm_link_action, 'login')
+			$array['message'] = str_replace("[login_link]", wp_login_url(), $array['message']);*/
+		}
+
+		return $array;
+	}
+
 	function retrieve_password_message($message, $key, $user_login, $user_data)
 	{
-		/*$message_temp = get_option('setting_custom_login_email_lost_password');
+		$setting_custom_login_email_lost_password = get_option('setting_custom_login_email_lost_password');
 
-		if($message_temp != '')
+		if($setting_custom_login_email_lost_password != '')
 		{
-			$exclude = $include = array();
+			$message = $this->email_replace_shortcodes($setting_custom_login_email_lost_password, $user_data, $key);
+
+			/*$exclude = $include = array();
 			$exclude[] = "[user_login]";		$include[] = $user_login;
 			$exclude[] = "[user_email]";		$include[] = $user_data->user_email;
 			$exclude[] = "[blogname]";			$include[] = get_option('blogname');
 			$exclude[] = "[siteurl]";			$include[] = get_site_url();
 			$exclude[] = "[loginurl]";			$include[] = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
 
-			$message = str_replace($exclude, $include, $message_temp);
-		}*/
+			$message = str_replace($exclude, $include, $message_temp);*/
+		}
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
-			$message .= "\r\n".$this->direct_link_text($key, $user_login, $user_data);
+			$message .= "\r\n".$this->direct_link_text($key, $user_data); //, $user_login
 		}
 
 		return $message;
@@ -517,7 +622,7 @@ class mf_custom_login
 
 			$mail_to = $user->user_email;
 			$mail_subject = sprintf(__("[%s] Here comes you link to direct login", 'lang_login'), get_bloginfo('name'));
-			$mail_content = $this->direct_link_text($key, $username, $user);
+			$mail_content = $this->direct_link_text($key, $user); //, $username
 
 			$sent = send_email(array('to' => $mail_to, 'subject' => $mail_subject, 'content' => $mail_content));
 
@@ -799,7 +904,7 @@ class widget_login_form extends WP_Widget
 				echo apply_filters('the_content', $instance['login_above_form']);
 			}*/
 
-			echo "<form method='post' action='".wp_login_url()."' class='mf_form'>" //esc_url(site_url('wp-login.php', 'login_post'))
+			echo "<form method='post' action='".wp_login_url()."' class='mf_form'>"
 				.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
 				.show_password_field(array('name' => 'pwd', 'text' => __("Password", 'lang_login'), 'value' => $user_pass, 'required' => true));
 
@@ -1121,10 +1226,7 @@ class widget_lost_password_form extends WP_Widget
 
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
-		$obj_custom_login = new mf_custom_login();
-		$obj_custom_login->check_if_logged_in();
-
-		$user_login = check_var('user_login');
+		$action = check_var('action');
 
 		echo $before_widget;
 
@@ -1136,60 +1238,137 @@ class widget_lost_password_form extends WP_Widget
 					.$instance['lost_password_heading']
 				.$after_title;
 			}
-
+			
 			$display_form = true;
 
-			if(isset($_POST['btnSendLostPassword']))
+			switch($action)
 			{
-				if($user_login == '')
-				{
-					$error_text = __("You have to enter the e-mail address, then I can process the request for you", 'lang_login');
-				}
+				case 'rp':
+					$user_login = check_var('login');
+					$user_key = check_var('key');
+					$user_pass = check_var('user_pass');
 
-				else
-				{
-					$user_login = strtolower($user_login);
-
-					$errors = $this->retrieve_password($user_login);
-
-					if(is_wp_error($errors))
+					if(isset($_POST['btnSendResetPassword']))
 					{
-						foreach($errors->errors as $error)
+						$user = check_password_reset_key($user_key, $user_login);
+
+						if(isset($_POST['user_pass']) && !hash_equals($user_key, $_POST['key']))
 						{
-							$error_text = $error[0];
+							$user = false;
+						}
+
+						if(!$user || is_wp_error($user))
+						{
+							if($user && $user->get_error_code() === 'expired_key')
+							{
+								$error_text = sprintf(__("The key that you used has expired. Please, %srequest a new key here%s", 'lang_login'), "<a href='".wp_lostpassword_url()."'>", "</a>");
+							}
+
+							else
+							{
+								$error_text = sprintf(__("The key that you used was invalid. Please, %srequest a new key here%s", 'lang_login'), "<a href='".wp_lostpassword_url()."'>", "</a>");
+							}
+						}
+
+						$errors = new WP_Error();
+
+						do_action('validate_password_reset', $errors, $user);
+
+						if($error_text != '')
+						{
+							// Do nothing
+						}
+
+						else if(!$errors->get_error_code() && $user_pass != '')
+						{
+							reset_password($user, $user_pass);
+
+							$done_text = __("Your password has been reset", 'lang_login')." <a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>";
+							
+							$display_form = false;
+						}
+					}
+
+					echo get_notification();
+
+					if($display_form == true)
+					{
+						echo "<form method='post' action='".wp_lostpassword_url()."?action=rp' class='mf_form'>"
+							.show_password_field(array('name' => 'user_pass', 'text' => __("New Password", 'lang_login'), 'value' => $user_pass, 'description' => wp_get_password_hint()));
+
+							do_action('resetpass_form', $user);
+
+							echo "<div class='form_button'>"
+								.show_button(array('name' => 'btnSendResetPassword', 'text' => __("Reset Password", 'lang_login')))
+								.input_hidden(array('name' => 'login', 'value' => $user_login, 'xtra' => " id='user_login'"))
+								.input_hidden(array('name' => 'key', 'value' => $user_key))
+							."</div>
+						</form>";
+					}
+				break;
+
+				default:
+					$user_login = check_var('user_login');
+
+					if(isset($_POST['btnSendLostPassword']))
+					{
+						if($user_login == '')
+						{
+							$error_text = __("You have to enter the e-mail address, then I can process the request for you", 'lang_login');
+						}
+
+						else
+						{
+							$user_login = strtolower($user_login);
+
+							$errors = $this->retrieve_password($user_login);
+
+							if(is_wp_error($errors))
+							{
+								foreach($errors->errors as $error)
+								{
+									$error_text = $error[0];
+								}
+							}
+
+							else
+							{
+								$done_text = __("I found the account that you were looking for. Please, check your inbox for the confirmation link.", 'lang_login');
+
+								$display_form = false;
+							}
 						}
 					}
 
 					else
 					{
-						$done_text = __("I found the account that you were looking for. Please, check your inbox for the confirmation link.", 'lang_login');
-
-						$display_form = false;
+						$obj_custom_login = new mf_custom_login();
+						$obj_custom_login->check_if_logged_in();
 					}
-				}
+
+					echo get_notification();
+
+					if($display_form == true)
+					{
+						/*if($instance['lost_password_above_form'] != '')
+						{
+							echo apply_filters('the_content', $instance['lost_password_above_form']);
+						}*/
+
+						echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
+							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
+							."<div class='form_button'>"
+								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
+								."<p class='inline'>
+									<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
+								</p>
+							</div>
+						</form>";
+					}
+
+					//do_action('lostpassword_form');
+				break;
 			}
-
-			echo get_notification();
-
-			if($display_form == true)
-			{
-				/*if($instance['lost_password_above_form'] != '')
-				{
-					echo apply_filters('the_content', $instance['lost_password_above_form']);
-				}*/
-
-				echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
-					.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
-					."<div class='form_button'>"
-						.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
-						."<p class='inline'>
-							<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
-						</p>
-					</div>
-				</form>";
-			}
-
-			//do_action('lostpassword_form');
 
 		echo $after_widget;
 	}
