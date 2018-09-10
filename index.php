@@ -42,6 +42,8 @@ else
 	add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
 
 	add_action('login_form', array($obj_custom_login, 'login_form'));
+
+	add_action('wp_head', array($obj_custom_login, 'wp_head'), 0);
 }
 
 add_filter('login_url', array($obj_custom_login, 'login_url'), 10, 2);

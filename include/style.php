@@ -9,6 +9,10 @@ if(!defined('ABSPATH'))
 	require_once($folder."wp-load.php");
 }
 
+$out_media_all = $out_media_mobile = "";
+
+// Default WP Login
+############################
 if(is_plugin_active('mf_theme_core/index.php'))
 {
 	if(!isset($obj_theme_core))
@@ -69,101 +73,118 @@ else
 	}
 }
 
-if($login_mobile_logo_css != '' || $setting_custom_login_page > 0)
+if($login_mobile_logo_css != '')
 {
-	echo "@media all
-	{";
-
-		if($login_mobile_logo_css != '')
-		{
-			echo ".login h1 a
-			{"
-				.$login_mobile_logo_css
-			."}";
-		}
-
-		if($setting_custom_login_page > 0)
-		{
-			echo "#mf_custom_login
-			{
-				background: #fff;
-				box-shadow: 0 1px 3px rgba(0, 0, 0, .13);
-				margin-bottom: 20px;
-				padding: 26px 24px;
-			}
-
-				#mf_custom_login > h2
-				{
-					line-height: 1.3em;
-				}
-
-				#mf_custom_login > p
-				{
-					margin-top: 1em;
-				}
-
-				#mf_custom_login img
-				{
-					max-width: 100%;
-				}";
-		}
-
-	echo "}";
+	$out_media_all .= ".login h1 a
+	{"
+		.$login_mobile_logo_css
+	."}";
 }
 
-echo "@media (min-width: 740px)
-{";
-
-	if($login_logo_css != '')
+if($setting_custom_login_page > 0)
+{
+	$out_media_all .= "#mf_custom_login
 	{
-		echo ".login h1 a
-		{"
-			.$login_logo_css
-		."}";
+		background: #fff;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, .13);
+		margin-bottom: 20px;
+		padding: 26px 24px;
 	}
 
-	if($setting_custom_login_page > 0)
-	{
-		echo "#login
+		#mf_custom_login > h2
 		{
-			position: relative;
-			width: 740px;
+			line-height: 1.3em;
 		}
 
-			#mf_custom_login, .message, #loginform, #nav, #backtoblog
-			{
-				box-sizing: border-box;
-			}
+		#mf_custom_login > p
+		{
+			margin-top: 1em;
+		}
 
-			#mf_custom_login
-			{
-				float: right;
-				margin-left: 4%;
-				width: 48%;
-			}
+		#mf_custom_login img
+		{
+			max-width: 100%;
+		}";
+}
 
-			.message
-			{
-				margin-bottom: 20px;
-			}
+if($login_logo_css != '')
+{
+	$out_media_mobile .= ".login h1 a
+	{"
+		.$login_logo_css
+	."}";
+}
 
-		#mf_custom_login + #login_error
+if($setting_custom_login_page > 0)
+{
+	$out_media_mobile .= "#login
+	{
+		position: relative;
+		width: 740px;
+	}
+
+		#mf_custom_login, .message, #loginform, #nav, #backtoblog
 		{
 			box-sizing: border-box;
+		}
+
+		#mf_custom_login
+		{
+			float: right;
+			margin-left: 4%;
 			width: 48%;
 		}
 
-		#loginform
+		.message
 		{
-			margin-top: 0;
+			margin-bottom: 20px;
 		}
 
-		.message, #loginform, #nav, #backtoblog
-		{
-			clear: left;
-			float: left;
-			width: 48%;
-		}";
+	#mf_custom_login + #login_error
+	{
+		box-sizing: border-box;
+		width: 48%;
 	}
 
-echo "}";
+	#loginform
+	{
+		margin-top: 0;
+	}
+
+	.message, #loginform, #nav, #backtoblog
+	{
+		clear: left;
+		float: left;
+		width: 48%;
+	}";
+}
+############################
+
+// Custom Login
+############################
+$login_post_id = get_widget_search('login-widget');
+
+if($login_post_id > 0)
+{
+	$out_media_all .= ".login_form form p
+	{
+		margin-top: .5em;
+	}";
+}
+############################
+
+if($out_media_all != '')
+{
+	echo "@media all
+	{"
+		.$out_media_all
+	."}";
+}
+
+if($out_media_mobile != '')
+{
+	echo "@media (min-width: 740px)
+	{"
+		.$out_media_mobile
+	."}";
+}

@@ -434,7 +434,7 @@ class mf_custom_login
 		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
 	}
 
-	function login_init()
+	function combined_head()
 	{
 		$plugin_include_url = plugin_dir_url(__FILE__);
 		$plugin_version = get_plugin_version(__FILE__);
@@ -470,6 +470,11 @@ class mf_custom_login
 				}
 			}
 		}
+	}
+
+	function login_init()
+	{
+		$this->combined_head();
 	}
 
 	function login_message($message)
@@ -750,6 +755,16 @@ class mf_custom_login
 		}
 	}
 
+	function wp_head()
+	{
+		$login_post_id = get_widget_search('login-widget');
+
+		if($login_post_id > 0)
+		{
+			$this->combined_head();
+		}
+	}
+
 	function login_url($url)
 	{
 		if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_widget_search'))
@@ -976,19 +991,17 @@ class widget_login_form extends WP_Widget
 						echo input_hidden(array('name' => 'customize-login', 'value' => 1));
 					}*/
 
-					echo input_hidden(array('name' => 'testcookie', 'value' => 1));
+					//echo input_hidden(array('name' => 'testcookie', 'value' => 1));
 
-					echo "<p class='inline'>";
+				echo "</div>
+				<p><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
+				
+				if(get_option('users_can_register'))
+				{
+					echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
+				}
 
-						if(get_option('users_can_register'))
-						{
-							echo "<a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a>&nbsp;";
-						}
-
-						echo "<a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Lost your password?", 'lang_login')."</a>
-					</p>
-				</div>
-			</form>"
+			echo "</form>"
 		.$after_widget;
 
 		//do_action('login_footer');
@@ -1138,10 +1151,8 @@ class widget_registration_form extends WP_Widget
 
 					echo "<div class='form_button'>"
 						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
-						."<p class='inline'>
-							<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
-						</p>
-					</div>
+					."</div>
+					<p><a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a></p>
 				</form>";
 			}
 
@@ -1240,9 +1251,9 @@ class widget_lost_password_form extends WP_Widget
 					.__("Someone has requested a password reset for the following account", 'lang_login').":<br>"
 					//.__("Site Name", 'lang_login').": ".$site_name."<br>"
 					.__("Username", 'lang_login').": ".$user_login
-				."</p>"
-				."<p>".__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."</p>"
-				."<p>"
+				."</p>
+				<p>".__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."</p>
+				<p>"
 					.__("To reset your password, visit the following address").":<br>"
 					."<a href='".$lost_password_link."'>".$lost_password_link."</a>
 				</p>";
@@ -1406,10 +1417,8 @@ class widget_lost_password_form extends WP_Widget
 							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
 							."<div class='form_button'>"
 								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
-								."<p class='inline'>
-									<a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>
-								</p>
-							</div>
+							."</div>
+							<p><a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a></p>
 						</form>";
 					}
 
