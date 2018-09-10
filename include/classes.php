@@ -7,15 +7,193 @@ class mf_custom_login
 		$this->error = "";
 	}
 
-	function check_if_logged_in()
+	function do_login($data = array())
+	{
+		if(!isset($data['user_login'])){		$data['user_login'] = '';}
+		if(!isset($data['user_pass'])){			$data['user_pass'] = '';}
+		if(!isset($data['user_remember'])){		$data['user_remember'] = '';}
+		if(!isset($data['redirect_to'])){		$data['redirect_to'] = '';}
+
+		$data['user_login'] = strtolower($data['user_login']);
+
+		$secure_cookie = '';
+
+		// If the user wants ssl but the session is not ssl, force a secure cookie.
+		/*if($data['user_login'] != '' && !force_ssl_admin())
+		{
+			$user_name = sanitize_user($data['user_login']);
+
+			$user = get_user_by((strpos($user_name, '@') ? 'email' : 'login'), $user_name);
+
+			if($user && get_user_option('use_ssl', $user->ID))
+			{
+				$secure_cookie = true;
+				force_ssl_admin(true);
+			}
+		}*/
+
+		//$reauth = empty($_REQUEST['reauth']) ? false : true;
+
+		$user = wp_signon(array('user_login' => $data['user_login'], 'user_password' => $data['user_pass'], 'remember' => $data['user_remember']), $secure_cookie);
+
+		/*if(empty($_COOKIE[LOGGED_IN_COOKIE]))
+		{
+			if(headers_sent())
+			{
+				$user = new WP_Error('test_cookie', sprintf(__("Cookies are blocked due to unexpected output. For help, please see %sthis documentation%s or try the %ssupport forums%s"), "<a href='https://codex.wordpress.org/Cookies'>", "</a>", "<a href='https://wordpress.org/support/'>", "</a>"));
+
+			}
+
+			else if(isset($_POST['testcookie']) && empty($_COOKIE[TEST_COOKIE]))
+			{
+				$user = new WP_Error('test_cookie', sprintf(__("Cookies are blocked or not supported by your browser. You must %senable cookies%s to use WordPress", 'lang_login'), "<a href='https://codex.wordpress.org/Cookies'>", "</a>"));
+			}
+		}*/
+
+		$requested_redirect_to = check_var('redirect_to');
+
+		$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
+
+		if(!is_wp_error($user)) // && !$reauth
+		{
+			/*if($interim_login)
+			{
+				$message = "<p class='message'>".__("You have logged in successfully", 'lang_login')."</p>";
+				$interim_login = 'success';
+
+				login_header('', $message);
+
+				echo "</div>";
+
+				do_action('login_footer');
+
+				echo "</body></html>";
+				exit;
+			}*/
+
+			if(empty($data['redirect_to']) || $data['redirect_to'] == 'wp-admin/' || $data['redirect_to'] == admin_url())
+			{
+				// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
+				if(is_multisite() && !get_active_blog_for_user($user->ID) && !is_super_admin($user->ID))
+				{
+					$data['redirect_to'] = user_admin_url();
+				}
+
+				else if(is_multisite() && !$user->has_cap('read'))
+				{
+					$data['redirect_to'] = get_dashboard_url($user->ID);
+				}
+
+				else if(!$user->has_cap('edit_posts'))
+				{
+					$data['redirect_to'] = $user->has_cap('read') ? admin_url('profile.php') : home_url();
+				}
+
+				/*wp_redirect($data['redirect_to']);
+				exit;*/
+			}
+
+			/*wp_safe_redirect($data['redirect_to']);
+			exit;*/
+
+			return array(
+				'success' => true,
+				'redirect' => $data['redirect_to'],
+			);
+		}
+
+		else
+		{
+			foreach($user->errors as $error)
+			{
+				//$error_text = $error[0];
+
+				return array(
+					'success' => false,
+					'error' => $error[0],
+				);
+
+				break;
+			}
+		}
+
+		//$errors = $user;
+
+		/*if($interim_login)
+		{
+			if(!$errors->get_error_code())
+			{
+				$errors->add('expired', __('Your session has expired. Please log in to continue where you left off.'), 'message');
+			}
+		}
+
+		else
+		{
+			// Some parts of this script use the main login form to display a message
+			if(isset($_GET['loggedout']) && true == $_GET['loggedout'])
+			{
+				$errors->add('loggedout', __('You are now logged out.'), 'message');
+			}
+
+			else if(isset($_GET['registration']) && 'disabled' == $_GET['registration'])
+			{
+				$errors->add('registerdisabled', __('User registration is currently not allowed.'));
+			}
+
+			else if(isset($_GET['checkemail']) && 'confirm' == $_GET['checkemail'])
+			{
+				$errors->add('confirm', __('Check your email for the confirmation link.'), 'message');
+			}
+
+			else if(isset($_GET['checkemail']) && 'newpass' == $_GET['checkemail'])
+			{
+				$errors->add('newpass', __('Check your email for your new password.'), 'message');
+			}
+
+			else if(isset($_GET['checkemail']) && 'registered' == $_GET['checkemail'])
+			{
+				$errors->add('registered', __('Registration complete. Please check your email.'), 'message');
+			}
+
+			else if(strpos($data['redirect_to'], 'about.php?updated'))
+			{
+				$errors->add('updated', __('<strong>You have successfully updated WordPress!</strong> Please log back in to see what&#8217;s new.'), 'message' );
+			}
+		}
+
+		$errors = apply_filters('wp_login_errors', $errors, $data['redirect_to']);*/
+
+		// Clear any stale cookies.
+		/*if($reauth)
+		{
+			wp_clear_auth_cookie();
+		}*/
+
+		/*if(isset($_POST['log']))
+		{
+			$data['user_login'] = ('incorrect_password' == $errors->get_error_code() || 'empty_password' == $errors->get_error_code()) ? esc_attr(wp_unslash($_POST['log'])) : '';
+		}*/
+	}
+
+	function check_if_logged_in($data = array())
 	{
 		global $error_text;
 
+		if(!isset($data['redirect'])){	$data['redirect'] = false;}
+
 		if(is_user_logged_in())
 		{
-			$user_data = get_userdata(get_current_user_id());
+			if($data['redirect'] == true)
+			{
+				mf_redirect(admin_url());
+			}
 
-			$error_text = sprintf(__("You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?", 'lang_login'), $user_data->user_login, "<a href='".admin_url()."'>", "</a>", "<a href='".wp_logout_url()."'>", "</a>");
+			else
+			{
+				$user_data = get_userdata(get_current_user_id());
+
+				$done_text = sprintf(__("You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?", 'lang_login'), $user_data->user_login, "<a href='".admin_url()."'>", "</a>", "<a href='".wp_logout_url()."'>", "</a>");
+			}
 		}
 	}
 
@@ -93,6 +271,16 @@ class mf_custom_login
 		else
 		{
 			delete_option('setting_custom_login_allow_direct_link');
+		}
+
+		if(substr(get_home_url(), 0, 5) == 'https')
+		{
+			$arr_settings['setting_custom_login_allow_api'] = __("Allow API Login", 'lang_login');
+		}
+
+		else
+		{
+			delete_option('setting_custom_login_allow_api');
 		}
 
 		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
@@ -201,9 +389,22 @@ class mf_custom_login
 	function setting_custom_login_direct_link_expire_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
-		$option = get_option($setting_key, 'no');
+		$option = get_option($setting_key);
 
 		echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='0' max='240'", 'suffix' => __("minutes", 'lang_login')." (".__("0 means never", 'lang_login').")"));
+	}
+
+	function setting_custom_login_allow_api_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key, 'no');
+
+		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+
+		if($option == 'yes')
+		{
+			echo "<p>".sprintf(__("By sending a request to %s with %s and %s as %s you will get a success or failure as a response", 'lang_login'), plugin_dir_url(__FILE__)."api/?action=login", 'user_login', 'user_pass', 'POST')."</p>";
+		}
 	}
 
 	function setting_custom_login_info_callback()
@@ -216,10 +417,10 @@ class mf_custom_login
 	function setting_custom_login_email_registration_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
-		$option = get_option_or_default($setting_key, __("Username", 'lang_approve_user').": [user_login]\r\n\r\n"
-		.__("To set your password, visit the following address", 'lang_approve_user').": [confirm_link]");
+		$option = get_option_or_default($setting_key, __("Username", 'lang_login').": [user_login]\r\n\r\n"
+		.__("To set your password, visit the following address", 'lang_login').": [confirm_link]");
 
-		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'textarea_rows' => 10));
+		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
 	}
 
 	function setting_custom_login_email_lost_password_callback()
@@ -230,7 +431,7 @@ class mf_custom_login
 		.__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."\r\n\r\n"
 		.__("To reset your password, visit the following address", 'lang_login').": [confirm_link]");
 
-		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'textarea_rows' => 10));
+		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
 	}
 
 	function login_init()
@@ -252,7 +453,7 @@ class mf_custom_login
 
 				if($this->username != '' && $this->auth != '' && $this->check_auth())
 				{
-					if($this->login($this->username))
+					if($this->direct_link_login($this->username))
 					{
 						mf_redirect(user_admin_url());
 					}
@@ -376,7 +577,7 @@ class mf_custom_login
 		}
 	}
 
-	function login($username)
+	function direct_link_login($username)
 	{
 		if(is_user_logged_in())
 		{
@@ -419,7 +620,7 @@ class mf_custom_login
 		$this->delete_meta(get_current_user_id());
 	}
 
-	function direct_link_text($key, $user_data) //, $user_login
+	function direct_link_text($key, $user_data)
 	{
 		$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
 
@@ -501,7 +702,7 @@ class mf_custom_login
 			/*$array['message'] = $setting_custom_login_email_registration;
 
 			$confirm_link_action = "action=rp&key=".$this->get_registration_key($user_data)."&login=".rawurlencode($user_data->user_login);
-			
+
 			$array['message'] = str_replace('[blog_title]', get_option('blogname'), $array['message']);
 			$array['message'] = str_replace('[site_url]', get_site_url(), $array['message']); //home_url()
 			$array['message'] = str_replace('[first_name]', $user_data->first_name, $array['message']);
@@ -569,7 +770,7 @@ class mf_custom_login
 		if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_widget_search'))
 		{
 			$post_id = get_widget_search('registration-widget');
-			
+
 			if($post_id > 0)
 			{
 				$url = get_permalink($post_id);
@@ -719,180 +920,26 @@ class widget_login_form extends WP_Widget
 				break;
 
 				default:
+					$obj_custom_login = new mf_custom_login();
+
 					if(isset($_POST['btnSendLogin']))
 					{
-						$user_login = strtolower($user_login);
+						$result = $obj_custom_login->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
 
-						$secure_cookie = '';
-
-						// If the user wants ssl but the session is not ssl, force a secure cookie.
-						/*if($user_login != '' && !force_ssl_admin())
+						if($result['success'] == true)
 						{
-							$user_name = sanitize_user($user_login);
-
-							$user = get_user_by((strpos($user_name, '@') ? 'email' : 'login'), $user_name);
-
-							if($user && get_user_option('use_ssl', $user->ID))
-							{
-								$secure_cookie = true;
-								force_ssl_admin(true);
-							}
-						}*/
-
-						//$reauth = empty($_REQUEST['reauth']) ? false : true;
-
-						$user = wp_signon(array('user_login' => $user_login, 'user_password' => $user_pass, 'remember' => $user_remember), $secure_cookie);
-
-						if(empty($_COOKIE[LOGGED_IN_COOKIE]))
-						{
-							if(headers_sent())
-							{
-								$user = new WP_Error('test_cookie', sprintf(__("Cookies are blocked due to unexpected output. For help, please see %sthis documentation%s or try the %ssupport forums%s"), "<a href='https://codex.wordpress.org/Cookies'>", "</a>", "<a href='https://wordpress.org/support/'>", "</a>"));
-
-							}
-							
-							else if(isset($_POST['testcookie']) && empty( $_COOKIE[TEST_COOKIE]))
-							{
-								$user = new WP_Error('test_cookie', sprintf(__("Cookies are blocked or not supported by your browser. You must %senable cookies%s to use WordPress", 'lang_login'), "<a href='https://codex.wordpress.org/Cookies'>", "</a>"));
-							}
-						}
-
-						$requested_redirect_to = check_var('redirect_to');
-
-						$redirect_to = apply_filters('login_redirect', $redirect_to, $requested_redirect_to, $user);
-
-						if(!is_wp_error($user)) // && !$reauth
-						{
-							/*if($interim_login)
-							{
-								$message = '<p class="message">' . __('You have logged in successfully.') . '</p>';
-								$interim_login = 'success';
-								
-								login_header( '', $message );
-
-								echo "</div>";
-
-								do_action( 'login_footer' );
-
-								echo "</body></html>";
-								exit;
-							}*/
-
-							if(empty($redirect_to) || $redirect_to == 'wp-admin/' || $redirect_to == admin_url())
-							{
-								// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
-								if(is_multisite() && !get_active_blog_for_user($user->ID) && !is_super_admin($user->ID))
-								{
-									$redirect_to = user_admin_url();
-								}
-
-								else if(is_multisite() && !$user->has_cap('read'))
-								{
-									$redirect_to = get_dashboard_url($user->ID);
-								}
-
-								else if(!$user->has_cap('edit_posts'))
-								{
-									$redirect_to = $user->has_cap('read') ? admin_url('profile.php') : home_url();
-								}
-
-								wp_redirect($redirect_to);
-								exit;
-							}
-
-							wp_safe_redirect($redirect_to);
-							exit;
+							mf_redirect($result['redirect']);
 						}
 
 						else
 						{
-							foreach($user->errors as $error)
-							{
-								$error_text = $error[0];
-							}
+							$error_text = $result['error'];
 						}
-
-						//$errors = $user;
-
-						// Clear errors if loggedout is set.
-						/*if(!empty($_GET['loggedout']) || $reauth)
-						{
-							$errors = new WP_Error();
-						}*/
-
-						/*if($interim_login)
-						{
-							if(!$errors->get_error_code())
-							{
-								$errors->add('expired', __( 'Your session has expired. Please log in to continue where you left off.' ), 'message');
-							}
-
-						}
-						
-						else
-						{
-							// Some parts of this script use the main login form to display a message
-							if(isset($_GET['loggedout']) && true == $_GET['loggedout'])
-							{
-								$errors->add('loggedout', __('You are now logged out.'), 'message');
-							}
-
-							else if(isset($_GET['registration']) && 'disabled' == $_GET['registration'])
-							{
-								$errors->add('registerdisabled', __('User registration is currently not allowed.'));
-							}
-
-							else if(isset($_GET['checkemail']) && 'confirm' == $_GET['checkemail'])
-							{
-								$errors->add('confirm', __('Check your email for the confirmation link.'), 'message');
-							}
-
-							else if(isset($_GET['checkemail']) && 'newpass' == $_GET['checkemail'])
-							{
-								$errors->add('newpass', __('Check your email for your new password.'), 'message');
-							}
-
-							else if(isset($_GET['checkemail']) && 'registered' == $_GET['checkemail'])
-							{
-								$errors->add('registered', __('Registration complete. Please check your email.'), 'message');
-							}
-
-							else if(strpos($redirect_to, 'about.php?updated'))
-							{
-								$errors->add('updated', __( '<strong>You have successfully updated WordPress!</strong> Please log back in to see what&#8217;s new.' ), 'message' );
-							}
-						}
-
-						$errors = apply_filters('wp_login_errors', $errors, $redirect_to);*/
-
-						// Clear any stale cookies.
-						/*if($reauth)
-						{
-							wp_clear_auth_cookie();
-						}*/
-
-						/*if(isset($_POST['log']))
-						{
-							$user_login = ('incorrect_password' == $errors->get_error_code() || 'empty_password' == $errors->get_error_code()) ? esc_attr(wp_unslash($_POST['log'])) : '';
-						}*/
-
-						//$rememberme = !empty($_POST['rememberme']);
-
-						/*if(!empty($errors->errors))
-						{
-							$aria_describedby_error = ' aria-describedby="login_error"';
-						}
-						
-						else
-						{
-							$aria_describedby_error = '';
-						}*/
 					}
 
 					else
 					{
-						$obj_custom_login = new mf_custom_login();
-						$obj_custom_login->check_if_logged_in();
+						$obj_custom_login->check_if_logged_in(array('redirect' => true));
 					}
 				break;
 			}
@@ -918,7 +965,7 @@ class widget_login_form extends WP_Widget
 					{
 						echo input_hidden(array('name' => 'interim-login', 'value' => 1));
 					}
-					
+
 					else
 					{*/
 						echo input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)));
@@ -968,7 +1015,7 @@ class widget_login_form extends WP_Widget
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='registration-title'"))
 			/*.show_wp_editor(array('name' => $this->get_field_name('login_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['login_above_form'],
-				'textarea_rows' => 5,
+				'editor_height' => 100,
 				'statusbar' => false,
 			))*/
 		."</div>";
@@ -1122,7 +1169,7 @@ class widget_registration_form extends WP_Widget
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
 			/*.show_wp_editor(array('name' => $this->get_field_name('registration_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['registration_above_form'],
-				'textarea_rows' => 5,
+				'editor_height' => 100,
 				'statusbar' => false,
 			))*/
 			.show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']))
@@ -1238,7 +1285,7 @@ class widget_lost_password_form extends WP_Widget
 					.$instance['lost_password_heading']
 				.$after_title;
 			}
-			
+
 			$display_form = true;
 
 			switch($action)
@@ -1284,7 +1331,7 @@ class widget_lost_password_form extends WP_Widget
 							reset_password($user, $user_pass);
 
 							$done_text = __("Your password has been reset", 'lang_login')." <a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>";
-							
+
 							$display_form = false;
 						}
 					}
@@ -1393,7 +1440,7 @@ class widget_lost_password_form extends WP_Widget
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='registration-title'"))
 			/*.show_wp_editor(array('name' => $this->get_field_name('lost_password_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['lost_password_above_form'],
-				'textarea_rows' => 5,
+				'editor_height' => 100,
 				'statusbar' => false,
 			))*/
 		."</div>";
