@@ -163,13 +163,77 @@ if($setting_custom_login_page > 0)
 // Custom Login
 ############################
 $login_post_id = get_widget_search('login-widget');
+$registration_post_id = get_widget_search('registration-widget');
+$lost_password_post_id = get_widget_search('lost-password-widget');
 
 if($login_post_id > 0)
 {
-	$out_media_all .= ".login_form form p
+	$out_media_all .= ".login_form
 	{
-		margin-top: .5em;
-	}";
+		margin: 0 auto;
+		max-width: 400px;
+	}
+
+		.login_form form .flex_flow .form_button
+		{
+			text-align: right;
+		}
+
+			.login_form form .flex_flow .form_button button:last-of-type
+			{
+				margin-right: 0 !important;
+			}
+
+		.login_form form p
+		{
+			margin-top: .5em;
+			text-align: center;
+		}";
+}
+
+if($registration_post_id > 0)
+{
+	$out_media_all .= ".registration_form
+	{
+		margin: 0 auto;
+		max-width: 400px;
+	}
+	
+		.registration_form .small
+		{
+			font-size: .8em;
+		}
+
+		.registration_form form button
+		{
+			width: 100%;
+		}
+		
+		.registration_form form p
+		{
+			margin-top: .5em;
+			text-align: center;
+		}";
+}
+
+if($lost_password_post_id > 0)
+{
+	$out_media_all .= ".lost_password_form
+	{
+		margin: 0 auto;
+		max-width: 400px;
+	}
+
+		.lost_password_form form button
+		{
+			width: 100%;
+		}
+	
+		.lost_password_form form p
+		{
+			margin-top: .5em;
+			text-align: center;
+		}";
 }
 ############################
 

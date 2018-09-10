@@ -972,28 +972,30 @@ class widget_login_form extends WP_Widget
 
 				do_action('login_form');
 
-				echo show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
-				."<div class='form_button'>"
-					.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')));
+				echo "<div class='flex_flow'>"
+					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
+					."<div class='form_button'>"
+						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')));
 
-					/*if($interim_login)
-					{
-						echo input_hidden(array('name' => 'interim-login', 'value' => 1));
-					}
+						/*if($interim_login)
+						{
+							echo input_hidden(array('name' => 'interim-login', 'value' => 1));
+						}
 
-					else
-					{*/
-						echo input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)));
-					/*}
+						else
+						{*/
+							echo input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)));
+						/*}
 
-					if($customize_login)
-					{
-						echo input_hidden(array('name' => 'customize-login', 'value' => 1));
-					}*/
+						if($customize_login)
+						{
+							echo input_hidden(array('name' => 'customize-login', 'value' => 1));
+						}*/
 
-					//echo input_hidden(array('name' => 'testcookie', 'value' => 1));
+						//echo input_hidden(array('name' => 'testcookie', 'value' => 1));
 
-				echo "</div>
+					echo "</div>
+				</div>
 				<p><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
 				
 				if(get_option('users_can_register'))
@@ -1149,10 +1151,11 @@ class widget_registration_form extends WP_Widget
 
 					do_action('register_form');
 
-					echo "<div class='form_button'>"
+					echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"))
+					."<div class='form_button'>"
 						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
 					."</div>
-					<p><a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a></p>
+					<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a></p>
 				</form>";
 			}
 
@@ -1418,7 +1421,7 @@ class widget_lost_password_form extends WP_Widget
 							."<div class='form_button'>"
 								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
 							."</div>
-							<p><a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a></p>
+							<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a></p>
 						</form>";
 					}
 
