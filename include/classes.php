@@ -757,11 +757,14 @@ class mf_custom_login
 
 	function wp_head()
 	{
-		$login_post_id = get_widget_search('login-widget');
-
-		if($login_post_id > 0)
+		if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_widget_search'))
 		{
-			$this->combined_head();
+			$login_post_id = get_widget_search('login-widget');
+
+			if($login_post_id > 0)
+			{
+				$this->combined_head();
+			}
 		}
 	}
 

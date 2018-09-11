@@ -162,78 +162,81 @@ if($setting_custom_login_page > 0)
 
 // Custom Login
 ############################
-$login_post_id = get_widget_search('login-widget');
-$registration_post_id = get_widget_search('registration-widget');
-$lost_password_post_id = get_widget_search('lost-password-widget');
-
-if($login_post_id > 0)
+if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_widget_search'))
 {
-	$out_media_all .= ".login_form
-	{
-		margin: 0 auto;
-		max-width: 400px;
-	}
+	$login_post_id = get_widget_search('login-widget');
+	$registration_post_id = get_widget_search('registration-widget');
+	$lost_password_post_id = get_widget_search('lost-password-widget');
 
-		.login_form form .flex_flow .form_button
+	if($login_post_id > 0)
+	{
+		$out_media_all .= ".login_form
 		{
-			text-align: right;
+			margin: 0 auto;
+			max-width: 400px;
 		}
 
-			.login_form form .flex_flow .form_button button:last-of-type
+			.login_form form .flex_flow .form_button
 			{
-				margin-right: 0 !important;
+				text-align: right;
 			}
 
-		.login_form form p
-		{
-			margin-top: .5em;
-			text-align: center;
-		}";
-}
+				.login_form form .flex_flow .form_button button:last-of-type
+				{
+					margin-right: 0 !important;
+				}
 
-if($registration_post_id > 0)
-{
-	$out_media_all .= ".registration_form
-	{
-		margin: 0 auto;
-		max-width: 400px;
+			.login_form form p
+			{
+				margin-top: .5em;
+				text-align: center;
+			}";
 	}
-	
-		.registration_form .small
-		{
-			font-size: .8em;
-		}
 
-		.registration_form form button
+	if($registration_post_id > 0)
+	{
+		$out_media_all .= ".registration_form
 		{
-			width: 100%;
+			margin: 0 auto;
+			max-width: 400px;
 		}
 		
-		.registration_form form p
-		{
-			margin-top: .5em;
-			text-align: center;
-		}";
-}
+			.registration_form .small
+			{
+				font-size: .8em;
+			}
 
-if($lost_password_post_id > 0)
-{
-	$out_media_all .= ".lost_password_form
-	{
-		margin: 0 auto;
-		max-width: 400px;
+			.registration_form form button
+			{
+				width: 100%;
+			}
+			
+			.registration_form form p
+			{
+				margin-top: .5em;
+				text-align: center;
+			}";
 	}
 
-		.lost_password_form form button
+	if($lost_password_post_id > 0)
+	{
+		$out_media_all .= ".lost_password_form
 		{
-			width: 100%;
+			margin: 0 auto;
+			max-width: 400px;
 		}
-	
-		.lost_password_form form p
-		{
-			margin-top: .5em;
-			text-align: center;
-		}";
+
+			.lost_password_form form button
+			{
+				width: 100%;
+			}
+		
+			.lost_password_form form p
+			{
+				margin-top: .5em;
+				text-align: center;
+			}";
+	}
 }
 ############################
 
