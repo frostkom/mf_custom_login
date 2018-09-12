@@ -326,7 +326,7 @@ class mf_custom_login
 		$arr_data = array();
 		get_post_children(array('add_choose_here' => true), $arr_data);
 
-		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-plus fa-lg'></i></a>", 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-plus-circle fa-lg'></i></a>", 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
 	}
 
 	function users_can_register_callback()
@@ -353,7 +353,7 @@ class mf_custom_login
 		$arr_data = array();
 		get_post_children(array('add_choose_here' => true), $arr_data);
 
-		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-plus fa-lg'></i></a>", 'description' => __("The content from this page is displayed next to the register screen", 'lang_login')));
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-plus-circle fa-lg'></i></a>", 'description' => __("The content from this page is displayed next to the register screen", 'lang_login')));
 	}
 
 	function setting_custom_login_lostpassword_callback()
@@ -364,7 +364,7 @@ class mf_custom_login
 		$arr_data = array();
 		get_post_children(array('add_choose_here' => true), $arr_data);
 
-		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-plus fa-lg'></i></a>", 'description' => __("The content from this page is displayed next to the lost password screen", 'lang_login')));
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-plus-circle fa-lg'></i></a>", 'description' => __("The content from this page is displayed next to the lost password screen", 'lang_login')));
 	}
 
 	function setting_custom_login_recoverpassword_callback()
@@ -375,7 +375,7 @@ class mf_custom_login
 		$arr_data = array();
 		get_post_children(array('add_choose_here' => true), $arr_data);
 
-		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-plus fa-lg'></i></a>", 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => "<a href='".admin_url("post-new.php?post_type=page")."'><i class='fa fa-plus-circle fa-lg'></i></a>", 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
 	}
 
 	function setting_custom_login_allow_direct_link_callback()
