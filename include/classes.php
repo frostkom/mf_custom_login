@@ -1000,7 +1000,7 @@ class widget_login_form extends WP_Widget
 					echo "</div>
 				</div>
 				<p><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
-				
+
 				if(get_option('users_can_register'))
 				{
 					echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";

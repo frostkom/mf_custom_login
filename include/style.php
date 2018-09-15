@@ -200,7 +200,7 @@ if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_
 			margin: 0 auto;
 			max-width: 400px;
 		}
-		
+
 			.registration_form .small
 			{
 				font-size: .8em;
@@ -210,7 +210,7 @@ if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_
 			{
 				width: 100%;
 			}
-			
+
 			.registration_form form p
 			{
 				margin-top: .5em;
@@ -230,7 +230,7 @@ if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_
 			{
 				width: 100%;
 			}
-		
+
 			.lost_password_form form p
 			{
 				margin-top: .5em;
