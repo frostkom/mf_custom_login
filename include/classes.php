@@ -685,13 +685,13 @@ class mf_custom_login
 		//wp_new_user_notification_email
 		$exclude[] = "[blog_title]";		$include[] = $blog_title;
 		$exclude[] = "[site_url]";			$include[] = $site_url;
-		$exclude[] = "[confirm_link]";		$include[] = $lost_password_url."?".$confirm_link_action;
+		$exclude[] = "[confirm_link]";		$include[] = $lost_password_url.(preg_match("/\?/", $lost_password_url) ? "&" : "?").$confirm_link_action;
 		$exclude[] = "[login_link]";		$include[] = $login_url;
 
 		//retrieve_password_message
 		$exclude[] = "[blogname]";			$include[] = $blog_title; //Replace with blog_title
 		$exclude[] = "[siteurl]";			$include[] = $site_url; //Replace with site_url
-		$exclude[] = "[loginurl]";			$include[] = $lost_password_url."?".$confirm_link_action; //Replace with confirm_link
+		$exclude[] = "[loginurl]";			$include[] = $lost_password_url.(preg_match("/\?/", $lost_password_url) ? "&" : "?").$confirm_link_action; //Replace with confirm_link
 
 		return str_replace($exclude, $include, $string);
 	}
@@ -703,17 +703,6 @@ class mf_custom_login
 		if($setting_custom_login_email_registration != '')
 		{
 			$array['message'] = $this->email_replace_shortcodes($setting_custom_login_email_registration, $user_data);
-
-			/*$array['message'] = $setting_custom_login_email_registration;
-
-			$confirm_link_action = "action=rp&key=".$this->get_registration_key($user_data)."&login=".rawurlencode($user_data->user_login);
-
-			$array['message'] = str_replace('[blog_title]', get_option('blogname'), $array['message']);
-			$array['message'] = str_replace('[site_url]', get_site_url(), $array['message']); //home_url()
-			$array['message'] = str_replace('[first_name]', $user_data->first_name, $array['message']);
-			$array['message'] = str_replace("[username]", $user_data->user_login, $array['message']);
-			$array['message'] = str_replace("[confirm_link]", wp_login_url()."?".$confirm_link_action, $array['message']); //network_site_url("wp-login.php?".$confirm_link_action, 'login')
-			$array['message'] = str_replace("[login_link]", wp_login_url(), $array['message']);*/
 		}
 
 		return $array;
@@ -726,15 +715,6 @@ class mf_custom_login
 		if($setting_custom_login_email_lost_password != '')
 		{
 			$message = $this->email_replace_shortcodes($setting_custom_login_email_lost_password, $user_data, $key);
-
-			/*$exclude = $include = array();
-			$exclude[] = "[user_login]";		$include[] = $user_login;
-			$exclude[] = "[user_email]";		$include[] = $user_data->user_email;
-			$exclude[] = "[blogname]";			$include[] = get_option('blogname');
-			$exclude[] = "[siteurl]";			$include[] = get_site_url();
-			$exclude[] = "[loginurl]";			$include[] = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
-
-			$message = str_replace($exclude, $include, $message_temp);*/
 		}
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
