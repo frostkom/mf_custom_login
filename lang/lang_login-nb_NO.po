@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-07 13:21+0100\n"
+"POT-Creation-Date: 2018-10-03 11:32+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -15,8 +15,29 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
 
+msgid "You are not using SSL, therefor I cannot process your request"
+msgstr "Du bruker ikke SSL, derfor kan jeg ikke behandle forespørselen din"
+
+msgid "Unknown Action"
+msgstr "Ukjent handling"
+
+msgid "Cookies are blocked or not supported by your browser. You must %senable cookies%s to use WordPress"
+msgstr "Cookies er blokkert eller støttes ikke av nettleseren din. Du må %senable cookies%s for å bruke WordPress"
+
+msgid "You have logged in successfully"
+msgstr "Du har logget inn"
+
+msgid "Custom Logo"
+msgstr "Tilpasset logo"
+
 msgid "Login"
 msgstr "Logg inn"
+
+msgid "Allow Registration"
+msgstr "Tillat registrering"
+
+msgid "Default Role"
+msgstr "Standard rolle"
 
 msgid "Register"
 msgstr "Registrer deg"
@@ -36,8 +57,29 @@ msgstr "minutter"
 msgid "Username"
 msgstr "Brukernavn"
 
+msgid "To set your password, visit the following address"
+msgstr "For å angi passordet ditt, besøk følgende adresse"
+
+msgid "Someone has requested a password reset for the following account."
+msgstr "Noen har bedt om tilbakestilling av passord for følgende konto."
+
+msgid "If this was a mistake, just ignore this email and nothing will happen."
+msgstr "Hvis dette var en feil, bare ignorere denne e-posten, og ingenting vil skje."
+
+msgid "To reset your password, visit the following address"
+msgstr "For å tilbakestille passordet ditt, besøk følgende adresse"
+
 msgid "I could not send the email"
 msgstr "Jeg kunne ikke sende e-post"
+
+msgid "Login Form"
+msgstr "Logg inn skjema"
+
+msgid "You have been successfully logged out"
+msgstr "Du har blitt logget ut"
+
+msgid "Username or E-mail"
+msgstr "Brukernavn eller E-post"
 
 msgid "Password"
 msgstr "Passord"
@@ -48,8 +90,20 @@ msgstr "Husk meg"
 msgid "Log In"
 msgstr "Logg inn"
 
-msgid "Lost your password?"
-msgstr "Mistet passordet ditt?"
+msgid "Have you forgotten your login credentials?"
+msgstr "Har du glemt dine innloggingsopplysninger?"
+
+msgid "Do not have an account?"
+msgstr "Har du ingen brukerkonto?"
+
+msgid "Heading"
+msgstr "Overskrif"
+
+msgid "Registration Form"
+msgstr "Registreringsskjema"
+
+msgid "You have to enter both Username and E-mail, then I can process the registration for you"
+msgstr "Du må skrive inn både brukernavn og e-post, så jeg kan behandle registreringen for deg"
 
 msgid "E-mail"
 msgstr "E-post"
@@ -60,14 +114,53 @@ msgstr "Fornavn"
 msgid "Last Name"
 msgstr "Etternavn"
 
+msgid "I consent to having this website store my submitted information, so that they can contact me if necessary"
+msgstr "Jeg samtykker i at denne hjemmesiden lagrer min innsendte informasjon, slik at de kan kontakte meg"
+
+msgid "Do you already have an account?"
+msgstr "Har du allerede en konto?"
+
 msgid "Log in"
 msgstr "Logg inn"
+
+msgid "Collect full name from user"
+msgstr "Samle fullt navn fra bruker"
+
+msgid "Display a Lost Password Form"
+msgstr "Vis et tapt passord skjema"
+
+msgid "Lost Password Form"
+msgstr "Tapt Passord Skjema"
+
+msgid "Invalid Username or E-mail"
+msgstr "Ugyldig brukernavn eller e-post"
+
+msgid "Someone has requested a password reset for the following account"
+msgstr "Noen har bedt om tilbakestilling av passord for følgende konto"
+
+msgid "Site Name"
+msgstr "Side Navn"
+
+msgid "[%s] Password Reset"
+msgstr "[%s] Passord er tilbakestilt"
+
+msgid "The email could not be sent."
+msgstr "E-posten kunne ikke sendes."
+
+msgid "Your password has been reset"
+msgstr "Passordet ditt har blitt tilbakestilt"
 
 msgid "New Password"
 msgstr "Nytt Passord"
 
 msgid "Reset Password"
 msgstr "Tilbakestill Passord"
+
+msgid "You have to enter the e-mail address, then I can process the request for you"
+msgstr "Du må skrive inn e-postadressen, så jeg kan behandle forespørselen for deg"
+
+msgid "I found the account that you were looking for. Please, check your inbox for the confirmation link."
+msgstr "Jeg fant den kontoen du lette etter. Vennligst sjekk innboksen din for bekreftelseslinken."
 
 msgid "Get New Password"
 msgstr "Få nytt passord"

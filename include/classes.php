@@ -1292,6 +1292,8 @@ class widget_lost_password_form extends WP_Widget
 					$user_key = check_var('key');
 					$user_pass = check_var('user_pass');
 
+					$user = '';
+
 					if(isset($_POST['btnSendResetPassword']))
 					{
 						$user = check_password_reset_key($user_key, $user_login);

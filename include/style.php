@@ -190,7 +190,15 @@ if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_
 			{
 				margin-top: .5em;
 				text-align: center;
-			}";
+			}
+			
+		.login_form + .widget_text
+		{
+			background: #eee;
+			margin: 0 auto;
+			padding: .2em .4em 0;
+			max-width: 400px;
+		}";
 	}
 
 	if($registration_post_id > 0)
