@@ -194,7 +194,7 @@ if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_
 			
 		.login_form + .widget_text
 		{
-			background: #eee;
+			background: #f7f7f7;
 			margin: 0 auto;
 			padding: .2em .4em 0;
 			max-width: 400px;
