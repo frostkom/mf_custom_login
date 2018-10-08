@@ -191,7 +191,7 @@ if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_
 				margin-top: .5em;
 				text-align: center;
 			}
-			
+
 		.login_form + .widget_text
 		{
 			background: #f7f7f7;
