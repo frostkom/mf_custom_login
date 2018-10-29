@@ -1138,7 +1138,7 @@ class widget_registration_form extends WP_Widget
 					."<div class='form_button'>"
 						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
 					."</div>
-					<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a></p>
+					<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>
 				</form>";
 			}
 
@@ -1329,7 +1329,7 @@ class widget_lost_password_form extends WP_Widget
 						{
 							reset_password($user, $user_pass);
 
-							$done_text = __("Your password has been reset", 'lang_login')." <a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a>";
+							$done_text = __("Your password has been reset", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a>";
 
 							$display_form = false;
 						}
@@ -1406,7 +1406,7 @@ class widget_lost_password_form extends WP_Widget
 							."<div class='form_button'>"
 								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
 							."</div>
-							<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log in", 'lang_login')."</a></p>
+							<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>
 						</form>";
 					}
 
