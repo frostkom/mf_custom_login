@@ -75,7 +75,7 @@ else
 
 if($login_mobile_logo_css != '')
 {
-	$out_media_all .= ".login h1 a
+	$out_media_all .= ".login #login h1 a
 	{"
 		.$login_mobile_logo_css
 	."}";
@@ -109,7 +109,7 @@ if($setting_custom_login_page > 0)
 
 if($login_logo_css != '')
 {
-	$out_media_mobile .= ".login h1 a
+	$out_media_mobile .= ".login #login h1 a
 	{"
 		.$login_logo_css
 	."}";
@@ -117,7 +117,7 @@ if($login_logo_css != '')
 
 if($setting_custom_login_page > 0)
 {
-	$out_media_mobile .= "#login
+	$out_media_mobile .= ".login #login
 	{
 		position: relative;
 		width: 740px;
