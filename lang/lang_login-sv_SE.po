@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-29 12:23+0100\n"
+"POT-Creation-Date: 2019-01-05 18:36+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -329,11 +329,21 @@ msgstr "Jag hittade kontot som du letade efter. Var vänlig kolla din inkorg fö
 msgid "Get New Password"
 msgstr "Hämta nytt lösenord"
 
-#: ../include/api/index.php:45
+#: ../include/api/index.php:51
+#, php-format
+msgid "You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s."
+msgstr "Du har inte skickat med korrekt inloggningsuppgifter. De ska skickas via %s med variablerna %s och %s."
+
+#: ../include/api/index.php:61
+#, php-format
+msgid "You are already logged in as %s"
+msgstr "Du är redan inloggad som %s"
+
+#: ../include/api/index.php:69
 msgid "You are not using SSL, therefor I cannot process your request"
 msgstr "Du använder inte SSL, därför kan jag inte genomföra din önskan"
 
-#: ../include/api/index.php:52
+#: ../include/api/index.php:76
 msgid "Unknown Action"
 msgstr "Okänd åtgärd"
 
