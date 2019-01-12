@@ -747,10 +747,10 @@ class mf_custom_login
 		{
 			$obj_wls = new mf_widget_logic_select();
 
-			$login_post_id = $obj_wls->get_widget_search('login-widget');*/
+			$post_id = $obj_wls->get_widget_search('login-widget');*/
 			$post_id = apply_filters('get_widget_search', 'login-widget');
 
-			if($login_post_id > 0)
+			if($post_id > 0)
 			{
 				$this->combined_head();
 			}
