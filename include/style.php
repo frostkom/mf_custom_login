@@ -162,11 +162,16 @@ if($setting_custom_login_page > 0)
 
 // Custom Login
 ############################
-if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_widget_search'))
+/*if(is_plugin_active('mf_widget_logic_select/index.php'))
 {
-	$login_post_id = get_widget_search('login-widget');
-	$registration_post_id = get_widget_search('registration-widget');
-	$lost_password_post_id = get_widget_search('lost-password-widget');
+	$obj_wls = new mf_widget_logic_select();
+
+	$login_post_id = $obj_wls->get_widget_search('login-widget');
+	$registration_post_id = $obj_wls->get_widget_search('registration-widget');
+	$lost_password_post_id = $obj_wls->get_widget_search('lost-password-widget');*/
+	$login_post_id = apply_filters('get_widget_search', 'login-widget');
+	$registration_post_id = apply_filters('get_widget_search', 'registration-widget');
+	$lost_password_post_id = apply_filters('get_widget_search', 'lost-password-widget');
 
 	if($login_post_id > 0)
 	{
@@ -245,7 +250,7 @@ if(is_plugin_active('mf_widget_logic_select/index.php') && function_exists('get_
 				text-align: center;
 			}";
 	}
-}
+//}
 ############################
 
 if($out_media_all != '')
