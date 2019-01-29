@@ -203,17 +203,6 @@ class mf_custom_login
 
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
-		/*$login_post_id = $registration_post_id = $lost_password_post_id = 0;
-
-		if(is_plugin_active('mf_widget_logic_select/index.php'))
-		{
-			$obj_wls = new mf_widget_logic_select();
-
-			$login_post_id = $obj_wls->get_widget_search('login-widget');
-			$registration_post_id = $obj_wls->get_widget_search('registration-widget');
-			$lost_password_post_id = $obj_wls->get_widget_search('lost-password-widget');
-		}*/
-
 		$login_post_id = apply_filters('get_widget_search', 'login-widget');
 		$registration_post_id = apply_filters('get_widget_search', 'registration-widget');
 		$lost_password_post_id = apply_filters('get_widget_search', 'lost-password-widget');
@@ -677,7 +666,7 @@ class mf_custom_login
 		}
 
 		$blog_title = get_option('blogname');
-		$site_url = get_site_url(); //home_url()
+		$site_url = get_site_url();
 		$login_url = wp_login_url(); //network_site_url("wp-login.php?".$confirm_link_action, 'login')
 		$lost_password_url = wp_lostpassword_url();
 		$confirm_link_action = "action=rp&key=".$this->get_registration_key($user_data)."&login=".rawurlencode($user_data->user_login);
@@ -743,89 +732,59 @@ class mf_custom_login
 
 	function wp_head()
 	{
-		/*if(is_plugin_active('mf_widget_logic_select/index.php'))
+		$post_id = apply_filters('get_widget_search', 'login-widget');
+
+		if($post_id > 0)
 		{
-			$obj_wls = new mf_widget_logic_select();
-
-			$post_id = $obj_wls->get_widget_search('login-widget');*/
-			$post_id = apply_filters('get_widget_search', 'login-widget');
-
-			if($post_id > 0)
-			{
-				$this->combined_head();
-			}
-		//}
+			$this->combined_head();
+		}
 	}
 
 	function login_url($url)
 	{
-		/*if(is_plugin_active('mf_widget_logic_select/index.php'))
+		$post_id = apply_filters('get_widget_search', 'login-widget');
+
+		if($post_id > 0)
 		{
-			$obj_wls = new mf_widget_logic_select();
-
-			$post_id = $obj_wls->get_widget_search('login-widget');*/
-			$post_id = apply_filters('get_widget_search', 'login-widget');
-
-			if($post_id > 0)
-			{
-				$url = get_permalink($post_id);
-			}
-		//}
+			$url = get_permalink($post_id);
+		}
 
 		return $url;
 	}
 
 	function register_url($url)
 	{
-		/*if(is_plugin_active('mf_widget_logic_select/index.php'))
+		$post_id = apply_filters('get_widget_search', 'registration-widget');
+
+		if($post_id > 0)
 		{
-			$obj_wls = new mf_widget_logic_select();
-
-			$post_id = $obj_wls->get_widget_search('registration-widget');*/
-			$post_id = apply_filters('get_widget_search', 'registration-widget');
-
-			if($post_id > 0)
-			{
-				$url = get_permalink($post_id);
-			}
-		//}
+			$url = get_permalink($post_id);
+		}
 
 		return $url;
 	}
 
 	function lostpassword_url($url)
 	{
-		/*if(is_plugin_active('mf_widget_logic_select/index.php'))
+		$post_id = apply_filters('get_widget_search', 'lost-password-widget');
+
+		if($post_id > 0)
 		{
-			$obj_wls = new mf_widget_logic_select();
-
-			$post_id = $obj_wls->get_widget_search('lost-password-widget');*/
-			$post_id = apply_filters('get_widget_search', 'lost-password-widget');
-
-			if($post_id > 0)
-			{
-				$url = get_permalink($post_id);
-			}
-		//}
+			$url = get_permalink($post_id);
+		}
 
 		return $url;
 	}
 
 	function logout_url($url)
 	{
-		/*if(is_plugin_active('mf_widget_logic_select/index.php'))
+		$post_id = apply_filters('get_widget_search', 'login-widget');
+
+		if($post_id > 0)
 		{
-			$obj_wls = new mf_widget_logic_select();
-
-			$post_id = $obj_wls->get_widget_search('login-widget');*/
-			$post_id = apply_filters('get_widget_search', 'login-widget');
-
-			if($post_id > 0)
-			{
-				$url = get_permalink($post_id)."?action=logout";
-				$url = wp_nonce_url($url, 'log-out');
-			}
-		//}
+			$url = get_permalink($post_id)."?action=logout";
+			$url = wp_nonce_url($url, 'log-out');
+		}
 
 		return $url;
 	}
