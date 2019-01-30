@@ -398,7 +398,11 @@ class mf_custom_login
 
 		if($option == 'yes')
 		{
-			echo "<p>".sprintf(__("By sending a request to %s with %s and %s as %s you will get a success or failure as a response", 'lang_login'), plugin_dir_url(__FILE__)."api/?action=login", 'user_login', 'user_pass', 'POST')."</p>";
+			$api_url = plugin_dir_url(__FILE__)."api/?action=login";
+
+			$user_data = get_userdata(get_current_user_id());
+
+			echo "<p>".sprintf(__("By sending a request to %s with %s and %s as %s you will get a success or failure as a response", 'lang_login'), "<code>".$api_url."</code>", "<code>".'user_login'."</code>", "<code>".'user_pass'."</code>", "<code>".'POST'."</code>")."</p>";
 		}
 	}
 

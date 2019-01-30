@@ -18,47 +18,57 @@ switch($action)
 	case 'login':
 		if(is_ssl())
 		{
-			if(!is_user_logged_in())
+			if(get_option('setting_custom_login_allow_api') == 'yes')
 			{
-				$user_login = check_var('user_login', 'char', true, '', false, 'post');
-				$user_pass = check_var('user_pass', 'char', true, '', false, 'post');
-
-				if($user_login == '')
+				if(!is_user_logged_in())
 				{
-					$user_login = check_var('username', 'char', true, '', false, 'post');
-				}
+					$user_login = check_var('user_login', 'char', true, '', false, 'post');
+					$user_pass = check_var('user_pass', 'char', true, '', false, 'post');
 
-				if($user_pass == '')
-				{
-					$user_pass = check_var('password', 'char', true, '', false, 'post');
-				}
+					if($user_login == '')
+					{
+						$user_login = check_var('username', 'char', true, '', false, 'post');
+					}
 
-				$obj_custom_login = new mf_custom_login();
+					if($user_pass == '')
+					{
+						$user_pass = check_var('password', 'char', true, '', false, 'post');
+					}
 
-				$result = $obj_custom_login->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass));
+					$obj_custom_login = new mf_custom_login();
 
-				$json_output = $result;
+					$result = $obj_custom_login->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass));
 
-				if($user_login != '' && $user_pass != '' && $result['success'] == true)
-				{
-					header("Status: 200 OK");
+					$json_output = $result;
+
+					if($user_login != '' && $user_pass != '' && $result['success'] == true)
+					{
+						header("Status: 200 OK");
+					}
+
+					else
+					{
+						header("Status: 401 Unauthorized");
+
+						$json_output['error'] = sprintf(__("You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s.", 'lang_login'), "POST", "user_login", "user_pass");
+					}
 				}
 
 				else
 				{
 					header("Status: 401 Unauthorized");
 
-					$json_output['error'] = sprintf(__("You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s.", 'lang_login'), "POST", "user_login", "user_pass");
+					$user_data = get_userdata(get_current_user_id());
+
+					$json_output['error'] = sprintf(__("You are already logged in as %s", 'lang_login'), $user_data->display_name);
 				}
 			}
 
 			else
 			{
-				header("Status: 401 Unauthorized");
+				header("Status: 503 Forbidden");
 
-				$user_data = get_userdata(get_current_user_id());
-
-				$json_output['error'] = sprintf(__("You are already logged in as %s", 'lang_login'), $user_data->display_name);
+				$json_output['error'] = __("The API login is inactivated on this site", 'lang_login');
 			}
 		}
 
@@ -66,7 +76,7 @@ switch($action)
 		{
 			header("Status: 503 Forbidden");
 
-			$json_output['error'] = __("You are not using SSL, therefor I cannot process your request", 'lang_login').": ".$action;
+			$json_output['error'] = __("You are not using SSL, therefor I cannot process your request", 'lang_login');
 		}
 	break;
 
