@@ -36,41 +36,12 @@ class mf_custom_login
 
 		$user = wp_signon(array('user_login' => $data['user_login'], 'user_password' => $data['user_pass'], 'remember' => $data['user_remember']), $secure_cookie);
 
-		/*if(empty($_COOKIE[LOGGED_IN_COOKIE]))
-		{
-			if(headers_sent())
-			{
-				$user = new WP_Error('test_cookie', sprintf(__("Cookies are blocked due to unexpected output. For help, please see %sthis documentation%s or try the %ssupport forums%s", 'lang_login'), "<a href='https://codex.wordpress.org/Cookies'>", "</a>", "<a href='https://wordpress.org/support/'>", "</a>"));
-
-			}
-
-			else if(isset($_POST['testcookie']) && empty($_COOKIE[TEST_COOKIE]))
-			{
-				$user = new WP_Error('test_cookie', sprintf(__("Cookies are blocked or not supported by your browser. You must %senable cookies%s to use WordPress", 'lang_login'), "<a href='https://codex.wordpress.org/Cookies'>", "</a>"));
-			}
-		}*/
-
 		$requested_redirect_to = check_var('redirect_to');
 
 		$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
 
 		if(!is_wp_error($user)) // && !$reauth
 		{
-			/*if($interim_login)
-			{
-				$message = "<p class='message'>".__("You have logged in successfully", 'lang_login')."</p>";
-				$interim_login = 'success';
-
-				login_header('', $message);
-
-				echo "</div>";
-
-				do_action('login_footer');
-
-				echo "</body></html>";
-				exit;
-			}*/
-
 			if(empty($data['redirect_to']) || $data['redirect_to'] == 'wp-admin/' || $data['redirect_to'] == admin_url())
 			{
 				// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
@@ -544,8 +515,6 @@ class mf_custom_login
 
 	function check_auth()
 	{
-		global $wpdb;
-
 		$user = get_user_by('login', $this->username);
 
 		$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
@@ -863,7 +832,7 @@ class widget_login_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
-		global $wpdb, $error_text, $done_text;
+		global $error_text, $done_text;
 
 		extract($args);
 
@@ -990,16 +959,10 @@ class widget_login_form extends WP_Widget
 
 	function form($instance)
 	{
-		global $wpdb;
-
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='registration-title'"))
-			/*.show_wp_editor(array('name' => $this->get_field_name('login_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['login_above_form'],
-				'editor_height' => 100,
-				'statusbar' => false,
-			))*/
 		."</div>";
 	}
 }
@@ -1024,7 +987,7 @@ class widget_registration_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
-		global $wpdb, $error_text, $done_text;
+		global $error_text, $done_text;
 
 		extract($args);
 
@@ -1143,16 +1106,10 @@ class widget_registration_form extends WP_Widget
 
 	function form($instance)
 	{
-		global $wpdb;
-
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
-			/*.show_wp_editor(array('name' => $this->get_field_name('registration_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['registration_above_form'],
-				'editor_height' => 100,
-				'statusbar' => false,
-			))*/
 			.show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']))
 		."</div>";
 	}
@@ -1219,7 +1176,6 @@ class widget_lost_password_form extends WP_Widget
 
 				$message = "<p>"
 					.__("Someone has requested a password reset for the following account", 'lang_login').":<br>"
-					//.__("Site Name", 'lang_login').": ".$site_name."<br>"
 					.__("Username", 'lang_login').": ".$user_login
 				."</p>
 				<p>".__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."</p>
@@ -1248,7 +1204,7 @@ class widget_lost_password_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
-		global $wpdb, $error_text, $done_text;
+		global $error_text, $done_text;
 
 		extract($args);
 
@@ -1414,16 +1370,10 @@ class widget_lost_password_form extends WP_Widget
 
 	function form($instance)
 	{
-		global $wpdb;
-
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='registration-title'"))
-			/*.show_wp_editor(array('name' => $this->get_field_name('lost_password_above_form'), 'text' => __("Text Above Form", 'lang_login'), 'value' => $instance['lost_password_above_form'],
-				'editor_height' => 100,
-				'statusbar' => false,
-			))*/
 		."</div>";
 	}
 }
