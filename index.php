@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 2.6.19
+Version: 2.7.0
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -19,6 +19,7 @@ include_once("include/classes.php");
 $obj_custom_login = new mf_custom_login();
 
 add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
+add_action('cron_base', array($obj_custom_login, 'cron_base'), mt_rand(1, 10));
 
 if(is_admin())
 {
@@ -26,6 +27,12 @@ if(is_admin())
 	register_uninstall_hook(__FILE__, 'uninstall_custom_login');
 
 	add_action('admin_init', array($obj_custom_login, 'settings_custom_login'));
+	add_action('admin_init', array($obj_custom_login, 'admin_init'));
+
+	add_filter('user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
+
+	add_action('show_user_profile', array($obj_custom_login, 'edit_user_profile'));
+	add_action('edit_user_profile', array($obj_custom_login, 'edit_user_profile'));
 }
 
 else
@@ -51,6 +58,9 @@ add_filter('register_url', array($obj_custom_login, 'register_url'), 10, 2);
 add_filter('lostpassword_url', array($obj_custom_login, 'lostpassword_url'), 10, 2);
 add_filter('logout_url', array($obj_custom_login, 'logout_url'), 10, 2);
 
+add_action('wp_ajax_get_direct_login_url', array($obj_custom_login, 'get_direct_login_url'));
+//add_action('wp_ajax_nopriv_get_direct_login_url', array($obj_custom_login, 'get_direct_login_url'));
+
 add_action('wp_ajax_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
 add_action('wp_ajax_nopriv_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
 
@@ -60,35 +70,6 @@ load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."
 
 function activate_custom_login()
 {
-	if(get_option('setting_custom_login_allow_direct_link') == 'yes')
-	{
-		$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
-
-		if($setting_custom_login_direct_link_expire > 0)
-		{
-			$users = get_users(array('fields' => array('ID')));
-
-			$obj_custom_login = new mf_custom_login();
-
-			foreach($users as $user)
-			{
-				$meta_login_auth = get_option($user->ID, 'meta_login_auth');
-
-				if($meta_login_auth != '')
-				{
-					list($meta_date, $rest) = explode("_", $meta_login_auth);
-
-					if($meta_date < date("YmdHis", strtotime("-".$setting_custom_login_direct_link_expire." minute")))
-					{
-						$obj_custom_login->delete_meta($user->ID);
-
-						do_log("Removed meta_login_auth for ".$user->ID);
-					}
-				}
-			}
-		}
-	}
-
 	mf_uninstall_plugin(array(
 		'options' => array('setting_custom_login_info'),
 	));

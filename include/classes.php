@@ -7,6 +7,48 @@ class mf_custom_login
 		$this->error = "";
 	}
 
+	function cron_base()
+	{
+		global $wpdb;
+
+		$obj_cron = new mf_cron();
+		$obj_cron->start(__CLASS__);
+
+		if($obj_cron->is_running == false)
+		{
+			if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+			{
+				$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
+
+				if($setting_custom_login_direct_link_expire > 0)
+				{
+					$users = get_users(array('fields' => array('ID')));
+
+					$obj_custom_login = new mf_custom_login();
+
+					foreach($users as $user)
+					{
+						$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
+
+						if($meta_login_auth != '')
+						{
+							list($meta_date, $rest) = explode("_", $meta_login_auth);
+
+							if($meta_date < date("YmdHis", strtotime("-".$setting_custom_login_direct_link_expire." minute")))
+							{
+								delete_user_meta($user->ID, 'meta_login_auth');
+
+								//do_log("Removed meta_login_auth for ".$user->ID);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		$obj_cron->end();
+	}
+
 	function do_login($data = array())
 	{
 		if(!isset($data['user_login'])){		$data['user_login'] = '';}
@@ -231,6 +273,7 @@ class mf_custom_login
 			if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 			{
 				$arr_settings['setting_custom_login_direct_link_expire'] = __("Direct Link Expires After", 'lang_login');
+				$arr_settings['setting_custom_login_direct_link_expire_after_login'] = __("Direct Link Expires After Login", 'lang_login');
 			}
 		}
 
@@ -360,6 +403,14 @@ class mf_custom_login
 		echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='0' max='240'", 'suffix' => __("minutes", 'lang_login')." (".__("0 means never", 'lang_login').")"));
 	}
 
+	function setting_custom_login_direct_link_expire_after_login_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key, 'yes');
+
+		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+	}
+
 	function setting_custom_login_allow_api_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
@@ -402,6 +453,73 @@ class mf_custom_login
 		.__("To reset your password, visit the following address", 'lang_login').": [confirm_link]");
 
 		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
+	}
+
+	function admin_init()
+	{
+		global $pagenow;
+
+		if(in_array($pagenow, array('user-edit.php', 'profile.php')) && IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
+		{
+			$plugin_include_url = plugin_dir_url(__FILE__);
+			$plugin_version = get_plugin_version(__FILE__);
+
+			mf_enqueue_script('script_login_profile', $plugin_include_url."script_profile.js", array('ajax_url' => admin_url('admin-ajax.php')), $plugin_version);
+		}
+	}
+
+	function user_row_actions($actions, $user)
+	{
+		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		{
+			// This will open up all direct links for users displayed in the table
+			//$actions['direct_link'] = "<a href='".$this->direct_link_url(array('user_data' => $user))."'>".__("Direct Link", 'lang_login')."</a>";
+
+			$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
+
+			if($meta_login_auth != '')
+			{
+				$actions['direct_link'] = "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user))."'>".__("Direct Link", 'lang_login')."</a>";
+			}
+		}
+
+		return $actions;
+	}
+
+	function edit_user_profile($user)
+	{
+		if(IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
+		{
+			echo "<table class='form-table'>
+				<tr>
+					<th><label>".__("Direct Link", 'lang_login')."</label></th>
+					<td>";
+
+						/*if(isset($_POST['btnDirectLogin']))
+						{
+							echo "<a href='".$this->direct_link_url(array('user_data' => $user))."'>".__("URL", 'lang_login')."</a>";
+						}
+
+						else
+						{*/
+							$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
+
+							if($meta_login_auth != '')
+							{
+								echo "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user))."'>".__("URL", 'lang_login')."</a>";
+							}
+
+							else
+							{
+								echo show_submit(array('type' => 'button', 'name' => 'btnDirectLogin', 'text' => __("Generate Now", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"))
+								."<div id='direct_login_debug'></div>";
+							}
+						//}
+
+					echo "</td>
+				</tr>
+			</table>";
+		}
 	}
 
 	function combined_head()
@@ -508,11 +626,6 @@ class mf_custom_login
 		return $errors;
 	}
 
-	function delete_meta($user_id)
-	{
-		delete_user_meta($user_id, 'meta_login_auth');
-	}
-
 	function check_auth()
 	{
 		$user = get_user_by('login', $this->username);
@@ -583,29 +696,46 @@ class mf_custom_login
 
 	function wp_login($username)
 	{
-		$user = get_user_by('login', $username);
+		if(get_option('setting_custom_login_direct_link_expire_after_login') != 'no')
+		{
+			$user = get_user_by('login', $username);
 
-		$this->delete_meta($user->ID);
+			delete_user_meta($user->ID, 'meta_login_auth');
+		}
 	}
 
 	function wp_logout()
 	{
-		$this->delete_meta(get_current_user_id());
+		if(get_option('setting_custom_login_direct_link_expire_after_login') != 'no')
+		{
+			delete_user_meta(get_current_user_id(), 'meta_login_auth');
+		}
 	}
 
-	function direct_link_text($key, $user_data)
+	function direct_link_url($data)
 	{
-		$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
+		if(!isset($data['user_meta_exists'])){		$data['user_meta_exists'] = false;}
+		if(!isset($data['key'])){					$data['key'] = md5(AUTH_SALT.$data['user_data']->user_login.$data['user_data']->user_email);}
 
-		if($setting_custom_login_direct_link_expire > 0)
+		if($data['user_meta_exists'] == false)
 		{
-			$key = date("YmdHis")."_".$key;
+			$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
+
+			if($setting_custom_login_direct_link_expire > 0)
+			{
+				$data['key'] = date("YmdHis")."_".$data['key'];
+			}
+
+			update_user_meta($data['user_data']->ID, 'meta_login_auth', $data['key']);
 		}
 
-		$out = __("To login directly without setting a password, visit the following link. The link is personal and can only be used once. If this link falls into the wrong hands and you haven't used it they will be able to login to your account without a password.", 'lang_login').":"
-		."\r\n\r\n".network_site_url("wp-login.php?type=link&auth=".$key."&username=".rawurlencode($user_data->user_login), 'login')."\r\n";
+		return network_site_url("wp-login.php?type=link&auth=".$data['key']."&username=".rawurlencode($data['user_data']->user_login), 'login');
+	}
 
-		update_user_meta($user_data->ID, 'meta_login_auth', $key);
+	function direct_link_text($data)
+	{
+		$out = __("To login directly without setting a password, visit the following link. The link is personal and can only be used once. If this link falls into the wrong hands and you haven't used it they will be able to login to your account without a password.", 'lang_login').":"
+		."\r\n\r\n".$this->direct_link_url($data)."\r\n";
 
 		return $out;
 	}
@@ -640,7 +770,7 @@ class mf_custom_login
 
 		$blog_title = get_option('blogname');
 		$site_url = get_site_url();
-		$login_url = wp_login_url(); //network_site_url("wp-login.php?".$confirm_link_action, 'login')
+		$login_url = wp_login_url();
 		$lost_password_url = wp_lostpassword_url();
 		$confirm_link_action = "action=rp&key=".$this->get_registration_key($user_data)."&login=".rawurlencode($user_data->user_login);
 
@@ -676,18 +806,18 @@ class mf_custom_login
 		return $array;
 	}
 
-	function retrieve_password_message($message, $key, $user_login, $user_data)
+	function retrieve_password_message($message, $key, $user_login, $user)
 	{
 		$setting_custom_login_email_lost_password = get_option('setting_custom_login_email_lost_password');
 
 		if($setting_custom_login_email_lost_password != '')
 		{
-			$message = $this->email_replace_shortcodes($setting_custom_login_email_lost_password, $user_data, $key);
+			$message = $this->email_replace_shortcodes($setting_custom_login_email_lost_password, $user, $key);
 		}
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
-			$message .= "\r\n".$this->direct_link_text($key, $user_data); //, $user_login
+			$message .= "\r\n".$this->direct_link_text(array('key' => $key, 'user_data' => $user));
 		}
 
 		return $message;
@@ -762,6 +892,36 @@ class mf_custom_login
 		return $url;
 	}
 
+	function get_direct_login_url()
+	{
+		$user_id = check_var('user_id');
+
+		if($user_id > 0)
+		{
+			if(IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
+			{
+				$user_data = get_userdata($user_id);
+
+				$result['success'] = true;
+				$result['message'] = "<a href='".$this->direct_link_url(array('user_data' => $user_data))."'>".__("URL", 'lang_login')."</a>";
+			}
+
+			else
+			{
+				$result['error'] = __("You don't have the rights to perform this action", 'lang_login');
+			}
+		}
+
+		else
+		{
+			$result['error'] = __("There was no User ID attached to the request", 'lang_login');
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($result);
+		die();
+	}
+
 	function send_direct_link_email()
 	{
 		$username = check_var('username');
@@ -770,11 +930,9 @@ class mf_custom_login
 
 		if(isset($user->user_email) && $user->user_email != '')
 		{
-			$key = md5(AUTH_SALT.$username.$user->user_email);
-
 			$mail_to = $user->user_email;
 			$mail_subject = sprintf(__("[%s] Here comes you link to direct login", 'lang_login'), get_bloginfo('name'));
-			$mail_content = $this->direct_link_text($key, $user); //, $username
+			$mail_content = $this->direct_link_text(array('user_data' => $user));
 
 			$sent = send_email(array('to' => $mail_to, 'subject' => $mail_subject, 'content' => $mail_content));
 
@@ -904,7 +1062,7 @@ class widget_login_form extends WP_Widget
 
 			echo "<form method='post' action='".wp_login_url()."' class='mf_form'>"
 				.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
-				.show_password_field(array('name' => 'pwd', 'text' => __("Password", 'lang_login'), 'value' => $user_pass, 'required' => true));
+				.show_password_field(array('name' => 'pwd', 'text' => __("Password"), 'value' => $user_pass, 'required' => true));
 
 				do_action('login_form');
 
