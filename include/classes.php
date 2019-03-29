@@ -101,13 +101,7 @@ class mf_custom_login
 				{
 					$data['redirect_to'] = $user->has_cap('read') ? admin_url('profile.php') : home_url();
 				}
-
-				/*wp_redirect($data['redirect_to']);
-				exit;*/
 			}
-
-			/*wp_safe_redirect($data['redirect_to']);
-			exit;*/
 
 			return array(
 				'success' => true,
@@ -543,7 +537,14 @@ class mf_custom_login
 				{
 					if($this->direct_link_login($this->username))
 					{
-						mf_redirect(user_admin_url());
+						//$redirect_to = user_admin_url();
+						$redirect_to = admin_url();
+
+						$user = get_user_by('login', $this->username);
+
+						$redirect_to = apply_filters('login_redirect', $redirect_to, $redirect_to, $user);
+
+						mf_redirect($redirect_to);
 					}
 
 					else
