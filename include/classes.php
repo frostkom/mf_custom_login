@@ -489,28 +489,23 @@ class mf_custom_login
 					<th><label>".__("Direct Link", 'lang_login')."</label></th>
 					<td>";
 
-						/*if(isset($_POST['btnDirectLogin']))
+						$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
+
+						if($meta_login_auth != '')
 						{
-							echo "<a href='".$this->direct_link_url(array('user_data' => $user))."'>".__("URL", 'lang_login')."</a>";
+							echo "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user))."'>".__("URL", 'lang_login')."</a>
+							<div>"
+								.show_submit(array('type' => 'button', 'name' => 'btnDirectLoginRevoke', 'text' => __("Revoke", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"))
+							."</div>";
 						}
 
 						else
-						{*/
-							$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
+						{
+							echo show_submit(array('type' => 'button', 'name' => 'btnDirectLoginCreate', 'text' => __("Generate Now", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"));
+						}
 
-							if($meta_login_auth != '')
-							{
-								echo "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user))."'>".__("URL", 'lang_login')."</a>";
-							}
-
-							else
-							{
-								echo show_submit(array('type' => 'button', 'name' => 'btnDirectLogin', 'text' => __("Generate Now", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"))
-								."<div id='direct_login_debug'></div>";
-							}
-						//}
-
-					echo "</td>
+						echo "<div id='direct_login_debug'></div>
+					</td>
 				</tr>
 			</table>";
 		}
@@ -893,7 +888,7 @@ class mf_custom_login
 		return $url;
 	}
 
-	function get_direct_login_url()
+	function create_direct_login()
 	{
 		$user_id = check_var('user_id');
 
@@ -909,7 +904,38 @@ class mf_custom_login
 
 			else
 			{
-				$result['error'] = __("You don't have the rights to perform this action", 'lang_login');
+				$result['error'] = __("You do not have the rights to perform this action", 'lang_login');
+			}
+		}
+
+		else
+		{
+			$result['error'] = __("There was no User ID attached to the request", 'lang_login');
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($result);
+		die();
+	}
+
+	function revoke_direct_login()
+	{
+		$user_id = check_var('user_id');
+
+		if($user_id > 0)
+		{
+			if(IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
+			{
+				delete_user_meta($user_id, 'meta_login_auth');
+
+				$result['success'] = true;
+				//$result['message'] = "<a href='".$this->direct_link_url(array('user_data' => $user_data))."'>".__("URL", 'lang_login')."</a>";
+				$result['message'] = __("The direct login link has been revoked and can not be used anymore", 'lang_login');
+			}
+
+			else
+			{
+				$result['error'] = __("You do not have the rights to perform this action", 'lang_login');
 			}
 		}
 
@@ -1139,9 +1165,18 @@ class widget_registration_form extends WP_Widget
 			'registration_heading' => '',
 			//'registration_above_form' => '',
 			'registration_collect_name' => 'no',
+			'registration_fields' => array(),
 		);
 
 		parent::__construct('registration-widget', __("Registration Form", 'lang_login'), $widget_ops);
+	}
+
+	function get_fields_for_select()
+	{
+		return array(
+			'full_name' => __("Full Name", 'lang_login'),
+			'company' => __("Company", 'lang_login'),
+		);
 	}
 
 	function widget($args, $instance)
@@ -1158,10 +1193,24 @@ class widget_registration_form extends WP_Widget
 		$user_login = check_var('user_login');
 		$user_email = check_var('user_email', 'email');
 
-		if($instance['registration_collect_name'] == 'yes')
+		if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
 		{
 			$first_name = check_var('first_name');
 			$last_name = check_var('last_name');
+		}
+
+		if(in_array('company', $instance['registration_fields']))
+		{
+			$profile_company = check_var('profile_company');
+		}
+
+		$role = get_option('default_role');
+		//$send_email = true;
+
+		if(is_user_logged_in() && IS_ADMIN)
+		{
+			$role = check_var('role', 'char', true, $role);
+			//$send_email = check_var('send_email', 'int');
 		}
 
 		echo $before_widget;
@@ -1187,6 +1236,11 @@ class widget_registration_form extends WP_Widget
 					$user_login = strtolower($user_login);
 					$user_email = strtolower($user_email);
 
+					/*if(is_user_logged_in() && IS_ADMIN)
+					{
+						//$send_email
+					}*/
+
 					$errors = register_new_user($user_login, $user_email);
 
 					if(is_wp_error($errors))
@@ -1202,12 +1256,17 @@ class widget_registration_form extends WP_Widget
 						$user_id = $errors;
 
 						$user = new WP_User($user_id);
-						$user->set_role(get_option('default_role'));
+						$user->set_role($role);
 
-						if($instance['registration_collect_name'] == 'yes')
+						if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
 						{
 							update_user_meta($user_id, 'first_name', $first_name);
 							update_user_meta($user_id, 'last_name', $last_name);
+						}
+						
+						if(in_array('company', $instance['registration_fields']))
+						{
+							update_user_meta($user_id, 'profile_company', $profile_company);
 						}
 
 						$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with instructions on how to complete the registration.", 'lang_login');
@@ -1230,7 +1289,7 @@ class widget_registration_form extends WP_Widget
 					.show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true))
 					.show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => "name@domain.com", 'required' => true));
 
-					if($instance['registration_collect_name'] == 'yes')
+					if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
 					{
 						echo "<div class='flex_flow'>"
 							.show_textfield(array('name' => 'first_name', 'text' => __("First Name", 'lang_login'), 'value' => $first_name, 'placeholder' => "Jane", 'required' => true))
@@ -1238,14 +1297,53 @@ class widget_registration_form extends WP_Widget
 						."</div>";
 					}
 
+					if(in_array('company', $instance['registration_fields']))
+					{
+						echo "<div class='flex_flow'>"
+							.show_textfield(array('name' => 'profile_company', 'text' => __("Company", 'lang_login'), 'value' => $profile_company, 'required' => true))
+						."</div>";
+					}
+
 					do_action('register_form');
 
-					echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"))
-					."<div class='form_button'>"
+					if(is_user_logged_in())
+					{
+						if(IS_ADMIN)
+						{
+							$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false, 'exclude' => array('administrator')));
+
+							if(count($arr_data) > 1)
+							{
+								echo show_select(array('data' => $arr_data, 'name' => 'role', 'text' => __("Role", 'lang_login'), 'value' => $role));
+							}
+
+							else
+							{
+								foreach($arr_data as $key => $value)
+								{
+									echo input_hidden(array('name' => 'role', 'value' => $key));
+								}
+							}
+
+							//echo show_checkbox(array('name' => 'send_email', 'text' => __("Send e-mail to user", 'lang_login'), 'value' => 1, 'compare' => $send_email));
+						}
+					}
+
+					else
+					{
+						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
+					}
+
+					echo "<div class='form_button'>"
 						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
-					."</div>
-					<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>
-				</form>";
+					."</div>";
+
+					if(!is_user_logged_in())
+					{
+						echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
+					}
+
+				echo "</form>";
 			}
 
 		echo $after_widget;
@@ -1259,6 +1357,7 @@ class widget_registration_form extends WP_Widget
 
 		$instance['registration_heading'] = sanitize_text_field($new_instance['registration_heading']);
 		$instance['registration_collect_name'] = sanitize_text_field($new_instance['registration_collect_name']);
+		$instance['registration_fields'] = is_array($new_instance['registration_fields']) ? $new_instance['registration_fields'] : array();
 
 		return $instance;
 	}
@@ -1268,8 +1367,14 @@ class widget_registration_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
-			.show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']))
+			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"));
+
+			if($instance['registration_collect_name'] == 'yes' && (!is_array($instance['registration_fields']) || !in_array('full_name', $instance['registration_fields'])))
+			{
+				echo show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']));
+			}
+
+			echo show_select(array('data' => $this->get_fields_for_select(), 'name' => $this->get_field_name('registration_fields')."[]", 'text' => __("Fields to Display", 'lang_login'), 'value' => $instance['registration_fields']))
 		."</div>";
 	}
 }

@@ -42,12 +42,23 @@ jQuery(function($)
 		return false;
 	}
 
-	$(document).on('click', "button[name='btnDirectLogin']", function(e)
+	$(document).on('click', "button[name='btnDirectLoginCreate']", function(e)
 	{
 		run_ajax(
 		{
 			'button': $(e.currentTarget),
-			'action': 'get_direct_login_url',
+			'action': 'create_direct_login',
+			'user_id': $(e.currentTarget).attr('data-user-id'),
+			'selector': $("#direct_login_debug")
+		});
+	});
+
+	$(document).on('click', "button[name='btnDirectLoginRevoke']", function(e)
+	{
+		run_ajax(
+		{
+			'button': $(e.currentTarget),
+			'action': 'revoke_direct_login',
 			'user_id': $(e.currentTarget).attr('data-user-id'),
 			'selector': $("#direct_login_debug")
 		});
