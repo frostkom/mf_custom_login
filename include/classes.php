@@ -426,6 +426,11 @@ class mf_custom_login
 	{
 		$tags = array('[first_name]', '[user_login]', '[username]', '[user_email]', '[blog_title]', '[site_url]', '[confirm_link]', '[login_link]');
 
+		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		{
+			$tags[] = '[direct_link]';
+		}
+
 		echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
 	}
 
@@ -781,6 +786,11 @@ class mf_custom_login
 		$exclude[] = "[site_url]";			$include[] = $site_url;
 		$exclude[] = "[confirm_link]";		$include[] = $lost_password_url.(preg_match("/\?/", $lost_password_url) ? "&" : "?").$confirm_link_action;
 		$exclude[] = "[login_link]";		$include[] = $login_url;
+
+		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && preg_match("/\[direct_link]/", $string))
+		{
+			$exclude[] = "[direct_link]";		$include[] = $this->direct_link_url(array('user_data' => $user_data));
+		}
 
 		//retrieve_password_message
 		$exclude[] = "[blogname]";			$include[] = $blog_title; //Replace with blog_title
@@ -1269,7 +1279,7 @@ class widget_registration_form extends WP_Widget
 							update_user_meta($user_id, 'profile_company', $profile_company);
 						}
 
-						$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with instructions on how to complete the registration.", 'lang_login');
+						$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with login information.", 'lang_login');
 
 						$display_form = false;
 					}
