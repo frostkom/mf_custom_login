@@ -60,29 +60,13 @@ class mf_custom_login
 
 		$secure_cookie = '';
 
-		// If the user wants ssl but the session is not ssl, force a secure cookie.
-		/*if($data['user_login'] != '' && !force_ssl_admin())
-		{
-			$user_name = sanitize_user($data['user_login']);
-
-			$user = get_user_by((strpos($user_name, '@') ? 'email' : 'login'), $user_name);
-
-			if($user && get_user_option('use_ssl', $user->ID))
-			{
-				$secure_cookie = true;
-				force_ssl_admin(true);
-			}
-		}*/
-
-		//$reauth = empty($_REQUEST['reauth']) ? false : true;
-
 		$user = wp_signon(array('user_login' => $data['user_login'], 'user_password' => $data['user_pass'], 'remember' => $data['user_remember']), $secure_cookie);
 
 		$requested_redirect_to = check_var('redirect_to');
 
 		$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
 
-		if(!is_wp_error($user)) // && !$reauth
+		if(!is_wp_error($user))
 		{
 			if(empty($data['redirect_to']) || $data['redirect_to'] == 'wp-admin/' || $data['redirect_to'] == admin_url())
 			{
@@ -123,63 +107,6 @@ class mf_custom_login
 				break;
 			}
 		}
-
-		//$errors = $user;
-
-		/*if($interim_login)
-		{
-			if(!$errors->get_error_code())
-			{
-				$errors->add('expired', __('Your session has expired. Please log in to continue where you left off.'), 'message');
-			}
-		}
-
-		else
-		{
-			// Some parts of this script use the main login form to display a message
-			if(isset($_GET['loggedout']) && true == $_GET['loggedout'])
-			{
-				$errors->add('loggedout', __('You are now logged out.'), 'message');
-			}
-
-			else if(isset($_GET['registration']) && 'disabled' == $_GET['registration'])
-			{
-				$errors->add('registerdisabled', __('User registration is currently not allowed.'));
-			}
-
-			else if(isset($_GET['checkemail']) && 'confirm' == $_GET['checkemail'])
-			{
-				$errors->add('confirm', __('Check your email for the confirmation link.'), 'message');
-			}
-
-			else if(isset($_GET['checkemail']) && 'newpass' == $_GET['checkemail'])
-			{
-				$errors->add('newpass', __('Check your email for your new password.'), 'message');
-			}
-
-			else if(isset($_GET['checkemail']) && 'registered' == $_GET['checkemail'])
-			{
-				$errors->add('registered', __('Registration complete. Please check your email.'), 'message');
-			}
-
-			else if(strpos($data['redirect_to'], 'about.php?updated'))
-			{
-				$errors->add('updated', __('<strong>You have successfully updated WordPress!</strong> Please log back in to see what&#8217;s new.'), 'message' );
-			}
-		}
-
-		$errors = apply_filters('wp_login_errors', $errors, $data['redirect_to']);*/
-
-		// Clear any stale cookies.
-		/*if($reauth)
-		{
-			wp_clear_auth_cookie();
-		}*/
-
-		/*if(isset($_POST['log']))
-		{
-			$data['user_login'] = ('incorrect_password' == $errors->get_error_code() || 'empty_password' == $errors->get_error_code()) ? esc_attr(wp_unslash($_POST['log'])) : '';
-		}*/
 	}
 
 	function check_if_logged_in($data = array())
@@ -471,14 +398,11 @@ class mf_custom_login
 	{
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
-			// This will open up all direct links for users displayed in the table
-			//$actions['direct_link'] = "<a href='".$this->direct_link_url(array('user_data' => $user))."'>".__("Direct Link", 'lang_login')."</a>";
-
 			$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
 
 			if($meta_login_auth != '')
 			{
-				$actions['direct_link'] = "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user))."'>".__("Direct Link", 'lang_login')."</a>";
+				$actions['direct_link'] = "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user, 'type' => 'users'))."'>".__("Direct Link", 'lang_login')."</a>";
 			}
 		}
 
@@ -498,7 +422,7 @@ class mf_custom_login
 
 						if($meta_login_auth != '')
 						{
-							echo "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user))."'>".__("URL", 'lang_login')."</a>
+							echo "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user, 'type' => 'profile'))."'>".__("URL", 'lang_login')."</a>
 							<div>"
 								.show_submit(array('type' => 'button', 'name' => 'btnDirectLoginRevoke', 'text' => __("Revoke", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"))
 							."</div>";
@@ -717,6 +641,7 @@ class mf_custom_login
 	{
 		if(!isset($data['user_meta_exists'])){		$data['user_meta_exists'] = false;}
 		if(!isset($data['key'])){					$data['key'] = md5(AUTH_SALT.$data['user_data']->user_login.$data['user_data']->user_email);}
+		if(!isset($data['type'])){					$data['type'] = '';}
 
 		if($data['user_meta_exists'] == false)
 		{
@@ -730,11 +655,13 @@ class mf_custom_login
 			update_user_meta($data['user_data']->ID, 'meta_login_auth', $data['key']);
 		}
 
-		return network_site_url("wp-login.php?type=link&auth=".$data['key']."&username=".rawurlencode($data['user_data']->user_login), 'login');
+		return network_site_url(apply_filters('filter_direct_link_url', "wp-login.php?type=link&auth=".$data['key']."&username=".rawurlencode($data['user_data']->user_login), $data), 'login');
 	}
 
 	function direct_link_text($data)
 	{
+		$data['type'] = 'login';
+
 		$out = __("To login directly without setting a password, visit the following link. The link is personal and can only be used once. If this link falls into the wrong hands and you haven't used it they will be able to login to your account without a password.", 'lang_login').":"
 		."\r\n\r\n".$this->direct_link_url($data)."\r\n";
 
@@ -789,7 +716,7 @@ class mf_custom_login
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && preg_match("/\[direct_link]/", $string))
 		{
-			$exclude[] = "[direct_link]";		$include[] = $this->direct_link_url(array('user_data' => $user_data));
+			$exclude[] = "[direct_link]";		$include[] = $this->direct_link_url(array('user_data' => $user_data, 'type' => 'registration'));
 		}
 
 		//retrieve_password_message
@@ -909,7 +836,7 @@ class mf_custom_login
 				$user_data = get_userdata($user_id);
 
 				$result['success'] = true;
-				$result['message'] = "<a href='".$this->direct_link_url(array('user_data' => $user_data))."'>".__("URL", 'lang_login')."</a>";
+				$result['message'] = "<a href='".$this->direct_link_url(array('user_data' => $user_data, 'type' => 'profile'))."'>".__("URL", 'lang_login')."</a>";
 			}
 
 			else
@@ -939,7 +866,6 @@ class mf_custom_login
 				delete_user_meta($user_id, 'meta_login_auth');
 
 				$result['success'] = true;
-				//$result['message'] = "<a href='".$this->direct_link_url(array('user_data' => $user_data))."'>".__("URL", 'lang_login')."</a>";
 				$result['message'] = __("The direct login link has been revoked and can not be used anymore", 'lang_login');
 			}
 
@@ -1173,17 +1099,29 @@ class widget_registration_form extends WP_Widget
 
 		$this->arr_default = array(
 			'registration_heading' => '',
+			'registration_who_can' => '',
 			//'registration_above_form' => '',
 			'registration_collect_name' => 'no',
-			'registration_fields' => array(),
+			'registration_fields' => array('username'),
 		);
 
 		parent::__construct('registration-widget', __("Registration Form", 'lang_login'), $widget_ops);
 	}
 
+	function get_roles_for_select()
+	{
+		$arr_data = array();
+		$arr_data[''] = "-- ".__("All", 'lang_login')." --";
+
+		$arr_data = get_roles_for_select(array('array' => $arr_data, 'add_choose_here' => false));
+
+		return $arr_data;
+	}
+
 	function get_fields_for_select()
 	{
 		return array(
+			'username' => __("Username", 'lang_login'),
 			'full_name' => __("Full Name", 'lang_login'),
 			'company' => __("Company", 'lang_login'),
 		);
@@ -1200,7 +1138,18 @@ class widget_registration_form extends WP_Widget
 		$obj_custom_login = new mf_custom_login();
 		$obj_custom_login->check_if_logged_in();
 
-		$user_login = check_var('user_login');
+		$is_allowed = (!isset($instance['registration_who_can']) || $instance['registration_who_can'] == '' || current_user_can($instance['registration_who_can']));
+
+		if(in_array('username', $instance['registration_fields']))
+		{
+			$user_login = check_var('user_login');
+		}
+
+		else
+		{
+			$user_login = "";
+		}
+
 		$user_email = check_var('user_email', 'email');
 
 		if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
@@ -1215,12 +1164,10 @@ class widget_registration_form extends WP_Widget
 		}
 
 		$role = get_option('default_role');
-		//$send_email = true;
 
 		if(is_user_logged_in() && IS_ADMIN)
 		{
 			$role = check_var('role', 'char', true, $role);
-			//$send_email = check_var('send_email', 'int');
 		}
 
 		echo $before_widget;
@@ -1234,56 +1181,79 @@ class widget_registration_form extends WP_Widget
 
 			$display_form = true;
 
-			if(isset($_POST['btnSendRegistration']))
+			if($is_allowed)
 			{
-				if($user_login == '' || $user_email == '')
+				if(isset($_POST['btnSendRegistration']))
 				{
-					$error_text = __("You have to enter both Username and E-mail, then I can process the registration for you", 'lang_login');
-				}
-
-				else
-				{
-					$user_login = strtolower($user_login);
-					$user_email = strtolower($user_email);
-
-					/*if(is_user_logged_in() && IS_ADMIN)
+					if($user_login == '')
 					{
-						//$send_email
-					}*/
-
-					$errors = register_new_user($user_login, $user_email);
-
-					if(is_wp_error($errors))
-					{
-						foreach($errors->errors as $error)
+						if(in_array('full_name', $instance['registration_fields']))
 						{
-							$error_text = $error[0];
+							$user_login .= ($user_login != '' ? "_" : "").$first_name."_".$last_name;
 						}
+
+						if(in_array('company', $instance['registration_fields']))
+						{
+							$user_login .= ($user_login != '' ? "_" : "").$profile_company;
+						}
+
+						if($user_login == '')
+						{
+							$user_login = $user_email;
+						}
+
+						$user_login = sanitize_title_with_dashes(sanitize_title($user_login));
+					}
+
+					if($user_login == '' || $user_email == '')
+					{
+						$error_text = __("You have to enter both Username and E-mail, then I can process the registration for you", 'lang_login');
 					}
 
 					else
 					{
-						$user_id = $errors;
+						$user_login = strtolower($user_login);
+						$user_email = strtolower($user_email);
 
-						$user = new WP_User($user_id);
-						$user->set_role($role);
+						$errors = register_new_user($user_login, $user_email);
 
-						if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
+						if(is_wp_error($errors))
 						{
-							update_user_meta($user_id, 'first_name', $first_name);
-							update_user_meta($user_id, 'last_name', $last_name);
-						}
-						
-						if(in_array('company', $instance['registration_fields']))
-						{
-							update_user_meta($user_id, 'profile_company', $profile_company);
+							foreach($errors->errors as $error)
+							{
+								$error_text = $error[0];
+							}
 						}
 
-						$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with login information.", 'lang_login');
+						else
+						{
+							$user_id = $errors;
 
-						$display_form = false;
+							$user = new WP_User($user_id);
+							$user->set_role($role);
+
+							if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
+							{
+								update_user_meta($user_id, 'first_name', $first_name);
+								update_user_meta($user_id, 'last_name', $last_name);
+							}
+
+							if(in_array('company', $instance['registration_fields']))
+							{
+								update_user_meta($user_id, 'profile_company', $profile_company);
+							}
+
+							$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with login information.", 'lang_login');
+							$display_form = false;
+						}
 					}
 				}
+			}
+
+			else
+			{
+				$error_text = __("You do not have the rights to view this form", 'lang_login');
+				$display_form = false;
 			}
 
 			echo get_notification();
@@ -1295,9 +1265,14 @@ class widget_registration_form extends WP_Widget
 					echo apply_filters('the_content', $instance['registration_above_form']);
 				}*/
 
-				echo "<form method='post' action='' class='mf_form'>"
-					.show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true))
-					.show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => "name@domain.com", 'required' => true));
+				echo "<form method='post' action='' class='mf_form'>";
+
+					if(in_array('username', $instance['registration_fields']))
+					{
+						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true));
+					}
+
+					echo show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => "name@domain.com", 'required' => true));
 
 					if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
 					{
@@ -1334,8 +1309,6 @@ class widget_registration_form extends WP_Widget
 									echo input_hidden(array('name' => 'role', 'value' => $key));
 								}
 							}
-
-							//echo show_checkbox(array('name' => 'send_email', 'text' => __("Send e-mail to user", 'lang_login'), 'value' => 1, 'compare' => $send_email));
 						}
 					}
 
@@ -1366,6 +1339,7 @@ class widget_registration_form extends WP_Widget
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
 		$instance['registration_heading'] = sanitize_text_field($new_instance['registration_heading']);
+		$instance['registration_who_can'] = sanitize_text_field($new_instance['registration_who_can']);
 		$instance['registration_collect_name'] = sanitize_text_field($new_instance['registration_collect_name']);
 		$instance['registration_fields'] = is_array($new_instance['registration_fields']) ? $new_instance['registration_fields'] : array();
 
@@ -1377,7 +1351,8 @@ class widget_registration_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"));
+			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
+			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_calendly'), 'value' => $instance['registration_who_can']));
 
 			if($instance['registration_collect_name'] == 'yes' && (!is_array($instance['registration_fields']) || !in_array('full_name', $instance['registration_fields'])))
 			{
