@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 2.7.7
+Version: 2.7.9
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -45,9 +45,6 @@ else
 	add_action('wp_login', array($obj_custom_login, 'wp_login'));
 	add_action('wp_logout', array($obj_custom_login, 'wp_logout'));
 
-	add_filter('wp_new_user_notification_email', array($obj_custom_login, 'wp_new_user_notification_email'), 10, 2);
-	add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
-
 	add_action('login_form', array($obj_custom_login, 'login_form'));
 
 	add_action('wp_head', array($obj_custom_login, 'wp_head'), 0);
@@ -55,7 +52,10 @@ else
 
 add_filter('login_url', array($obj_custom_login, 'login_url'), 10, 2);
 add_filter('register_url', array($obj_custom_login, 'register_url'), 10, 2);
+add_filter('wp_new_user_notification_email_admin', array($obj_custom_login, 'wp_new_user_notification_email_admin'), 10, 2);
+add_filter('wp_new_user_notification_email', array($obj_custom_login, 'wp_new_user_notification_email'), 10, 2);
 add_filter('lostpassword_url', array($obj_custom_login, 'lostpassword_url'), 10, 2);
+add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
 add_filter('logout_url', array($obj_custom_login, 'logout_url'), 10, 2);
 
 add_action('wp_ajax_create_direct_login', array($obj_custom_login, 'create_direct_login'));
@@ -81,7 +81,7 @@ function activate_custom_login()
 function uninstall_custom_login()
 {
 	mf_uninstall_plugin(array(
-		'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password'),
+		'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password'),
 		'meta' => array('meta_login_auth'),
 	));
 }

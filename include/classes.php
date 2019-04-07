@@ -217,6 +217,7 @@ class mf_custom_login
 
 		if(get_option('users_can_register'))
 		{
+			$arr_settings['setting_custom_login_email_admin_registration'] = __("Registration Email Content to Admin", 'lang_login');
 			$arr_settings['setting_custom_login_email_registration'] = __("Registration Email Content", 'lang_login');
 		}
 
@@ -351,14 +352,27 @@ class mf_custom_login
 
 	function setting_custom_login_info_callback()
 	{
-		$tags = array('[first_name]', '[user_login]', '[username]', '[user_email]', '[blog_title]', '[site_url]', '[confirm_link]', '[login_link]');
+		$tags = array("[first_name]", "[user_login]", "[username]", "[user_email]", "[blog_title]", "[site_url]", "[confirm_link]", "[login_link]");
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
-			$tags[] = '[direct_link]';
+			$tags[] = "[direct_link]";
+
+			if(apply_filters('get_widget_search', 'registration-widget') > 0)
+			{
+				$tags[] = "[direct_registration_link]";
+			}
 		}
 
 		echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
+	}
+
+	function setting_custom_login_email_admin_registration_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option_or_default($setting_key, sprintf(__("A new user (%s) has been created", 'lang_login'), "[user_login]"));
+
+		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
 	}
 
 	function setting_custom_login_email_registration_callback()
@@ -422,7 +436,7 @@ class mf_custom_login
 
 						if($meta_login_auth != '')
 						{
-							echo "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user, 'type' => 'profile'))."'>".__("URL", 'lang_login')."</a>
+							echo "<p><a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user, 'type' => 'profile'))."'>".__("URL", 'lang_login')."</a></p>
 							<div>"
 								.show_submit(array('type' => 'button', 'name' => 'btnDirectLoginRevoke', 'text' => __("Revoke", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"))
 							."</div>";
@@ -716,7 +730,26 @@ class mf_custom_login
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && preg_match("/\[direct_link]/", $string))
 		{
-			$exclude[] = "[direct_link]";		$include[] = $this->direct_link_url(array('user_data' => $user_data, 'type' => 'registration'));
+			$direct_link = $this->direct_link_url(array('user_data' => $user_data, 'type' => 'registration'));
+
+			$exclude[] = "[direct_link]";		$include[] = $direct_link;
+
+			$direct_registration_link = "";
+
+			if(isset($user_data->roles) && in_array('administrator', $user_data->roles))
+			{
+				$registration_post_id = apply_filters('get_widget_search', 'registration-widget');
+
+				if($registration_post_id > 0)
+				{
+					$registration_post_url = get_permalink($registration_post_id);
+					$registration_post_url = str_replace(get_site_url(), "", $registration_post_url);
+					
+					$direct_registration_link = $direct_link.(preg_match("/\?/", $direct_link) ? "&" : "?")."redirect_to=".$registration_post_url;
+				}
+			}
+			
+			$exclude[] = "[direct_registration_link]";		$include[] = $direct_registration_link;
 		}
 
 		//retrieve_password_message
@@ -727,13 +760,25 @@ class mf_custom_login
 		return str_replace($exclude, $include, $string);
 	}
 
+	function wp_new_user_notification_email_admin($array, $user_data)
+	{
+		$option = get_option('setting_custom_login_email_admin_registration');
+
+		if($option != '')
+		{
+			$array['message'] = $this->email_replace_shortcodes($option, $user_data);
+		}
+
+		return $array;
+	}
+
 	function wp_new_user_notification_email($array, $user_data)
 	{
-		$setting_custom_login_email_registration = get_option('setting_custom_login_email_registration');
+		$option = get_option('setting_custom_login_email_registration');
 
-		if($setting_custom_login_email_registration != '')
+		if($option != '')
 		{
-			$array['message'] = $this->email_replace_shortcodes($setting_custom_login_email_registration, $user_data);
+			$array['message'] = $this->email_replace_shortcodes($option, $user_data);
 		}
 
 		return $array;
@@ -741,11 +786,11 @@ class mf_custom_login
 
 	function retrieve_password_message($message, $key, $user_login, $user)
 	{
-		$setting_custom_login_email_lost_password = get_option('setting_custom_login_email_lost_password');
+		$option = get_option('setting_custom_login_email_lost_password');
 
-		if($setting_custom_login_email_lost_password != '')
+		if($option != '')
 		{
-			$message = $this->email_replace_shortcodes($setting_custom_login_email_lost_password, $user, $key);
+			$message = $this->email_replace_shortcodes($option, $user, $key);
 		}
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
