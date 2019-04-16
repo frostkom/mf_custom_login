@@ -744,11 +744,11 @@ class mf_custom_login
 				{
 					$registration_post_url = get_permalink($registration_post_id);
 					$registration_post_url = str_replace(get_site_url(), "", $registration_post_url);
-					
+
 					$direct_registration_link = $direct_link.(preg_match("/\?/", $direct_link) ? "&" : "?")."redirect_to=".$registration_post_url;
 				}
 			}
-			
+
 			$exclude[] = "[direct_registration_link]";		$include[] = $direct_registration_link;
 		}
 
@@ -1397,7 +1397,7 @@ class widget_registration_form extends WP_Widget
 
 		echo "<div class='mf_form'>"
 			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
-			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_calendly'), 'value' => $instance['registration_who_can']));
+			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_login'), 'value' => $instance['registration_who_can']));
 
 			if($instance['registration_collect_name'] == 'yes' && (!is_array($instance['registration_fields']) || !in_array('full_name', $instance['registration_fields'])))
 			{
