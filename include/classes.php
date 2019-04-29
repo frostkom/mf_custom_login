@@ -206,11 +206,17 @@ class mf_custom_login
 		if(substr(get_home_url(), 0, 5) == 'https')
 		{
 			$arr_settings['setting_custom_login_allow_api'] = __("Allow API Login", 'lang_login');
+
+			if(isset($_SERVER['PHP_AUTH_USER']))
+			{
+				$arr_settings['setting_custom_login_allow_server_auth'] = __("Allow Server Authentication", 'lang_login');
+			}
 		}
 
 		else
 		{
 			delete_option('setting_custom_login_allow_api');
+			delete_option('setting_custom_login_allow_server_auth');
 		}
 
 		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
@@ -346,8 +352,16 @@ class mf_custom_login
 
 			$user_data = get_userdata(get_current_user_id());
 
-			echo "<p>".sprintf(__("By sending a request to %s with %s and %s as %s you will get a success or failure as a response", 'lang_login'), "<code>".$api_url."</code>", "<code>".'user_login'."</code>", "<code>".'user_pass'."</code>", "<code>".'POST'."</code>")."</p>";
+			echo "<p>".sprintf(__("By sending a request to %s with %s and %s as %s you will get a success or failure as a response", 'lang_login'), "<code>".$api_url."</code>", "<code>user_login</code>", "<code>user_pass</code>", "<code>POST</code>")."</p>";
 		}
+	}
+
+	function setting_custom_login_allow_server_auth_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key, 'no');
+
+		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
 	}
 
 	function setting_custom_login_info_callback()
@@ -868,6 +882,25 @@ class mf_custom_login
 		}
 
 		return $url;
+	}
+
+	function determine_current_user($user_id)
+	{
+		if(!($user_id > 0) && isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != '' && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_PW'] != '' && get_option('setting_custom_login_allow_server_auth') == 'yes')
+		{
+			$user_data = get_user_by('login', $_SERVER['PHP_AUTH_USER']);
+
+			if(isset($user_data->ID) && $user_data->ID > 0)
+			{
+				// Would this even matter since you are allowed on the server?
+				/*if(isset($user_data->user_pass) && wp_check_password($_SERVER['PHP_AUTH_PW'], $user_data->user_pass))
+				{*/
+					$user_id = $user_data->ID;
+				//}
+			}
+		}
+
+		return $user_id;
 	}
 
 	function create_direct_login()
