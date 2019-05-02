@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-16 07:02+0100\n"
+"POT-Creation-Date: 2019-04-29 14:22+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -68,6 +68,9 @@ msgstr "Direktlänk går ut efter inloggning"
 
 msgid "Allow API Login"
 msgstr "Tillåt login via API"
+
+msgid "Allow Server Authentication"
+msgstr "Tillåt inloggning via servern"
 
 msgid "Registration Email Content to Admin"
 msgstr "Registreringsmeddelande till administratör"
