@@ -513,6 +513,11 @@ class mf_custom_login
 		}
 	}
 
+	function login_headertitle()
+	{
+		return get_bloginfo('name');
+	}
+
 	function login_init()
 	{
 		$this->combined_head();
@@ -1034,7 +1039,6 @@ class widget_login_form extends WP_Widget
 		global $error_text, $done_text;
 
 		extract($args);
-
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		$action = check_var('action');
@@ -1147,7 +1151,6 @@ class widget_login_form extends WP_Widget
 	function update($new_instance, $old_instance)
 	{
 		$instance = $old_instance;
-
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
 		$instance['login_heading'] = sanitize_text_field($new_instance['login_heading']);
@@ -1210,7 +1213,6 @@ class widget_registration_form extends WP_Widget
 		global $error_text, $done_text;
 
 		extract($args);
-
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		$obj_custom_login = new mf_custom_login();
@@ -1413,7 +1415,6 @@ class widget_registration_form extends WP_Widget
 	function update($new_instance, $old_instance)
 	{
 		$instance = $old_instance;
-
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
 		$instance['registration_heading'] = sanitize_text_field($new_instance['registration_heading']);
@@ -1534,7 +1535,6 @@ class widget_lost_password_form extends WP_Widget
 		global $error_text, $done_text;
 
 		extract($args);
-
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		$action = check_var('action');
@@ -1687,7 +1687,6 @@ class widget_lost_password_form extends WP_Widget
 	function update($new_instance, $old_instance)
 	{
 		$instance = $old_instance;
-
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
 		$instance['lost_password_heading'] = sanitize_text_field($new_instance['lost_password_heading']);

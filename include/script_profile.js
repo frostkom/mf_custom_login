@@ -6,9 +6,9 @@ jQuery(function($)
 
 		$.ajax(
 		{
-			type: "post",
-			dataType: "json",
 			url: script_login_profile.ajax_url,
+			type: 'post',
+			dataType: 'json',
 			data: {
 				action: obj.action,
 				user_id: obj.user_id
@@ -17,7 +17,7 @@ jQuery(function($)
 			{
 				obj.selector.empty();
 
-				if(obj.button.is('a'))
+				if(obj.button.is("a"))
 				{
 					obj.button.addClass('hide');
 				}

@@ -36,9 +36,9 @@ jQuery(function($)
 			{
 				$.ajax(
 				{
-					type: "post",
-					dataType: "json",
 					url: script_custom_login.ajax_url,
+					type: 'post',
+					dataType: 'json',
 					data: {
 						action: "send_direct_link_email",
 						username: dom_user
