@@ -424,7 +424,7 @@ class mf_custom_login
 
 	function user_row_actions($actions, $user)
 	{
-		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && current_user_can('edit_user') && isset($user->roles[0]) && $user->roles[0] != '')
 		{
 			$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
 
@@ -513,7 +513,7 @@ class mf_custom_login
 		}
 	}
 
-	function login_headertitle()
+	function login_headertext()
 	{
 		return get_bloginfo('name');
 	}
