@@ -840,6 +840,32 @@ class mf_custom_login
 		}
 	}
 
+	function is_public_page($out)
+	{
+		$site_url = get_site_url();
+		@list($request_uri, $rest) = explode("?", $_SERVER['REQUEST_URI'], 2);
+
+		$arr_widget_search = array('login-widget', 'registration-widget', 'lost-password-widget');
+
+		foreach($arr_widget_search as $widget_key)
+		{
+			if($out == true)
+			{
+				$post_id = apply_filters('get_widget_search', $widget_key);
+
+				if($post_id > 0)
+				{
+					if(str_replace($site_url, "", get_permalink($post_id)) == $request_uri)
+					{
+						$out = false;
+					}
+				}
+			}
+		}
+
+		return $out;
+	}
+
 	function login_url($url)
 	{
 		$post_id = apply_filters('get_widget_search', 'login-widget');
