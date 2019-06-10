@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-29 14:22+0100\n"
+"POT-Creation-Date: 2019-06-02 06:21+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -14,21 +14,6 @@ msgstr ""
 "X-Poedit-KeywordsList: esc_html__;esc_html_e;esc_attr__;esc_attr_e;__;_e\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
-
-msgid "You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s."
-msgstr "Du har inte skickat med korrekt inloggningsuppgifter. De ska skickas via %s med variablerna %s och %s."
-
-msgid "You are already logged in as %s"
-msgstr "Du är redan inloggad som %s"
-
-msgid "The API login is inactivated on this site"
-msgstr "API-login är inaktiverat på denna webbplats"
-
-msgid "You are not using SSL, therefor I cannot process your request"
-msgstr "Du använder inte SSL, därför kan jag inte genomföra din önskan"
-
-msgid "Unknown Action"
-msgstr "Okänd åtgärd"
 
 msgid "You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?"
 msgstr "Du är redan inloggad som %s. Vill du gå till %sadmin%s eller %slogga ut%s?"
@@ -71,6 +56,9 @@ msgstr "Tillåt login via API"
 
 msgid "Allow Server Authentication"
 msgstr "Tillåt inloggning via servern"
+
+msgid "Information"
+msgstr "Information"
 
 msgid "Registration Email Content to Admin"
 msgstr "Registreringsmeddelande till administratör"
@@ -290,4 +278,19 @@ msgstr "Jag hittade kontot som du letade efter. Var vänlig kolla din inkorg fö
 
 msgid "Get New Password"
 msgstr "Hämta nytt lösenord"
+
+msgid "You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s."
+msgstr "Du har inte skickat med korrekt inloggningsuppgifter. De ska skickas via %s med variablerna %s och %s."
+
+msgid "You are already logged in as %s"
+msgstr "Du är redan inloggad som %s"
+
+msgid "The API login is inactivated on this site"
+msgstr "API-login är inaktiverat på denna webbplats"
+
+msgid "You are not using SSL, therefor I cannot process your request"
+msgstr "Du använder inte SSL, därför kan jag inte genomföra din önskan"
+
+msgid "Unknown Action"
+msgstr "Okänd åtgärd"
 
