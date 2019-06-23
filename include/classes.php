@@ -839,6 +839,21 @@ class mf_custom_login
 			$this->combined_head();
 		}
 	}
+	
+	function body_class($classes)
+	{
+		global $post;
+
+		if(isset($post) && isset($post->ID) && $post->ID > 0)
+		{
+			if(apply_filters('get_widget_search', 'login-widget') == $post->ID || apply_filters('get_widget_search', 'registration-widget') == $post->ID || apply_filters('get_widget_search', 'lost-password-widget') == $post->ID)
+			{
+				$classes[] = "is_login_page";
+			}
+		}
+
+		return $classes;
+	}
 
 	function is_public_page($out)
 	{
@@ -1053,6 +1068,7 @@ class widget_login_form extends WP_Widget
 		);
 
 		$this->arr_default = array(
+			'login_image' => '',
 			'login_heading' => '',
 			//'login_above_form' => '',
 		);
@@ -1078,6 +1094,11 @@ class widget_login_form extends WP_Widget
 		//do_action('login_header');
 
 		echo $before_widget;
+
+			if($instance['login_image'] != '')
+			{
+				echo "<p><img src='".$instance['login_image']."'></p>";
+			}
 
 			if($instance['login_heading'] != '')
 			{
@@ -1179,6 +1200,7 @@ class widget_login_form extends WP_Widget
 		$instance = $old_instance;
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
+		$instance['login_image'] = sanitize_text_field($new_instance['login_image']);
 		$instance['login_heading'] = sanitize_text_field($new_instance['login_heading']);
 		//$instance['login_above_form'] = sanitize_text_field($new_instance['login_above_form']);
 
@@ -1190,6 +1212,7 @@ class widget_login_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
+			.get_media_library(array('name' => $this->get_field_name('login_image'), 'value' => $instance['login_image'], 'type' => 'image'))
 			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='registration-title'"))
 		."</div>";
 	}
@@ -1205,6 +1228,7 @@ class widget_registration_form extends WP_Widget
 		);
 
 		$this->arr_default = array(
+			'registration_image' => '',
 			'registration_heading' => '',
 			'registration_who_can' => '',
 			//'registration_above_form' => '',
@@ -1277,6 +1301,11 @@ class widget_registration_form extends WP_Widget
 		}
 
 		echo $before_widget;
+
+			if($instance['registration_image'] != '')
+			{
+				echo "<p><img src='".$instance['registration_image']."'></p>";
+			}
 
 			if($instance['registration_heading'] != '')
 			{
@@ -1443,6 +1472,7 @@ class widget_registration_form extends WP_Widget
 		$instance = $old_instance;
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
+		$instance['registration_image'] = sanitize_text_field($new_instance['registration_image']);
 		$instance['registration_heading'] = sanitize_text_field($new_instance['registration_heading']);
 		$instance['registration_who_can'] = sanitize_text_field($new_instance['registration_who_can']);
 		$instance['registration_collect_name'] = sanitize_text_field($new_instance['registration_collect_name']);
@@ -1456,6 +1486,7 @@ class widget_registration_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
+			.get_media_library(array('name' => $this->get_field_name('registration_image'), 'value' => $instance['registration_image'], 'type' => 'image'))
 			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
 			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_login'), 'value' => $instance['registration_who_can']));
 
@@ -1479,6 +1510,7 @@ class widget_lost_password_form extends WP_Widget
 		);
 
 		$this->arr_default = array(
+			'lost_password_image' => '',
 			'lost_password_heading' => '',
 			//'lost_password_above_form' => '',
 		);
@@ -1568,6 +1600,11 @@ class widget_lost_password_form extends WP_Widget
 		echo $before_widget;
 
 			//do_action('lost_password');
+			
+			if($instance['lost_password_image'] != '')
+			{
+				echo "<p><img src='".$instance['lost_password_image']."'></p>";
+			}
 
 			if($instance['lost_password_heading'] != '')
 			{
@@ -1715,6 +1752,7 @@ class widget_lost_password_form extends WP_Widget
 		$instance = $old_instance;
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
+		$instance['lost_password_image'] = sanitize_text_field($new_instance['lost_password_image']);
 		$instance['lost_password_heading'] = sanitize_text_field($new_instance['lost_password_heading']);
 
 		return $instance;
@@ -1725,6 +1763,7 @@ class widget_lost_password_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
+			.get_media_library(array('name' => $this->get_field_name('lost_password_image'), 'value' => $instance['lost_password_image'], 'type' => 'image'))
 			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='registration-title'"))
 		."</div>";
 	}
