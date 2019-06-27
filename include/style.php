@@ -160,13 +160,9 @@ if($setting_custom_login_page > 0)
 }
 ############################
 
-// Custom Login
+// Widget Styles
 ############################
-$login_post_id = apply_filters('get_widget_search', 'login-widget');
-$registration_post_id = apply_filters('get_widget_search', 'registration-widget');
-$lost_password_post_id = apply_filters('get_widget_search', 'lost-password-widget');
-
-if($login_post_id > 0)
+if(apply_filters('get_widget_search', 'login-widget') > 0)
 {
 	$out_media_all .= ".login_form
 	{
@@ -199,7 +195,7 @@ if($login_post_id > 0)
 	}";
 }
 
-if($registration_post_id > 0)
+if(apply_filters('get_widget_search', 'registration-widget') > 0)
 {
 	$out_media_all .= ".registration_form
 	{
@@ -224,7 +220,7 @@ if($registration_post_id > 0)
 		}";
 }
 
-if($lost_password_post_id > 0)
+if(apply_filters('get_widget_search', 'lost-password-widget') > 0)
 {
 	$out_media_all .= ".lost_password_form
 	{
@@ -241,6 +237,55 @@ if($lost_password_post_id > 0)
 		{
 			margin-top: .5em;
 			text-align: center;
+		}";
+}
+
+if(apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
+{
+	$out_media_all .= "header .logged_in_info
+	{
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: -webkit-flex;
+		display: flex;
+		float: right;
+	}
+
+		header .logged_in_info > *
+		{
+			display: block;
+			-webkit-box-flex: 1 1 0;
+			-webkit-flex: 1 1 0;
+			-ms-flex: 1 1 0;
+			flex: 1 1 0;
+		}
+
+			header .logged_in_info > * + *
+			{
+				margin-left: 1em;
+			}
+
+		.logged_in_info ul
+		{
+			align-self: center;
+			font-size: 1.4em;
+			list-style: none;
+		}
+
+			.logged_in_info ul li
+			{
+				white-space: nowrap;
+			}
+
+				.logged_in_info ul li + li
+				{
+					margin-top: .3em;
+				}
+
+		.logged_in_info img
+		{
+			border: .2em solid #ccc;
+			border-radius: 50%;
 		}";
 }
 ############################

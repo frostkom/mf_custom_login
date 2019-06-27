@@ -137,13 +137,14 @@ class mf_custom_login
 
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
-		$login_post_id = apply_filters('get_widget_search', 'login-widget');
-		$registration_post_id = apply_filters('get_widget_search', 'registration-widget');
-		$lost_password_post_id = apply_filters('get_widget_search', 'lost-password-widget');
+		$has_login_widget = (apply_filters('get_widget_search', 'login-widget') > 0);
+		$users_can_register = get_option('users_can_register');
+		$has_registration_widget = ($users_can_register ? (apply_filters('get_widget_search', 'registration-widget') > 0) : false);
+		$has_lost_password_post_widget = (apply_filters('get_widget_search', 'lost-password-widget'));
 
 		$arr_settings = array();
 
-		if(!($login_post_id > 0) && !($registration_post_id > 0) && !($lost_password_post_id > 0))
+		if($has_login_widget == false && $has_registration_widget == false && $has_lost_password_post_widget == false)
 		{
 			if(is_plugin_active('mf_theme_core/index.php'))
 			{
@@ -156,7 +157,7 @@ class mf_custom_login
 			}
 		}
 
-		if(!($login_post_id > 0))
+		if($has_login_widget == false)
 		{
 			$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
 		}
@@ -165,23 +166,23 @@ class mf_custom_login
 		{
 			$arr_settings['users_can_register'] = __("Allow Registration", 'lang_login');
 
-			if(get_option('users_can_register'))
+			if($users_can_register)
 			{
 				$arr_settings['default_role'] = __("Default Role", 'lang_login');
 
-				if(!($registration_post_id > 0))
+				if($has_registration_widget == false)
 				{
 					$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 				}
 			}
 		}
 
-		else if(!($registration_post_id > 0))
+		else if($users_can_register && $has_registration_widget == false)
 		{
 			$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 		}
 
-		if(!($lost_password_post_id > 0))
+		if($has_lost_password_post_widget == false)
 		{
 			$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
 			$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
@@ -839,7 +840,7 @@ class mf_custom_login
 			$this->combined_head();
 		}
 	}
-	
+
 	function body_class($classes)
 	{
 		global $post;
@@ -1055,6 +1056,7 @@ class mf_custom_login
 		}
 
 		register_widget('widget_lost_password_form');
+		register_widget('widget_logged_in_info');
 	}
 }
 
@@ -1600,7 +1602,7 @@ class widget_lost_password_form extends WP_Widget
 		echo $before_widget;
 
 			//do_action('lost_password');
-			
+
 			if($instance['lost_password_image'] != '')
 			{
 				echo "<p><img src='".$instance['lost_password_image']."'></p>";
@@ -1765,6 +1767,125 @@ class widget_lost_password_form extends WP_Widget
 		echo "<div class='mf_form'>"
 			.get_media_library(array('name' => $this->get_field_name('lost_password_image'), 'value' => $instance['lost_password_image'], 'type' => 'image'))
 			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='registration-title'"))
+		."</div>";
+	}
+}
+
+class widget_logged_in_info extends WP_Widget
+{
+	function __construct()
+	{
+		$widget_ops = array(
+			'classname' => 'logged_in_info',
+			'description' => __("Display Information About the Logged in User", 'lang_login')
+		);
+
+		$this->arr_default = array(
+			//'logged_in_info_heading' => '',
+			'logged_in_info_display' => array(),
+		);
+
+		parent::__construct('logged-in-info-widget', __("Logged in Information", 'lang_login'), $widget_ops);
+	}
+
+	function get_user_info_for_select()
+	{
+		$arr_data = array(
+			'name' => __("Name", 'lang_login'),
+			'role' => " - ".__("Role", 'lang_login'),
+			'profile' => __("Profile", 'lang_login'),
+			'logout' => __("Log Out", 'lang_login'),
+			'image' => __("Image", 'lang_login'),
+		);
+
+		return $arr_data;
+	}
+
+	function widget($args, $instance)
+	{
+		extract($args);
+		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		if(is_user_logged_in())
+		{
+			echo $before_widget;
+
+				/*if($instance['logged_in_info_heading'] != '')
+				{
+					echo $before_title
+						.$instance['logged_in_info_heading']
+					.$after_title;
+				}*/
+
+				echo "<div class='logged_in_info section'>";
+
+					if(count($instance['logged_in_info_display']) == 0 || in_array('name', $instance['logged_in_info_display']) || in_array('profile', $instance['logged_in_info_display']) || in_array('logout', $instance['logged_in_info_display']))
+					{
+						echo "<ul>";
+
+							if(count($instance['logged_in_info_display']) == 0 || in_array('name', $instance['logged_in_info_display']))
+							{
+								$user_data = get_userdata(get_current_user_id());
+								$display_name = $user_data->display_name; //apply_filters('filter_admin_display_name', )
+
+								echo "<li>"
+									.$display_name; //<i class='fa fa-user'></i> 
+
+									if(in_array('role', $instance['logged_in_info_display']))
+									{
+										$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
+										$user_role = get_current_user_role(get_current_user_id());
+
+										echo " (".$arr_roles[$user_role].")";
+									}
+
+								echo "</li>";
+							}
+
+							if(count($instance['logged_in_info_display']) == 0 || in_array('profile', $instance['logged_in_info_display']))
+							{
+								echo "<li><a href='".get_edit_profile_url()."'>".__("Your Profile", 'lang_login')."</a></li>";
+							}
+
+							if(count($instance['logged_in_info_display']) == 0 || in_array('logout', $instance['logged_in_info_display']))
+							{
+								echo "<li><a href='".wp_logout_url()."'>".__("Log Out", 'lang_login')."</a></li>";
+							}
+
+						echo "</ul>";
+					}
+
+					if(count($instance['logged_in_info_display']) == 0 || in_array('image', $instance['logged_in_info_display']))
+					{
+						$user_data = get_userdata(get_current_user_id());
+						$display_name = $user_data->display_name;
+
+						echo "<div><img src='".get_avatar_url(get_current_user_id(), array('size' => 60))."' alt='".sprintf(__("Profile Image for %s", 'lang_login'), $display_name)."'></div>";
+					}
+
+				echo "</div>"
+			.$after_widget;
+		}
+	}
+
+	function update($new_instance, $old_instance)
+	{
+		$instance = $old_instance;
+		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
+
+		//$instance['logged_in_info_heading'] = sanitize_text_field($new_instance['logged_in_info_heading']);
+		$instance['logged_in_info_display'] = is_array($new_instance['logged_in_info_display']) ? $new_instance['logged_in_info_display'] : array();
+
+		return $instance;
+	}
+
+	function form($instance)
+	{
+		$instance = wp_parse_args((array)$instance, $this->arr_default);
+
+		echo "<div class='mf_form'>"
+			//.show_textfield(array('name' => $this->get_field_name('logged_in_info_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['logged_in_info_heading'], 'xtra' => " id='registration-title'"))
+			.show_select(array('data' => $this->get_user_info_for_select(), 'name' => $this->get_field_name('logged_in_info_display')."[]", 'value' => $instance['logged_in_info_display']))
 		."</div>";
 	}
 }

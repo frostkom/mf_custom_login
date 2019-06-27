@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-02 06:21+0100\n"
+"POT-Creation-Date: 2019-06-27 07:47+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -56,9 +56,6 @@ msgstr "Tillåt login via API"
 
 msgid "Allow Server Authentication"
 msgstr "Tillåt inloggning via servern"
-
-msgid "Information"
-msgstr "Information"
 
 msgid "Registration Email Content to Admin"
 msgstr "Registreringsmeddelande till administratör"
@@ -278,6 +275,30 @@ msgstr "Jag hittade kontot som du letade efter. Var vänlig kolla din inkorg fö
 
 msgid "Get New Password"
 msgstr "Hämta nytt lösenord"
+
+msgid "Display Information About the Logged in User"
+msgstr "Visa information om den inloggade användaren"
+
+msgid "Logged in Information"
+msgstr "Information om inloggad användare"
+
+msgid "Name"
+msgstr "Namn"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Log Out"
+msgstr "Logga ut"
+
+msgid "Image"
+msgstr "Bild"
+
+msgid "Your Profile"
+msgstr "Din profil"
+
+msgid "Profile Image for %s"
+msgstr "Profilbild för %s"
 
 msgid "You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s."
 msgstr "Du har inte skickat med korrekt inloggningsuppgifter. De ska skickas via %s med variablerna %s och %s."
