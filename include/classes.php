@@ -1104,6 +1104,8 @@ class widget_login_form extends WP_Widget
 
 			if($instance['login_heading'] != '')
 			{
+				$instance['login_heading'] = apply_filters('widget_title', $instance['login_heading'], $instance, $this->id_base);
+
 				echo $before_title
 					.$instance['login_heading']
 				.$after_title;
@@ -1311,6 +1313,8 @@ class widget_registration_form extends WP_Widget
 
 			if($instance['registration_heading'] != '')
 			{
+				$instance['registration_heading'] = apply_filters('widget_title', $instance['registration_heading'], $instance, $this->id_base);
+
 				echo $before_title
 					.$instance['registration_heading']
 				.$after_title;
@@ -1610,6 +1614,8 @@ class widget_lost_password_form extends WP_Widget
 
 			if($instance['lost_password_heading'] != '')
 			{
+				$instance['lost_password_heading'] = apply_filters('widget_title', $instance['lost_password_heading'], $instance, $this->id_base);
+
 				echo $before_title
 					.$instance['lost_password_heading']
 				.$after_title;
@@ -1812,6 +1818,8 @@ class widget_logged_in_info extends WP_Widget
 
 				/*if($instance['logged_in_info_heading'] != '')
 				{
+					$instance['logged_in_info_heading'] = apply_filters('widget_title', $instance['logged_in_info_heading'], $instance, $this->id_base);
+
 					echo $before_title
 						.$instance['logged_in_info_heading']
 					.$after_title;
