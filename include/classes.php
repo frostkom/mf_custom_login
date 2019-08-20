@@ -1868,7 +1868,11 @@ class widget_logged_in_info extends WP_Widget
 						$user_data = get_userdata(get_current_user_id());
 						$display_name = $user_data->display_name;
 
-						echo "<div><img src='".get_avatar_url(get_current_user_id(), array('size' => 60))."' alt='".sprintf(__("Profile Image for %s", 'lang_login'), $display_name)."'></div>";
+						echo "<div>
+							<div class='logged_in_avatar'>"
+								.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), $display_name))
+							."</div>
+						</div>";
 					}
 
 				echo "</div>"

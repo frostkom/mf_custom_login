@@ -282,11 +282,19 @@ if(apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
 					margin-top: .3em;
 				}
 
-		.logged_in_info img
+		.logged_in_info .logged_in_avatar
 		{
 			border: .2em solid #ccc;
 			border-radius: 50%;
-		}";
+			height: 6em;
+			overflow: hidden;
+			width: 6em;
+		}
+		
+			.logged_in_info .logged_in_avatar img
+			{
+				object-fit: cover;
+			}";
 }
 ############################
 
