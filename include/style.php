@@ -294,6 +294,7 @@ if(apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
 			.logged_in_info .logged_in_avatar img
 			{
 				object-fit: cover;
+				width: 100%;
 			}";
 }
 ############################
