@@ -290,10 +290,11 @@ if(apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
 			overflow: hidden;
 			width: 6em;
 		}
-		
+
 			.logged_in_info .logged_in_avatar img
 			{
 				object-fit: cover;
+				height: 100%;
 				width: 100%;
 			}";
 }

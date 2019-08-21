@@ -253,7 +253,7 @@ class mf_custom_login
 		$setting_key = get_setting_key(__FUNCTION__);
 		$option = get_option($setting_key);
 
-		echo get_media_library(array('name' => $setting_key, 'value' => $option, 'type' => 'image'));
+		echo get_media_library(array('type' => 'image', 'name' => $setting_key, 'value' => $option));
 	}
 
 	function setting_custom_login_page_callback()
@@ -1216,7 +1216,7 @@ class widget_login_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			.get_media_library(array('name' => $this->get_field_name('login_image'), 'value' => $instance['login_image'], 'type' => 'image'))
+			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('login_image'), 'value' => $instance['login_image']))
 			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='registration-title'"))
 		."</div>";
 	}
@@ -1492,7 +1492,7 @@ class widget_registration_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			.get_media_library(array('name' => $this->get_field_name('registration_image'), 'value' => $instance['registration_image'], 'type' => 'image'))
+			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('registration_image'), 'value' => $instance['registration_image']))
 			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
 			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_login'), 'value' => $instance['registration_who_can']));
 
@@ -1771,7 +1771,7 @@ class widget_lost_password_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			.get_media_library(array('name' => $this->get_field_name('lost_password_image'), 'value' => $instance['lost_password_image'], 'type' => 'image'))
+			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('lost_password_image'), 'value' => $instance['lost_password_image']))
 			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='registration-title'"))
 		."</div>";
 	}
