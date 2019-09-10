@@ -9,8 +9,6 @@ class mf_custom_login
 
 	function cron_base()
 	{
-		global $wpdb;
-
 		$obj_cron = new mf_cron();
 		$obj_cron->start(__CLASS__);
 
