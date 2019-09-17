@@ -694,7 +694,7 @@ class mf_custom_login
 	{
 		$data['type'] = 'login';
 
-		$out = __("To login directly without setting a password, visit the following link. The link is personal and can only be used once. If this link falls into the wrong hands and you haven't used it they will be able to login to your account without a password.", 'lang_login').":"
+		$out = __("To login directly without setting a password, visit the following link. The link is personal and can only be used once. If this link falls into the wrong hands and you have not used it they will be able to login to your account without a password.", 'lang_login').":"
 		."\r\n\r\n".$this->direct_link_url($data)."\r\n";
 
 		return $out;
