@@ -831,12 +831,13 @@ class mf_custom_login
 
 	function wp_head()
 	{
-		$post_id = apply_filters('get_widget_search', 'login-widget');
+		// This can't be used since it'll only allow styles etc. on a page where the login widget is present
+		/*$post_id = apply_filters('get_widget_search', 'login-widget');
 
 		if($post_id > 0)
-		{
+		{*/
 			$this->combined_head();
-		}
+		//}
 	}
 
 	function body_class($classes)
