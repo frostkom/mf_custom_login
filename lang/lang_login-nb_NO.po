@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-03 11:32+0100\n"
+"POT-Creation-Date: 2019-10-10 08:45+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -20,12 +20,6 @@ msgstr "Du bruker ikke SSL, derfor kan jeg ikke behandle forespørselen din"
 
 msgid "Unknown Action"
 msgstr "Ukjent handling"
-
-msgid "Cookies are blocked or not supported by your browser. You must %senable cookies%s to use WordPress"
-msgstr "Cookies er blokkert eller støttes ikke av nettleseren din. Du må %senable cookies%s for å bruke WordPress"
-
-msgid "You have logged in successfully"
-msgstr "Du har logget inn"
 
 msgid "Custom Logo"
 msgstr "Tilpasset logo"
@@ -69,6 +63,9 @@ msgstr "Hvis dette var en feil, bare ignorere denne e-posten, og ingenting vil s
 msgid "To reset your password, visit the following address"
 msgstr "For å tilbakestille passordet ditt, besøk følgende adresse"
 
+msgid "URL"
+msgstr "Nettadresse"
+
 msgid "I could not send the email"
 msgstr "Jeg kunne ikke sende e-post"
 
@@ -80,9 +77,6 @@ msgstr "Du har blitt logget ut"
 
 msgid "Username or E-mail"
 msgstr "Brukernavn eller E-post"
-
-msgid "Password"
-msgstr "Passord"
 
 msgid "Remember Me"
 msgstr "Husk meg"
@@ -120,9 +114,6 @@ msgstr "Jeg samtykker i at denne hjemmesiden lagrer min innsendte informasjon, s
 msgid "Do you already have an account?"
 msgstr "Har du allerede en konto?"
 
-msgid "Log in"
-msgstr "Logg inn"
-
 msgid "Collect full name from user"
 msgstr "Samle fullt navn fra bruker"
 
@@ -137,9 +128,6 @@ msgstr "Ugyldig brukernavn eller e-post"
 
 msgid "Someone has requested a password reset for the following account"
 msgstr "Noen har bedt om tilbakestilling av passord for følgende konto"
-
-msgid "Site Name"
-msgstr "Side Navn"
 
 msgid "[%s] Password Reset"
 msgstr "[%s] Passord er tilbakestilt"

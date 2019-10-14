@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-17 09:44+0100\n"
+"POT-Creation-Date: 2019-10-04 10:50+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -15,18 +15,198 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
 
+msgid "You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s."
+msgstr "Du har ikke angivet de korrekte loginoplysninger. De skal sendes med %s med variablerne %s og %s."
+
+msgid "You are already logged in as %s"
+msgstr "Du er allerede logget ind som %s"
+
+msgid "Unknown Action"
+msgstr "Ukendt handling"
+
+msgid "You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?"
+msgstr "Du er allerede logget ind som% s. Vil du gå til %sadmin%s eller %slog out %s?"
+
+msgid "Login"
+msgstr "Log ind"
+
+msgid "Register"
+msgstr "Registrer"
+
+msgid "Lost Password"
+msgstr "Mistet adgangskode"
+
+msgid "Recover Password"
+msgstr "Gendan adgangskode"
+
+msgid "Username"
+msgstr "Brugernavn"
+
+msgid "To set your password, visit the following address"
+msgstr "Besøg følgende adresse for at indstille din adgangskode"
+
+msgid "Someone has requested a password reset for the following account."
+msgstr "Nogen har anmodet om en nulstilling af adgangskode til følgende konto."
+
+msgid "If this was a mistake, just ignore this email and nothing will happen."
+msgstr "Hvis dette var en fejl, skal du bare ignorere denne e-mail, og der vil ikke ske noget."
+
+msgid "To reset your password, visit the following address"
+msgstr "Besøg følgende adresse for at nulstille din adgangskode"
+
+msgid "Direct Link"
+msgstr "Direkte link"
+
+msgid "Revoke"
+msgstr "Tilbagekald"
+
+msgid "Generate Now"
+msgstr "Generer nu"
+
+msgid "I could not log in %s for you. If the problem persists, please contact an admin"
+msgstr "Jeg kunne ikke logge ind %s til dig. Hvis problemet fortsætter, skal du kontakte en administrator"
+
+msgid "Lost Password? Click to get a secure direct link to login instantly"
+msgstr "Glemt kodeord? Klik for at få et sikkert direkte link til at logge ind med det samme"
+
+msgid "You do not have the rights to perform this action"
+msgstr "Du har ikke rettighederne til at udføre denne handling"
+
+msgid "There was no User ID attached to the request"
+msgstr "Der var ingen bruger-id knyttet til anmodningen"
+
+msgid "I successfully sent the message to your email. Follow the link in it, and you will be logged in before you know it"
+msgstr "Jeg har sendt beskeden til din e-mail. Følg linket deri, så bliver du logget ind, før du ved det"
+
+msgid "I could not send the email"
+msgstr "Jeg kunne ikke sende e-mailen"
+
+msgid "I could not find an email corresponding to the username you entered"
+msgstr "Jeg kunne ikke finde en e-mail, der svarer til det brugernavn, du indtastede"
+
+msgid "Login Form"
+msgstr "Ta reda på hur ordet uttalas Loginformular"
+
+msgid "You have been successfully logged out"
+msgstr "Du er logget ud"
+
+msgid "Username or E-mail"
+msgstr "Brugernavn eller E-mailadresse"
+
+msgid "Remember Me"
+msgstr "Husk mig"
+
+msgid "Log In"
+msgstr "Log ind"
+
+msgid "Have you forgotten your login credentials?"
+msgstr "Har du glemt dine loginoplysninger?"
+
+msgid "Do not have an account?"
+msgstr "Har du ikke en konto?"
+
 msgid "Heading"
 msgstr "Overskrift"
+
+msgid "Display a Registration Form"
+msgstr "Vis en registreringsformular"
+
+msgid "Registration Form"
+msgstr "Tilmeldingsblanket"
 
 msgid "All"
 msgstr "Alle"
 
+msgid "Full Name"
+msgstr "Fuldt Navn"
+
+msgid "Company"
+msgstr "Selskab"
+
+msgid "You have to enter both Username and E-mail, then I can process the registration for you"
+msgstr "Du skal indtaste både brugernavn og e-mail, så kan jeg behandle registreringen for dig"
+
+msgid "I processed the registration for you. You should have a message in your inbox shortly, with login information."
+msgstr "Jeg behandlede registreringen for dig. Du skal snart have en besked i din indbakke med loginoplysninger."
+
+msgid "You do not have the rights to view this form"
+msgstr "Du har ikke rettighederne til at se denne formular"
+
 msgid "E-mail"
 msgstr "E-mail adresse"
+
+msgid "First Name"
+msgstr "Fornavn"
+
+msgid "Last Name"
+msgstr "Efternavn"
+
+msgid "Role"
+msgstr "Rolle"
+
+msgid "I consent to having this website store my submitted information, so that they can contact me if necessary"
+msgstr "Jeg accepterer, at dette websted gemmer mine indsendte oplysninger, så de kan kontakte mig, hvis det er nødvendigt"
+
+msgid "Do you already have an account?"
+msgstr "Har du allerede en konto?"
+
+msgid "Who Can Register?"
+msgstr "Hvem kan registrere sig?"
+
+msgid "Collect full name from user"
+msgstr "Saml det fulde navn fra brugeren"
+
+msgid "Invalid Username or E-mail"
+msgstr "Ugyldigt brugernavn eller e-mail"
+
+msgid "Someone has requested a password reset for the following account"
+msgstr "Nogen har anmodet om en nulstilling af adgangskode til følgende konto"
+
+msgid "[%s] Password Reset"
+msgstr "[%s] Nulstil adgangskode"
+
+msgid "The email could not be sent."
+msgstr "E-mailen kunne ikke sendes."
+
+msgid "Your password has been reset"
+msgstr "Din adgangskode er nulstillet"
+
+msgid "New Password"
+msgstr "Ny Adgangskode"
+
+msgid "Reset Password"
+msgstr "Nulstil Adgangskode"
+
+msgid "You have to enter the e-mail address, then I can process the request for you"
+msgstr "Du skal indtaste e-mail-adressen, så kan jeg behandle anmodningen til dig"
+
+msgid "I found the account that you were looking for. Please, check your inbox for the confirmation link."
+msgstr "Jeg fandt den konto, du ledte efter. Kontroller din indbakke for bekræftelseslinket."
+
+msgid "Get New Password"
+msgstr "Hent ny adgangskode"
+
+msgid "Display Information About the Logged in User"
+msgstr "Vis oplysninger om den loggede bruger"
+
+msgid "Logged in Information"
+msgstr "Logget på information"
 
 msgid "Name"
 msgstr "Navn"
 
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Log Out"
+msgstr "Log ud"
+
 msgid "Image"
 msgstr "Billede"
+
+msgid "Your Profile"
+msgstr "Din profil"
+
+msgid "Profile Image for %s"
+msgstr "Profilbillede til %s"
 
