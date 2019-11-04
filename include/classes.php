@@ -1071,7 +1071,7 @@ class widget_login_form extends WP_Widget
 		$this->arr_default = array(
 			'login_image' => '',
 			'login_heading' => '',
-			//'login_above_form' => '',
+			'login_above_form' => '',
 		);
 
 		parent::__construct('login-widget', __("Login Form", 'lang_login'), $widget_ops);
@@ -1150,10 +1150,10 @@ class widget_login_form extends WP_Widget
 
 			echo get_notification();
 
-			/*if($instance['login_above_form'] != '')
+			if($instance['login_above_form'] != '')
 			{
 				echo apply_filters('the_content', $instance['login_above_form']);
-			}*/
+			}
 
 			echo "<form method='post' action='".wp_login_url()."' class='mf_form'>"
 				.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
@@ -1205,7 +1205,7 @@ class widget_login_form extends WP_Widget
 
 		$instance['login_image'] = sanitize_text_field($new_instance['login_image']);
 		$instance['login_heading'] = sanitize_text_field($new_instance['login_heading']);
-		//$instance['login_above_form'] = sanitize_text_field($new_instance['login_above_form']);
+		$instance['login_above_form'] = sanitize_text_field($new_instance['login_above_form']);
 
 		return $instance;
 	}
@@ -1217,6 +1217,7 @@ class widget_login_form extends WP_Widget
 		echo "<div class='mf_form'>"
 			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('login_image'), 'value' => $instance['login_image']))
 			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='registration-title'"))
+			.show_textarea(array('name' => $this->get_field_name('login_above_form'), 'text' => __("Content Above Form", 'lang_login'), 'value' => $instance['login_above_form']))
 		."</div>";
 	}
 }
