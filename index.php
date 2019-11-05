@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 2.8.9
+Version: 2.8.10
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -18,12 +18,10 @@ include_once("include/classes.php");
 
 $obj_custom_login = new mf_custom_login();
 
-add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
 add_action('cron_base', array($obj_custom_login, 'cron_base'), mt_rand(1, 10));
 
 if(is_admin())
 {
-	register_activation_hook(__FILE__, 'activate_custom_login');
 	register_uninstall_hook(__FILE__, 'uninstall_custom_login');
 
 	add_action('admin_init', array($obj_custom_login, 'settings_custom_login'));
@@ -74,16 +72,6 @@ add_action('wp_ajax_nopriv_send_direct_link_email', array($obj_custom_login, 'se
 add_action('widgets_init', array($obj_custom_login, 'widgets_init'));
 
 load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
-
-function activate_custom_login()
-{
-	mf_uninstall_plugin(array(
-		'options' => array('setting_custom_login_info'),
-	));
-
-	replace_option(array('old' => 'settings_custom_login_page', 'new' => 'setting_custom_login_page'));
-	replace_option(array('old' => 'setting_approve_user_registration_email_text', 'new' => 'setting_custom_login_email_registration'));
-}
 
 function uninstall_custom_login()
 {
