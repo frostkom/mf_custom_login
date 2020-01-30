@@ -58,9 +58,7 @@ switch($action)
 				{
 					header("Status: 401 Unauthorized");
 
-					$user_data = get_userdata(get_current_user_id());
-
-					$json_output['error'] = sprintf(__("You are already logged in as %s", 'lang_login'), $user_data->display_name);
+					$json_output['error'] = sprintf(__("You are already logged in as %s", 'lang_login'), get_user_info());
 				}
 			}
 

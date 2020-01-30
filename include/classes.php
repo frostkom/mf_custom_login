@@ -1833,11 +1833,8 @@ class widget_logged_in_info extends WP_Widget
 
 							if(count($instance['logged_in_info_display']) == 0 || in_array('name', $instance['logged_in_info_display']))
 							{
-								$user_data = get_userdata(get_current_user_id());
-								$display_name = $user_data->display_name; //apply_filters('filter_admin_display_name', )
-
 								echo "<li>"
-									.$display_name; //<i class='fa fa-user'></i> 
+									.get_user_info();
 
 									if(in_array('role', $instance['logged_in_info_display']))
 									{
@@ -1865,12 +1862,9 @@ class widget_logged_in_info extends WP_Widget
 
 					if(count($instance['logged_in_info_display']) == 0 || in_array('image', $instance['logged_in_info_display']))
 					{
-						$user_data = get_userdata(get_current_user_id());
-						$display_name = $user_data->display_name;
-
 						echo "<div>
 							<div class='logged_in_avatar'>"
-								.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), $display_name))
+								.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), get_user_info()))
 							."</div>
 						</div>";
 					}
