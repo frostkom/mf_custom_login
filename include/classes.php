@@ -1091,6 +1091,8 @@ class widget_login_form extends WP_Widget
 		$user_pass = check_var('pwd');
 		$user_remember = check_var('rememberme', 'char', true, 'forever');
 
+		do_action('login_init');
+
 		//do_action('login_head');
 		//do_action('login_header');
 
