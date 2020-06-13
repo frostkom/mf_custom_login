@@ -227,6 +227,13 @@ class mf_custom_login
 		}
 
 		$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password Email Content", 'lang_login');
+		
+		$arr_settings['setting_custom_login_redirect_after_login_page'] = __("Redirect After Login", 'lang_login');
+
+		if(get_option('setting_custom_login_redirect_after_login_page') > 0)
+		{
+			$arr_settings['setting_custom_login_redirect_after_login'] = __("Who to Redirect", 'lang_login');
+		}
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 	}
@@ -408,6 +415,25 @@ class mf_custom_login
 		echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
 	}
 
+	function setting_custom_login_redirect_after_login_page_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		$arr_data = array();
+		get_post_children(array('add_choose_here' => true), $arr_data);
+
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option))));
+	}
+
+	function setting_custom_login_redirect_after_login_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		echo show_select(array('data' => get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false)), 'name' => $setting_key."[]", 'value' => $option, 'description' => __("Users with these roles will be redirected after login. If none are chosen, all are affected", 'lang_login')));
+	}
+
 	function admin_init()
 	{
 		global $pagenow;
@@ -477,37 +503,37 @@ class mf_custom_login
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
-			$this->type = check_var('type');
-
-			if($this->type == 'link')
+			switch(check_var('type'))
 			{
-				$this->username = check_var('username');
-				$this->auth = check_var('auth');
+				case 'link':
+					$this->username = check_var('username');
+					$this->auth = check_var('auth');
 
-				if($this->username != '' && $this->auth != '' && $this->check_auth())
-				{
-					if($this->direct_link_login($this->username))
+					if($this->username != '' && $this->auth != '' && $this->check_auth())
 					{
-						//$redirect_to = user_admin_url();
-						$redirect_to = admin_url();
+						if($this->direct_link_login($this->username))
+						{
+							//$redirect_to = user_admin_url();
+							$redirect_to = admin_url();
 
-						$user = get_user_by('login', $this->username);
+							$user = get_user_by('login', $this->username);
 
-						$redirect_to = apply_filters('login_redirect', $redirect_to, $redirect_to, $user);
+							$redirect_to = apply_filters('login_redirect', $redirect_to, $redirect_to, $user);
 
-						mf_redirect($redirect_to);
+							mf_redirect($redirect_to);
+						}
+
+						else
+						{
+							$this->error = sprintf(__("I could not log in %s for you. If the problem persists, please contact an admin", 'lang_login'), $this->username);
+						}
 					}
 
 					else
 					{
-						$this->error = sprintf(__("I could not log in %s for you. If the problem persists, please contact an admin", 'lang_login'), $this->username);
+						$this->error = sprintf(__("It looks like the authorization key for %s has expired so I can not let you in", 'lang_login'), $this->username);
 					}
-				}
-
-				else
-				{
-					$this->error = sprintf(__("It looks like the authorization key for %s has expired so I can not let you in", 'lang_login'), $this->username);
-				}
+				break;
 			}
 		}
 	}
@@ -517,9 +543,78 @@ class mf_custom_login
 		return get_bloginfo('name');
 	}
 
+	function get_login_redirect($redirect_to, $user_data)
+	{
+		$setting_custom_login_redirect_after_login_page = get_option('setting_custom_login_redirect_after_login_page');
+
+		if($setting_custom_login_redirect_after_login_page > 0)
+		{
+			$setting_custom_login_redirect_after_login = get_option_or_default('setting_custom_login_redirect_after_login', array());
+
+			if(count($setting_custom_login_redirect_after_login) == 0 || isset($user_data->roles) && is_array($user_data->roles) && count(array_intersect($setting_fea_redirect_after_login, $user_data->roles)) > 0)
+			{
+				$post_url = get_permalink($setting_custom_login_redirect_after_login_page);
+
+				if($post_url != '')
+				{
+					$redirect_to = $post_url;
+
+					wp_redirect($redirect_to, 302);
+					exit;
+				}
+			}
+		}
+
+		return $redirect_to;
+	}
+
 	function login_init()
 	{
 		$this->combined_head();
+		
+		$action = check_var('action');
+
+		switch($action)
+		{
+			case 'logout':
+				// Do nothing
+			break;
+
+			default:
+				if(is_user_logged_in())
+				{
+					$redirect_to = (current_user_can('read') ? admin_url() : home_url());
+					$user_data = get_userdata(get_current_user_id());
+
+					//$log_message = "login_init: User: ".$user_data->display_name.", Fallback: ".$redirect_to;
+
+					$redirect_to = $this->get_login_redirect($redirect_to, $user_data);
+
+					//$log_message .= ", Role: ".var_export($user_data->roles, true)." -> ".$redirect_to;
+
+					//do_log($log_message);
+				}
+			break;
+		}
+	}
+
+	function login_redirect($redirect_to, $request, $user_data)
+	{
+		// Just in case we have sent this variable along with the URL
+		$redirect_to = check_var('redirect_to', 'char', true, $redirect_to);
+
+		//$log_message = "login_redirect: User: ".$user_data->display_name.", Fallback: ".$redirect_to;
+
+		if($redirect_to == admin_url())
+		{
+			$redirect_to = $this->get_login_redirect($redirect_to, $user_data);
+
+			//$log_message .= ", Role: ".var_export($user_data->roles, true)." -> ".$redirect_to;
+		}
+
+		//do_log($log_message);
+
+		return $redirect_to;
 	}
 
 	function login_message($message)
