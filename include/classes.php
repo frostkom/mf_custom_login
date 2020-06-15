@@ -278,6 +278,21 @@ class mf_custom_login
 		$option = get_option($setting_key, '0');
 
 		echo show_select(array('data' => get_yes_no_for_select(array('return_integer' => true)), 'name' => $setting_key, 'value' => $option));
+
+		$registration_widget = apply_filters('get_widget_search', 'registration-widget');
+
+		if($registration_widget > 0)
+		{
+			// All is good
+		}
+
+		else
+		{
+			echo "<p class='display_warning'>"
+				."<i class='fa fa-exclamation-triangle yellow'></i> "
+				.sprintf(__("You have not created a %spage for registration%s. Please do so and add the %sregistration widget%s to the page", 'lang_login'), "<a href='".admin_url("post-new.php?post_type=page")."'>", "</a>", "<a href='".admin_url("widgets.php")."'>", "</a>")
+			."</p>";
+		}
 	}
 
 	function default_role_callback()
