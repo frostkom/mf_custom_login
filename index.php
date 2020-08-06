@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 3.0.1
+Version: 3.1.0
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -18,10 +18,12 @@ include_once("include/classes.php");
 
 $obj_custom_login = new mf_custom_login();
 
+add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
 add_action('cron_base', array($obj_custom_login, 'cron_base'), mt_rand(1, 10));
 
 if(is_admin())
 {
+	register_activation_hook(__FILE__, 'activate_custom_login');
 	register_uninstall_hook(__FILE__, 'uninstall_custom_login');
 
 	add_action('admin_init', array($obj_custom_login, 'settings_custom_login'));
@@ -74,10 +76,47 @@ add_action('widgets_init', array($obj_custom_login, 'widgets_init'));
 
 load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
 
+function activate_custom_login()
+{
+	global $wpdb;
+
+	$default_charset = DB_CHARSET != '' ? DB_CHARSET : "utf8";
+
+	$arr_add_column = $arr_update_column = $arr_add_index = array();
+
+	$wpdb->query("CREATE TABLE IF NOT EXISTS ".$wpdb->base_prefix."custom_login (
+		loginID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+		loginIP VARCHAR(15) DEFAULT NULL,
+		loginStatus ENUM('failure', 'success') NOT NULL DEFAULT 'failure',
+		loginUsername VARCHAR(40) DEFAULT NULL,
+		loginCreated DATETIME DEFAULT NULL,
+		PRIMARY KEY (loginID),
+		KEY logIP (loginIP),
+		KEY loginStatus (loginStatus)
+	) DEFAULT CHARSET=".$default_charset);
+
+	$arr_add_column[$wpdb->base_prefix."custom_login"] = array(
+		'loginUsername' => "ALTER TABLE [table] ADD [column] VARCHAR(40) DEFAULT NULL AFTER loginStatus",
+	);
+
+	$arr_update_column[$wpdb->base_prefix."custom_login"] = array(
+		//'login...' => "ALTER TABLE [table] CHANGE [column] login... VARCHAR(40) DEFAULT NULL",
+	);
+
+	$arr_add_index[$wpdb->prefix."custom_login"] = array(
+		//'login...' => "ALTER TABLE [table] ADD INDEX [column] ([column])",
+	);
+
+	update_columns($arr_update_column);
+	add_columns($arr_add_column);
+	add_index($arr_add_index);
+}
+
 function uninstall_custom_login()
 {
 	mf_uninstall_plugin(array(
 		'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_redirect_after_login'),
 		'meta' => array('meta_login_auth'),
+		'tables' => array('custom_login'),
 	));
 }

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-15 06:03+0100\n"
+"POT-Creation-Date: 2020-08-06 08:31+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -29,7 +29,8 @@ msgid "Custom Logo"
 msgstr "Egen logga"
 
 #: ../include/classes.php:160
-#: ../include/classes.php:245
+#: ../include/classes.php:256
+#: ../include/classes.php:439
 msgid "Login"
 msgstr "Inloggning"
 
@@ -43,8 +44,8 @@ msgstr "Standardroll"
 
 #: ../include/classes.php:173
 #: ../include/classes.php:180
-#: ../include/classes.php:1304
-#: ../include/classes.php:1574
+#: ../include/classes.php:1327
+#: ../include/classes.php:1597
 msgid "Register"
 msgstr "Registrering"
 
@@ -77,388 +78,392 @@ msgid "Allow Server Authentication"
 msgstr "Tillåt inloggning via servern"
 
 #: ../include/classes.php:221
-msgid "Information"
-msgstr ""
-
-#: ../include/classes.php:225
-msgid "Registration Email Content to Admin"
-msgstr "Registreringsmeddelande till administratör"
-
-#: ../include/classes.php:226
-msgid "Registration Email Content"
-msgstr "E-postinnehåll för registrering"
-
-#: ../include/classes.php:229
-msgid "Lost Password Email Content"
-msgstr "E-postinnehåll för glömt lösenord"
-
-#: ../include/classes.php:231
 msgid "Redirect After Login"
 msgstr "Dirigera om efter inlogging"
 
-#: ../include/classes.php:235
+#: ../include/classes.php:225
 msgid "Who to Redirect"
 msgstr "Vem ska dirigeras om"
 
-#: ../include/classes.php:272
+#: ../include/classes.php:238
+msgid "Information"
+msgstr ""
+
+#: ../include/classes.php:242
+msgid "Registration Email Content to Admin"
+msgstr "Registreringsmeddelande till administratör"
+
+#: ../include/classes.php:243
+msgid "Registration Email Content"
+msgstr "E-postinnehåll för registrering"
+
+#: ../include/classes.php:246
+msgid "Lost Password Email Content"
+msgstr "E-postinnehåll för glömt lösenord"
+
+#: ../include/classes.php:283
 msgid "The content from this page is displayed next to the login screen"
 msgstr "Innehållet från denna sida visas bredvid loginformuläret"
 
-#: ../include/classes.php:293
+#: ../include/classes.php:304
 #, php-format
 msgid "You have not created a %spage for registration%s. Please do so and add the %sregistration widget%s to the page"
 msgstr "Du har inte lagt till en %ssida för registrering%s. Var vänlig gör det och lägg till %sregistreringswidgeten%s på sidan"
 
-#: ../include/classes.php:314
+#: ../include/classes.php:325
 msgid "The content from this page is displayed next to the register screen"
 msgstr "Innehållet från denna sida visas bredvid registreringsformuläret"
 
-#: ../include/classes.php:325
+#: ../include/classes.php:336
 msgid "The content from this page is displayed next to the lost password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för glömt lösenord"
 
-#: ../include/classes.php:336
+#: ../include/classes.php:347
 msgid "The content from this page is displayed next to the recover password screen"
 msgstr "Innehållet från denna sida visas bredvid formuläret för att återställa lösenord"
 
-#: ../include/classes.php:344
+#: ../include/classes.php:355
 msgid "This will allow users to get a direct link to use instead of username and password"
 msgstr "Detta tillåter användare att få en direktlänk att använda istället för användarnamn och lösenord"
 
-#: ../include/classes.php:352
+#: ../include/classes.php:363
 msgid "minutes"
 msgstr "minuter"
 
-#: ../include/classes.php:352
+#: ../include/classes.php:363
 msgid "0 means never"
 msgstr "0 betyder aldrig"
 
-#: ../include/classes.php:376
+#: ../include/classes.php:387
 #, php-format
 msgid "By sending a request to %s with %s and %s as %s you will get a success or failure as a response"
 msgstr "Genom att skicka till %s med %s och %s som %s så får du tillbaka lyckat eller misslyckat som svar"
 
-#: ../include/classes.php:402
+#: ../include/classes.php:413
 #, php-format
 msgid "To take advantage of dynamic data, you can use the following placeholders: %s"
 msgstr "För att utnyttja dynamisk information så kan du använda följande platshållare: %s"
 
-#: ../include/classes.php:408
+#: ../include/classes.php:432
+msgid "Users with these roles will be redirected after login. If none are chosen, all are affected"
+msgstr "Användare med dessa roller kommer att dirigeras om efter inloggning. Om inga är valda så påverkas alla"
+
+#: ../include/classes.php:439
+msgid "Content"
+msgstr "Innehåll"
+
+#: ../include/classes.php:445
 #, php-format
 msgid "A new user (%s) has been created"
 msgstr "En ny användare (%s) har skapats"
 
-#: ../include/classes.php:416
-#: ../include/classes.php:426
-#: ../include/classes.php:1371
-#: ../include/classes.php:1525
-#: ../include/classes.php:1683
+#: ../include/classes.php:453
+#: ../include/classes.php:463
+#: ../include/classes.php:1394
+#: ../include/classes.php:1548
+#: ../include/classes.php:1706
 msgid "Username"
 msgstr "Användarnamn"
 
-#: ../include/classes.php:417
+#: ../include/classes.php:454
 msgid "To set your password, visit the following address"
 msgstr "För att återställa ditt lösenord, gå till följande adress"
 
-#: ../include/classes.php:425
+#: ../include/classes.php:462
 msgid "Someone has requested a password reset for the following account."
 msgstr "Någon har efterfrågat en återställning av lösenord för följande konto."
 
-#: ../include/classes.php:427
-#: ../include/classes.php:1685
+#: ../include/classes.php:464
+#: ../include/classes.php:1708
 msgid "If this was a mistake, just ignore this email and nothing will happen."
 msgstr "Om detta var ett misstag, så kan du strunta i detta e-post och då händer inget."
 
-#: ../include/classes.php:428
-#: ../include/classes.php:1687
+#: ../include/classes.php:465
+#: ../include/classes.php:1710
 msgid "To reset your password, visit the following address"
 msgstr "För att återställa ditt lösenord, gå till följande adress"
 
-#: ../include/classes.php:449
-msgid "Users with these roles will be redirected after login. If none are chosen, all are affected"
-msgstr "Användare med dessa roller kommer att dirigeras om efter inloggning. Om inga är valda så påverkas alla"
-
-#: ../include/classes.php:473
-#: ../include/classes.php:486
+#: ../include/classes.php:491
+#: ../include/classes.php:504
 msgid "Direct Link"
 msgstr "Direktlänk"
 
-#: ../include/classes.php:493
-#: ../include/classes.php:1073
+#: ../include/classes.php:511
+#: ../include/classes.php:1091
 msgid "URL"
 msgstr ""
 
-#: ../include/classes.php:495
+#: ../include/classes.php:513
 msgid "Revoke"
 msgstr "Återkalla"
 
-#: ../include/classes.php:501
+#: ../include/classes.php:519
 msgid "Generate Now"
 msgstr "Generera nu"
 
-#: ../include/classes.php:543
+#: ../include/classes.php:561
 #, php-format
 msgid "I could not log in %s for you. If the problem persists, please contact an admin"
 msgstr "Jag kunde inte logga in %s åt dig. Om problemet kvarstår, kontakta en administratör"
 
-#: ../include/classes.php:549
+#: ../include/classes.php:567
 #, php-format
 msgid "It looks like the authorization key for %s has expired so I can not let you in"
 msgstr "Det ser ut som att nyckeln för %s har gått ut så jag kan inte släppa in dig"
 
-#: ../include/classes.php:807
+#: ../include/classes.php:825
 msgid "To login directly without setting a password, visit the following link. The link is personal and can only be used once. If this link falls into the wrong hands and you have not used it they will be able to login to your account without a password."
 msgstr "För att genomföra en direktinloggning utan att ange ett lösenord, besök följande länk. Länken är personlig och kan endast användas en gång. Om denna länk kommer i orätta händer och du inte har använt den så kommer de att kunna logga in på ditt konto utan lösenord."
 
-#: ../include/classes.php:937
+#: ../include/classes.php:955
 msgid "Lost Password? Click to get a secure direct link to login instantly"
 msgstr "Glömt lösenord? Klicka för att få en säker direktlänk för att logga in omgående"
 
-#: ../include/classes.php:1078
-#: ../include/classes.php:1108
+#: ../include/classes.php:1096
+#: ../include/classes.php:1126
 msgid "You do not have the rights to perform this action"
 msgstr "Du har inte behörigheten att utföra denna åtgärd"
 
-#: ../include/classes.php:1084
-#: ../include/classes.php:1114
+#: ../include/classes.php:1102
+#: ../include/classes.php:1132
 msgid "There was no User ID attached to the request"
 msgstr "Det fanns inget användar-ID bifogat till anropet"
 
-#: ../include/classes.php:1103
+#: ../include/classes.php:1121
 msgid "The direct login link has been revoked and can not be used anymore"
 msgstr "Direktlänken har blivit återkallad och kan inte användas längre"
 
-#: ../include/classes.php:1131
+#: ../include/classes.php:1149
 #, php-format
 msgid "[%s] Here comes you link to direct login"
 msgstr "[%s] Här kommer länken för direktinloggning"
 
-#: ../include/classes.php:1139
+#: ../include/classes.php:1157
 msgid "I successfully sent the message to your email. Follow the link in it, and you will be logged in before you know it"
 msgstr "Jag skickade meddelandet till din e-post. Följ länken i meddelandet, så blir du automatiskt inloggad"
 
-#: ../include/classes.php:1144
+#: ../include/classes.php:1162
 msgid "I could not send the email"
 msgstr "Jag kunde inte skicka meddelandet"
 
-#: ../include/classes.php:1150
+#: ../include/classes.php:1168
 msgid "I could not find an email corresponding to the username you entered"
 msgstr "Jag kunde inte hitta en e-post som stämde överens med det användarnamn som du angav"
 
-#: ../include/classes.php:1178
+#: ../include/classes.php:1196
 msgid "Display a Login Form"
 msgstr "Visa ett inloggningsformulär"
 
-#: ../include/classes.php:1187
+#: ../include/classes.php:1205
 msgid "Login Form"
 msgstr "Inloggningsformulär"
 
-#: ../include/classes.php:1234
+#: ../include/classes.php:1254
 msgid "You have been successfully logged out"
 msgstr "Du har blivit utloggad"
 
-#: ../include/classes.php:1271
-#: ../include/classes.php:1855
+#: ../include/classes.php:1291
+#: ../include/classes.php:1878
 msgid "Username or E-mail"
 msgstr "Användarnamn eller e-post"
 
-#: ../include/classes.php:1272
+#: ../include/classes.php:1292
 msgid "Password"
 msgstr "Lösenord"
 
-#: ../include/classes.php:1277
+#: ../include/classes.php:1297
 msgid "Remember Me"
 msgstr "Kom ihåg mig"
 
-#: ../include/classes.php:1279
-#: ../include/classes.php:1579
-#: ../include/classes.php:1782
-#: ../include/classes.php:1859
+#: ../include/classes.php:1299
+#: ../include/classes.php:1602
+#: ../include/classes.php:1805
+#: ../include/classes.php:1882
 msgid "Log In"
 msgstr "Logga in"
 
-#: ../include/classes.php:1300
+#: ../include/classes.php:1323
 msgid "Have you forgotten your login credentials?"
 msgstr "Har du glömt dina inloggningsuppgifter?"
 
-#: ../include/classes.php:1304
+#: ../include/classes.php:1327
 msgid "Do not have an account?"
 msgstr "Har du inte ett konto?"
 
-#: ../include/classes.php:1331
-#: ../include/classes.php:1608
-#: ../include/classes.php:1887
+#: ../include/classes.php:1354
+#: ../include/classes.php:1631
+#: ../include/classes.php:1910
 msgid "Heading"
 msgstr "Rubrik"
 
-#: ../include/classes.php:1332
+#: ../include/classes.php:1355
 msgid "Content Above Form"
 msgstr "Innehåll ovanför formulär"
 
-#: ../include/classes.php:1343
+#: ../include/classes.php:1366
 msgid "Display a Registration Form"
 msgstr "Visa ett registreringsformulär"
 
-#: ../include/classes.php:1355
+#: ../include/classes.php:1378
 msgid "Registration Form"
 msgstr "Registreringsformulär"
 
-#: ../include/classes.php:1361
+#: ../include/classes.php:1384
 msgid "All"
 msgstr "Alla"
 
-#: ../include/classes.php:1372
+#: ../include/classes.php:1395
 msgid "Full Name"
 msgstr "Fullständigt namn"
 
-#: ../include/classes.php:1373
-#: ../include/classes.php:1541
+#: ../include/classes.php:1396
+#: ../include/classes.php:1564
 msgid "Company"
 msgstr "Företag"
 
-#: ../include/classes.php:1463
+#: ../include/classes.php:1486
 msgid "You have to enter both Username and E-mail, then I can process the registration for you"
 msgstr "Du måste ange både användarnamn och e-post, därefter kan jag genomföra registreringen åt dig"
 
-#: ../include/classes.php:1499
+#: ../include/classes.php:1522
 msgid "I processed the registration for you. You should have a message in your inbox shortly, with login information."
 msgstr "Jag har nu genomfört registreringen åt dig. Du borde ha ett meddelande i din inkorg inom kort, med inloggningsinformation."
 
-#: ../include/classes.php:1508
+#: ../include/classes.php:1531
 msgid "You do not have the rights to view this form"
 msgstr "Du har inte behörighet att se detta formulär"
 
-#: ../include/classes.php:1528
+#: ../include/classes.php:1551
 msgid "E-mail"
 msgstr "E-post"
 
-#: ../include/classes.php:1533
+#: ../include/classes.php:1556
 msgid "First Name"
 msgstr "Förnamn"
 
-#: ../include/classes.php:1534
+#: ../include/classes.php:1557
 msgid "Last Name"
 msgstr "Efternamn"
 
-#: ../include/classes.php:1555
-#: ../include/classes.php:1913
+#: ../include/classes.php:1578
+#: ../include/classes.php:1936
 msgid "Role"
 msgstr "Roll"
 
-#: ../include/classes.php:1570
+#: ../include/classes.php:1593
 msgid "I consent to having this website store my submitted information, so that they can contact me if necessary"
 msgstr "Jag godkänner att denna webbsida sparar min skickade information, så att de kan kontakta mig om nödvändigt"
 
-#: ../include/classes.php:1579
-#: ../include/classes.php:1859
+#: ../include/classes.php:1602
+#: ../include/classes.php:1882
 msgid "Do you already have an account?"
 msgstr "Har du redan ett konto?"
 
-#: ../include/classes.php:1609
+#: ../include/classes.php:1632
 msgid "Who Can Register?"
 msgstr "Vem kan registrera?"
 
-#: ../include/classes.php:1613
+#: ../include/classes.php:1636
 msgid "Collect full name from user"
 msgstr "Samla in fullständigt namn av användare"
 
-#: ../include/classes.php:1616
+#: ../include/classes.php:1639
 msgid "Fields to Display"
 msgstr "Fält att visa"
 
-#: ../include/classes.php:1627
+#: ../include/classes.php:1650
 msgid "Display a Lost Password Form"
 msgstr "Visa formulär för glömt lösenord"
 
-#: ../include/classes.php:1636
+#: ../include/classes.php:1659
 msgid "Lost Password Form"
 msgstr "Glömt lösenord-formulär"
 
-#: ../include/classes.php:1647
+#: ../include/classes.php:1670
 msgid "Invalid Username or E-mail"
 msgstr "Felaktigt användarnamn eller e-post"
 
-#: ../include/classes.php:1682
+#: ../include/classes.php:1705
 msgid "Someone has requested a password reset for the following account"
 msgstr "Någon har efterfrågat en återställning av lösenord för följande konto"
 
-#: ../include/classes.php:1691
+#: ../include/classes.php:1714
 #, php-format
 msgid "[%s] Password Reset"
 msgstr "[%s] Återställ lösenord"
 
-#: ../include/classes.php:1703
+#: ../include/classes.php:1726
 msgid "The email could not be sent."
 msgstr "E-postet kunde inte skickas."
 
-#: ../include/classes.php:1703
+#: ../include/classes.php:1726
 msgid "Possible reason: your host may have disabled the mail() function."
 msgstr "Möjlig anledning: din leverantör kanske har inaktiverat mail()-funktionen."
 
-#: ../include/classes.php:1760
+#: ../include/classes.php:1783
 #, php-format
 msgid "The key that you used has expired. Please, %srequest a new key here%s"
 msgstr "Nyckeln som du använde har gått ut. %sHämta en ny nyckel här%s"
 
-#: ../include/classes.php:1765
+#: ../include/classes.php:1788
 #, php-format
 msgid "The key that you used was invalid. Please, %srequest a new key here%s"
 msgstr "Nyckeln som du använda var ogiltig. %sHämta en ny nyckel här%s"
 
-#: ../include/classes.php:1782
+#: ../include/classes.php:1805
 msgid "Your password has been reset"
 msgstr "Ditt lösenord har blivit återställt"
 
-#: ../include/classes.php:1793
+#: ../include/classes.php:1816
 msgid "New Password"
 msgstr "Nytt lösenord"
 
-#: ../include/classes.php:1798
+#: ../include/classes.php:1821
 msgid "Reset Password"
 msgstr "Återställ lösenord"
 
-#: ../include/classes.php:1813
+#: ../include/classes.php:1836
 msgid "You have to enter the e-mail address, then I can process the request for you"
 msgstr "Du måste ange en e-postadress, sen kan jag genomföra åtgärden som du efterfrågade"
 
-#: ../include/classes.php:1832
+#: ../include/classes.php:1855
 msgid "I found the account that you were looking for. Please, check your inbox for the confirmation link."
 msgstr "Jag hittade kontot som du letade efter. Var vänlig kolla din inkorg för att se bekräftelselänken."
 
-#: ../include/classes.php:1857
+#: ../include/classes.php:1880
 msgid "Get New Password"
 msgstr "Hämta nytt lösenord"
 
-#: ../include/classes.php:1898
+#: ../include/classes.php:1921
 msgid "Display Information About the Logged in User"
 msgstr "Visa information om den inloggade användaren"
 
-#: ../include/classes.php:1906
+#: ../include/classes.php:1929
 msgid "Logged in Information"
 msgstr "Information om inloggad användare"
 
-#: ../include/classes.php:1912
+#: ../include/classes.php:1935
 msgid "Name"
 msgstr "Namn"
 
-#: ../include/classes.php:1914
+#: ../include/classes.php:1937
 msgid "Profile"
 msgstr "Profil"
 
-#: ../include/classes.php:1915
-#: ../include/classes.php:1969
+#: ../include/classes.php:1938
+#: ../include/classes.php:1992
 msgid "Log Out"
 msgstr "Logga ut"
 
-#: ../include/classes.php:1916
+#: ../include/classes.php:1939
 msgid "Image"
 msgstr "Bild"
 
-#: ../include/classes.php:1964
+#: ../include/classes.php:1987
 msgid "Your Profile"
 msgstr "Din profil"
 
-#: ../include/classes.php:1979
+#: ../include/classes.php:2002
 #, php-format
 msgid "Profile Image for %s"
 msgstr "Profilbild för %s"
