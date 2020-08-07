@@ -164,32 +164,6 @@ class mf_custom_login
 			$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
 		}
 
-		if(is_multisite())
-		{
-			$arr_settings['users_can_register'] = __("Allow Registration", 'lang_login');
-
-			if($users_can_register)
-			{
-				$arr_settings['default_role'] = __("Default Role", 'lang_login');
-
-				if($has_registration_widget == false)
-				{
-					$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
-				}
-			}
-		}
-
-		else if($users_can_register && $has_registration_widget == false)
-		{
-			$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
-		}
-
-		if($has_lost_password_post_widget == false)
-		{
-			$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
-			$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
-		}
-
 		if(is_plugin_active('mf_auth/index.php') == false || get_option('setting_auth_active') == 'no')
 		{
 			$arr_settings['setting_custom_login_allow_direct_link'] = __("Allow Direct Link to Login", 'lang_login');
@@ -221,6 +195,9 @@ class mf_custom_login
 			delete_option('setting_custom_login_allow_api');
 			delete_option('setting_custom_login_allow_server_auth');
 		}
+
+		$arr_settings['setting_custom_login_limit_attempts'] = __("Limit Attempts", 'lang_login');
+		$arr_settings['setting_custom_login_limit_minutes'] = __("Limit Minutes", 'lang_login');
 		
 		$arr_settings['setting_custom_login_redirect_after_login_page'] = __("Redirect After Login", 'lang_login');
 
@@ -231,9 +208,48 @@ class mf_custom_login
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 
-		// Content
+		// Registration
 		############################
-		$options_area = $options_area_orig."_content";
+		$options_area = $options_area_orig."_registration";
+
+		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
+
+		$arr_settings = array();
+
+		if(is_multisite())
+		{
+			$arr_settings['users_can_register'] = __("Allow Registration", 'lang_login');
+
+			if($users_can_register)
+			{
+				$arr_settings['default_role'] = __("Default Role", 'lang_login');
+
+				if($has_registration_widget == false)
+				{
+					$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
+				}
+			}
+		}
+
+		else if($users_can_register && $has_registration_widget == false)
+		{
+			$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
+		}
+
+		if(get_option('users_can_register'))
+		{
+			$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
+
+			$arr_settings['setting_custom_login_email_admin_registration'] = __("Registration Email Content to Admin", 'lang_login');
+			$arr_settings['setting_custom_login_email_registration'] = __("Registration Email Content", 'lang_login');
+		}
+
+		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
+		############################
+
+		// Password
+		############################
+		$options_area = $options_area_orig."_password";
 
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
@@ -241,10 +257,10 @@ class mf_custom_login
 
 		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
-		if(get_option('users_can_register'))
+		if($has_lost_password_post_widget == false)
 		{
-			$arr_settings['setting_custom_login_email_admin_registration'] = __("Registration Email Content to Admin", 'lang_login');
-			$arr_settings['setting_custom_login_email_registration'] = __("Registration Email Content", 'lang_login');
+			$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
+			$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
 		}
 
 		$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password Email Content", 'lang_login');
@@ -285,70 +301,6 @@ class mf_custom_login
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
-		}
-
-		function users_can_register_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option($setting_key, '0');
-
-			echo show_select(array('data' => get_yes_no_for_select(array('return_integer' => true)), 'name' => $setting_key, 'value' => $option));
-
-			$registration_widget = apply_filters('get_widget_search', 'registration-widget');
-
-			if($registration_widget > 0)
-			{
-				// All is good
-			}
-
-			else
-			{
-				echo "<p class='display_warning'>"
-					."<i class='fa fa-exclamation-triangle yellow'></i> "
-					.sprintf(__("You have not created a %spage for registration%s. Please do so and add the %sregistration widget%s to the page", 'lang_login'), "<a href='".admin_url("post-new.php?post_type=page")."'>", "</a>", "<a href='".admin_url("widgets.php")."'>", "</a>")
-				."</p>";
-			}
-		}
-
-		function default_role_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option($setting_key);
-
-			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false)), 'name' => $setting_key, 'value' => $option));
-		}
-
-		function setting_custom_login_register_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option($setting_key);
-
-			$arr_data = array();
-			get_post_children(array('add_choose_here' => true), $arr_data);
-
-			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the register screen", 'lang_login')));
-		}
-
-		function setting_custom_login_lostpassword_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option($setting_key);
-
-			$arr_data = array();
-			get_post_children(array('add_choose_here' => true), $arr_data);
-
-			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the lost password screen", 'lang_login')));
-		}
-
-		function setting_custom_login_recoverpassword_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option($setting_key);
-
-			$arr_data = array();
-			get_post_children(array('add_choose_here' => true), $arr_data);
-
-			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
 		}
 
 		function setting_custom_login_allow_direct_link_callback()
@@ -417,6 +369,24 @@ class mf_custom_login
 			echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
 		}
 
+		function setting_custom_login_limit_attempts_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			settings_save_site_wide($setting_key);
+			$option = get_site_option($setting_key, get_option($setting_key, 20));
+
+			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option));
+		}
+
+		function setting_custom_login_limit_minutes_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			settings_save_site_wide($setting_key);
+			$option = get_site_option($setting_key, get_option($setting_key, 15));
+
+			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option));
+		}
+
 		function setting_custom_login_redirect_after_login_page_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
@@ -436,12 +406,54 @@ class mf_custom_login
 			echo show_select(array('data' => get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false)), 'name' => $setting_key."[]", 'value' => $option, 'description' => __("Users with these roles will be redirected after login. If none are chosen, all are affected", 'lang_login')));
 		}
 
-	function settings_custom_login_content_callback()
+	function settings_custom_login_registration_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
 
-		echo settings_header($setting_key, __("Login", 'lang_login')." - ".__("Content", 'lang_login'));
+		echo settings_header($setting_key, __("Login", 'lang_login')." - ".__("Registration", 'lang_login'));
 	}
+
+		function users_can_register_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key, '0');
+
+			echo show_select(array('data' => get_yes_no_for_select(array('return_integer' => true)), 'name' => $setting_key, 'value' => $option));
+
+			$registration_widget = apply_filters('get_widget_search', 'registration-widget');
+
+			if($registration_widget > 0)
+			{
+				// All is good
+			}
+
+			else
+			{
+				echo "<p class='display_warning'>"
+					."<i class='fa fa-exclamation-triangle yellow'></i> "
+					.sprintf(__("You have not created a %spage for registration%s. Please do so and add the %sregistration widget%s to the page", 'lang_login'), "<a href='".admin_url("post-new.php?post_type=page")."'>", "</a>", "<a href='".admin_url("widgets.php")."'>", "</a>")
+				."</p>";
+			}
+		}
+
+		function default_role_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key);
+
+			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false)), 'name' => $setting_key, 'value' => $option));
+		}
+
+		function setting_custom_login_register_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key);
+
+			$arr_data = array();
+			get_post_children(array('add_choose_here' => true), $arr_data);
+
+			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the register screen", 'lang_login')));
+		}
 
 		function setting_custom_login_email_admin_registration_callback()
 		{
@@ -460,6 +472,13 @@ class mf_custom_login
 			echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
 		}
 
+	function settings_custom_login_password_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+
+		echo settings_header($setting_key, __("Login", 'lang_login')." - ".__("Password", 'lang_login'));
+	}
+
 		function setting_custom_login_email_lost_password_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
@@ -469,6 +488,28 @@ class mf_custom_login
 			.__("To reset your password, visit the following address", 'lang_login').": [confirm_link]");
 
 			echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
+		}
+
+		function setting_custom_login_lostpassword_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key);
+
+			$arr_data = array();
+			get_post_children(array('add_choose_here' => true), $arr_data);
+
+			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the lost password screen", 'lang_login')));
+		}
+
+		function setting_custom_login_recoverpassword_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key);
+
+			$arr_data = array();
+			get_post_children(array('add_choose_here' => true), $arr_data);
+
+			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
 		}
 
 	function admin_init()
@@ -1264,13 +1305,13 @@ class widget_login_form extends WP_Widget
 
 					if(isset($_POST['btnSendLogin'])) // && wp_verify_nonce($_POST['_wpnonce_login_send'], $login_nonce_value)
 					{
-						$login_limit_attempts = 50;
-						$login_limit_minutes = 15;
+						$setting_custom_login_limit_attempts = get_site_option('setting_custom_login_limit_attempts', 20);
+						$setting_custom_login_limit_minutes = get_site_option('setting_custom_login_limit_minutes', 15);
 
-						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$login_limit_minutes." MINUTE)", $_SERVER['REMOTE_ADDR'], 'failure'));
+						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", $_SERVER['REMOTE_ADDR'], 'failure'));
 						$login_failed_attempts = $wpdb->num_rows;
 
-						if($login_failed_attempts < $login_limit_attempts)
+						if($login_failed_attempts < $setting_custom_login_limit_attempts)
 						{
 							$result = $obj_custom_login->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
 
@@ -1289,7 +1330,7 @@ class widget_login_form extends WP_Widget
 
 						else
 						{
-							$error_text = sprintf(__("You have exceeded the limit of %d logins in the last %d minutes. Please try again later.", 'lang_login'), $login_limit_attempts, $login_limit_minutes);
+							$error_text = sprintf(__("You have exceeded the limit of %d logins in the last %d minutes. Please try again later.", 'lang_login'), $setting_custom_login_limit_attempts, $setting_custom_login_limit_minutes);
 						}
 					}
 
