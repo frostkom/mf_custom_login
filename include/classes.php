@@ -375,7 +375,7 @@ class mf_custom_login
 			settings_save_site_wide($setting_key);
 			$option = get_site_option($setting_key, get_option($setting_key, 20));
 
-			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option));
+			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='5' max='100'"));
 		}
 
 		function setting_custom_login_limit_minutes_callback()
@@ -384,7 +384,7 @@ class mf_custom_login
 			settings_save_site_wide($setting_key);
 			$option = get_site_option($setting_key, get_option($setting_key, 15));
 
-			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option));
+			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='2' max='60'"));
 		}
 
 		function setting_custom_login_redirect_after_login_page_callback()
