@@ -1236,7 +1236,7 @@ class widget_login_form extends WP_Widget
 {
 	function __construct()
 	{
-		$widget_ops = array(
+		$this->widget_ops = array(
 			'classname' => 'login_form',
 			'description' => __("Display a Login Form", 'lang_login')
 		);
@@ -1247,7 +1247,7 @@ class widget_login_form extends WP_Widget
 			'login_above_form' => '',
 		);
 
-		parent::__construct('login-widget', __("Login Form", 'lang_login'), $widget_ops);
+		parent::__construct('login-widget', __("Login Form", 'lang_login'), $this->widget_ops);
 	}
 
 	function widget($args, $instance)
@@ -1412,7 +1412,7 @@ class widget_login_form extends WP_Widget
 
 		echo "<div class='mf_form'>"
 			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('login_image'), 'value' => $instance['login_image']))
-			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='registration-title'"))
+			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
 			.show_textarea(array('name' => $this->get_field_name('login_above_form'), 'text' => __("Content Above Form", 'lang_login'), 'value' => $instance['login_above_form']))
 		."</div>";
 	}
@@ -1422,7 +1422,7 @@ class widget_registration_form extends WP_Widget
 {
 	function __construct()
 	{
-		$widget_ops = array(
+		$this->widget_ops = array(
 			'classname' => 'registration_form',
 			'description' => __("Display a Registration Form", 'lang_login')
 		);
@@ -1436,7 +1436,7 @@ class widget_registration_form extends WP_Widget
 			'registration_fields' => array('username'),
 		);
 
-		parent::__construct('registration-widget', __("Registration Form", 'lang_login'), $widget_ops);
+		parent::__construct('registration-widget', __("Registration Form", 'lang_login'), $this->widget_ops);
 	}
 
 	function get_roles_for_select()
@@ -1689,7 +1689,7 @@ class widget_registration_form extends WP_Widget
 
 		echo "<div class='mf_form'>"
 			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('registration_image'), 'value' => $instance['registration_image']))
-			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='registration-title'"))
+			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
 			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_login'), 'value' => $instance['registration_who_can']));
 
 			if($instance['registration_collect_name'] == 'yes' && (!is_array($instance['registration_fields']) || !in_array('full_name', $instance['registration_fields'])))
@@ -1706,7 +1706,7 @@ class widget_lost_password_form extends WP_Widget
 {
 	function __construct()
 	{
-		$widget_ops = array(
+		$this->widget_ops = array(
 			'classname' => 'lost_password_form',
 			'description' => __("Display a Lost Password Form", 'lang_login')
 		);
@@ -1717,7 +1717,7 @@ class widget_lost_password_form extends WP_Widget
 			//'lost_password_above_form' => '',
 		);
 
-		parent::__construct('lost-password-widget', __("Lost Password Form", 'lang_login'), $widget_ops);
+		parent::__construct('lost-password-widget', __("Lost Password Form", 'lang_login'), $this->widget_ops);
 	}
 
 	function retrieve_password($login)
@@ -1968,7 +1968,7 @@ class widget_lost_password_form extends WP_Widget
 
 		echo "<div class='mf_form'>"
 			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('lost_password_image'), 'value' => $instance['lost_password_image']))
-			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='registration-title'"))
+			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
 		."</div>";
 	}
 }
@@ -1977,7 +1977,7 @@ class widget_logged_in_info extends WP_Widget
 {
 	function __construct()
 	{
-		$widget_ops = array(
+		$this->widget_ops = array(
 			'classname' => 'logged_in_info',
 			'description' => __("Display Information About the Logged in User", 'lang_login')
 		);
@@ -1987,7 +1987,7 @@ class widget_logged_in_info extends WP_Widget
 			'logged_in_info_display' => array(),
 		);
 
-		parent::__construct('logged-in-info-widget', __("Logged in Information", 'lang_login'), $widget_ops);
+		parent::__construct(str_replace("_", "-", $this->widget_ops['classname']).'-widget', __("Logged in Information", 'lang_login'), $this->widget_ops);
 	}
 
 	function get_user_info_for_select()
@@ -2086,7 +2086,7 @@ class widget_logged_in_info extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			//.show_textfield(array('name' => $this->get_field_name('logged_in_info_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['logged_in_info_heading'], 'xtra' => " id='registration-title'"))
+			//.show_textfield(array('name' => $this->get_field_name('logged_in_info_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['logged_in_info_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
 			.show_select(array('data' => $this->get_user_info_for_select(), 'name' => $this->get_field_name('logged_in_info_display')."[]", 'value' => $instance['logged_in_info_display']))
 		."</div>";
 	}
