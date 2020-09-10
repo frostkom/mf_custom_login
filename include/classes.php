@@ -664,13 +664,7 @@ class mf_custom_login
 					$redirect_to = (current_user_can('read') ? admin_url() : home_url());
 					$user_data = get_userdata(get_current_user_id());
 
-					//$log_message = "login_init: User: ".$user_data->display_name.", Fallback: ".$redirect_to;
-
 					$redirect_to = $this->get_login_redirect($redirect_to, $user_data);
-
-					//$log_message .= ", Role: ".var_export($user_data->roles, true)." -> ".$redirect_to;
-
-					//do_log($log_message);
 				}
 			break;
 		}
@@ -681,16 +675,10 @@ class mf_custom_login
 		// Just in case we have sent this variable along with the URL
 		$redirect_to = check_var('redirect_to', 'char', true, $redirect_to);
 
-		//$log_message = "login_redirect: User: ".$user_data->display_name.", Fallback: ".$redirect_to;
-
 		if($redirect_to == admin_url())
 		{
 			$redirect_to = $this->get_login_redirect($redirect_to, $user_data);
-
-			//$log_message .= ", Role: ".var_export($user_data->roles, true)." -> ".$redirect_to;
 		}
-
-		//do_log($log_message);
 
 		return $redirect_to;
 	}
