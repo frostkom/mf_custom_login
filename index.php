@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 3.1.4
+Version: 3.1.5
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -27,7 +27,7 @@ if(is_admin())
 	register_uninstall_hook(__FILE__, 'uninstall_custom_login');
 
 	add_action('admin_init', array($obj_custom_login, 'settings_custom_login'));
-	add_action('admin_init', array($obj_custom_login, 'admin_init'));
+	add_action('admin_init', array($obj_custom_login, 'admin_init'), 0);
 
 	add_filter('user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
 	add_action('ms_user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);

@@ -236,7 +236,7 @@ class mf_custom_login
 			$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 		}
 
-		if(get_option('users_can_register'))
+		if($users_can_register)
 		{
 			$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
@@ -418,21 +418,27 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key, '0');
 
-			echo show_select(array('data' => get_yes_no_for_select(array('return_integer' => true)), 'name' => $setting_key, 'value' => $option));
+			$xtra = $description = "";
 
-			$registration_widget = apply_filters('get_widget_search', 'registration-widget');
-
-			if($registration_widget > 0)
+			if(is_multisite())
 			{
-				// All is good
+				$xtra = " disabled";
+				$description = sprintf(__("You can change this in the %sNetwork Settings%s", 'lang_login'), "<a href='".network_admin_url("settings.php")."'>", "</a>");
 			}
 
-			else
+			echo show_select(array('data' => get_yes_no_for_select(array('return_integer' => true)), 'name' => $setting_key, 'value' => $option, 'xtra' => $xtra, 'description' => $description));
+
+			if($option == 1)
 			{
-				echo "<p class='display_warning'>"
-					."<i class='fa fa-exclamation-triangle yellow'></i> "
-					.sprintf(__("You have not created a %spage for registration%s. Please do so and add the %sregistration widget%s to the page", 'lang_login'), "<a href='".admin_url("post-new.php?post_type=page")."'>", "</a>", "<a href='".admin_url("widgets.php")."'>", "</a>")
-				."</p>";
+				$registration_widget = apply_filters('get_widget_search', 'registration-widget');
+
+				if(!($registration_widget > 0))
+				{
+					echo "<p class='display_warning'>"
+						."<i class='fa fa-exclamation-triangle yellow'></i> "
+						.sprintf(__("You have not created a %spage for registration%s. Please do so and add the %sregistration widget%s to the page", 'lang_login'), "<a href='".admin_url("post-new.php?post_type=page")."'>", "</a>", "<a href='".admin_url("widgets.php")."'>", "</a>")
+					."</p>";
+				}
 			}
 		}
 
@@ -515,6 +521,11 @@ class mf_custom_login
 	function admin_init()
 	{
 		global $pagenow;
+
+		if(!is_plugin_active("mf_base/index.php"))
+		{
+			deactivate_plugins(str_replace("include/classes.php", "index.php", plugin_basename(__FILE__)));
+		}
 
 		if(in_array($pagenow, array('user-edit.php', 'profile.php')) && IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
