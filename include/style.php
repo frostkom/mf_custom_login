@@ -28,12 +28,9 @@ if(is_plugin_active('mf_theme_core/index.php') && get_option('setting_custom_log
 
 	if($obj_theme_core->options['header_logo'] != '')
 	{
-		if($obj_theme_core->options['header_logo'] != '')
-		{
-			$login_mobile_logo_css = $login_logo_css = "background-image: url(".$obj_theme_core->options['header_logo'].");
-			background-size: contain;
-			width: auto;";
-		}
+		$login_mobile_logo_css = $login_logo_css = "background-image: url(".$obj_theme_core->options['header_logo'].");
+		background-size: contain;
+		width: auto;";
 
 		if($obj_theme_core->options['header_mobile_logo'] != '')
 		{

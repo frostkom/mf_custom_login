@@ -198,7 +198,7 @@ class mf_custom_login
 
 		$arr_settings['setting_custom_login_limit_attempts'] = __("Limit Attempts", 'lang_login');
 		$arr_settings['setting_custom_login_limit_minutes'] = __("Limit Minutes", 'lang_login');
-		
+
 		$arr_settings['setting_custom_login_redirect_after_login_page'] = __("Redirect After Login", 'lang_login');
 
 		if(get_option('setting_custom_login_redirect_after_login_page') > 0)
@@ -660,7 +660,7 @@ class mf_custom_login
 	function login_init()
 	{
 		$this->combined_head();
-		
+
 		$action = check_var('action');
 
 		switch($action)
