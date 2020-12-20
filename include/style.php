@@ -17,7 +17,7 @@ $setting_custom_login_page = get_option('setting_custom_login_page');
 
 $login_logo_css = $login_mobile_logo_css = "";
 
-if(is_plugin_active('mf_theme_core/index.php') && get_option('setting_custom_login_display_theme_logo') == 'yes')
+if(class_exists('mf_theme_core') && get_option('setting_custom_login_display_theme_logo') == 'yes')
 {
 	if(!isset($obj_theme_core))
 	{
