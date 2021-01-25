@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 3.1.7
+Version: 3.2.1
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -40,6 +40,11 @@ else
 {
 	add_filter('login_headertext', array($obj_custom_login, 'login_headertext'));
 
+	/* Validate fields on login, registration and lost password forms */
+	add_action('wp_authenticate_user', array($obj_custom_login, 'wp_authenticate_user'), 10);
+	add_filter('registration_errors', array($obj_custom_login, 'registration_errors'), 10, 3);
+	//add_action('lostpassword_post', array($obj_custom_login, 'lostpassword_post')); // This does not validate and return errors
+
 	add_action('login_init', array($obj_custom_login, 'login_init'), 0);
 	add_filter('login_redirect', array($obj_custom_login, 'login_redirect'), 10, 3);
 	add_filter('login_message', array($obj_custom_login, 'login_message'));
@@ -49,7 +54,10 @@ else
 	add_action('wp_login', array($obj_custom_login, 'wp_login'));
 	add_action('wp_logout', array($obj_custom_login, 'wp_logout'));
 
+	/* Add fields to login, registration and lost password forms */
 	add_action('login_form', array($obj_custom_login, 'login_form'));
+	add_action('register_form', array($obj_custom_login, 'register_form'));
+	//add_action('lostpassword_form', array($obj_custom_login, 'lostpassword_form'));
 
 	add_action('wp_head', array($obj_custom_login, 'wp_head'), 0);
 	add_filter('body_class', array($obj_custom_login, 'body_class'));

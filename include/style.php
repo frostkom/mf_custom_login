@@ -67,6 +67,20 @@ else
 	}
 }
 
+if(!is_plugin_active("mf_form/index.php")) // We don't need duplicates of this code
+{
+	$out_media_all .= ".form_textfield.form_check
+	{
+        height: 0;
+        left: 0;
+		opacity: 0;
+		position: absolute;
+		top: 0;
+        width: 0;
+		z-index: -1;
+	}";
+}
+
 if($login_mobile_logo_css != '')
 {
 	$out_media_all .= ".login #login h1 a
@@ -114,7 +128,7 @@ if($setting_custom_login_page > 0)
 	$out_media_mobile .= ".login #login
 	{
 		position: relative;
-		width: 740px;
+		width: 740px !important;
 	}
 
 		#mf_custom_login, .message, #loginform, #nav, #backtoblog

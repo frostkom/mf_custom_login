@@ -24,7 +24,7 @@ class mf_custom_login
 				{
 					$users = get_users(array('fields' => array('ID')));
 
-					$obj_custom_login = new mf_custom_login();
+					//$obj_custom_login = new mf_custom_login();
 
 					foreach($users as $user)
 					{
@@ -657,6 +657,37 @@ class mf_custom_login
 		return $redirect_to;
 	}
 
+	function wp_authenticate_user($userdata)
+	{
+		if(check_var('login_check') != '')
+		{
+			$userdata = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+		}
+
+		//$login_nonce_value = 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("YmdH");
+		//wp_verify_nonce($_POST['_wpnonce_login_send'], $login_nonce_value)
+
+		return $userdata;
+	}
+
+	function registration_errors($errors, $user_login, $user_email)
+	{
+		if(check_var('registration_check') != '')
+		{
+			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+		}
+
+		return $errors;
+	}
+
+	/*function lostpassword_post($errors, $user_data)
+	{
+		if(check_var('lost_password_check') != '')
+		{
+			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+		}
+	}*/
+
 	function login_init()
 	{
 		$this->combined_head();
@@ -999,7 +1030,23 @@ class mf_custom_login
 				<a href='#'>".__("Lost Password? Click to get a secure direct link to login instantly", 'lang_login')."</a><br><br>
 			</p>";
 		}
+
+		echo show_textfield(array('name' => 'login_check', 'text' => __("This field should not be visible", 'lang_login'), 'xtra_class' => "form_check", 'xtra' => " autocomplete='off'"));
+
+		// For this to work we have to prevent this page from ever being cached
+		//$login_nonce_value = 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("YmdH");
+		//echo wp_nonce_field($login_nonce_value, '_wpnonce_login_send', true, false);
 	}
+
+	function register_form()
+	{
+		echo show_textfield(array('name' => 'registration_check', 'text' => __("This field should not be visible", 'lang_login'), 'xtra_class' => "form_check", 'xtra' => " autocomplete='off'"));
+	}
+
+	/*function lostpassword_form()
+	{
+		echo show_textfield(array('name' => 'lost_password_check', 'text' => __("This field should not be visible", 'lang_login'), 'xtra_class' => "form_check", 'xtra' => " autocomplete='off'"));
+	}*/
 
 	function wp_head()
 	{
@@ -1251,12 +1298,10 @@ class widget_login_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
-		global $wpdb, $error_text, $done_text;
+		global $wpdb, $obj_custom_login, $error_text, $done_text;
 
 		extract($args);
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
-
-		$login_nonce_value = 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("YmdH");
 
 		$action = check_var('action');
 		$redirect_to = check_var('redirect_to', 'char', true, admin_url());
@@ -1300,9 +1345,12 @@ class widget_login_form extends WP_Widget
 				break;
 
 				default:
-					$obj_custom_login = new mf_custom_login();
+					if(!isset($obj_custom_login))
+					{
+						$obj_custom_login = new mf_custom_login();
+					}
 
-					if(isset($_POST['btnSendLogin'])) // && wp_verify_nonce($_POST['_wpnonce_login_send'], $login_nonce_value)
+					if(isset($_POST['btnSendLogin']))
 					{
 						$setting_custom_login_limit_attempts = get_site_option('setting_custom_login_limit_attempts', 20);
 						$setting_custom_login_limit_minutes = get_site_option('setting_custom_login_limit_minutes', 15);
@@ -1348,7 +1396,7 @@ class widget_login_form extends WP_Widget
 			}
 
 			echo "<form method='post' action='".wp_login_url()."' class='mf_form'>"
-				.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
+				.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true))
 				.show_password_field(array('name' => 'pwd', 'text' => __("Password"), 'value' => $user_pass, 'required' => true));
 
 				do_action('login_form');
@@ -1356,29 +1404,9 @@ class widget_login_form extends WP_Widget
 				echo "<div class='flex_flow'>"
 					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
 					."<div class='form_button'>"
-						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')));
-
-						// For this to work we have to prevent this page from ever being cached
-						//echo wp_nonce_field($login_nonce_value, '_wpnonce_login_send', true, false);
-
-						/*if($interim_login)
-						{
-							echo input_hidden(array('name' => 'interim-login', 'value' => 1));
-						}
-
-						else
-						{*/
-							echo input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)));
-						/*}
-
-						if($customize_login)
-						{
-							echo input_hidden(array('name' => 'customize-login', 'value' => 1));
-						}*/
-
-						//echo input_hidden(array('name' => 'testcookie', 'value' => 1));
-
-					echo "</div>
+						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
+						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
+					."</div>
 				</div>
 				<p><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
 
@@ -1608,7 +1636,7 @@ class widget_registration_form extends WP_Widget
 						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true));
 					}
 
-					echo show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => "name@domain.com", 'required' => true));
+					echo show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => get_placeholder_email(), 'required' => true));
 
 					if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
 					{
@@ -1734,6 +1762,8 @@ class widget_lost_password_form extends WP_Widget
 
 		else
 		{
+			//do_action('lostpassword_post', $errors, $user_data);
+
 			$user_login = $user_data->user_login;
 			$user_email = $user_data->user_email;
 			$key = get_password_reset_key($user_data);
@@ -1935,15 +1965,16 @@ class widget_lost_password_form extends WP_Widget
 						}*/
 
 						echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
-							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / name@domain.com", 'required' => true))
-							."<div class='form_button'>"
+							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true));
+
+							do_action('lostpassword_form');
+
+							echo "<div class='form_button'>"
 								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
 							."</div>
 							<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>
 						</form>";
 					}
-
-					//do_action('lostpassword_form');
 				break;
 			}
 
