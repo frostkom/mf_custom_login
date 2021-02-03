@@ -148,7 +148,7 @@ class mf_custom_login
 
 		if($has_login_widget == false && $has_registration_widget == false && $has_lost_password_post_widget == false)
 		{
-			if(is_plugin_active('mf_theme_core/index.php'))
+			if(is_plugin_active("mf_theme_core/index.php"))
 			{
 				$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
 			}
@@ -164,7 +164,7 @@ class mf_custom_login
 			$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
 		}
 
-		if(is_plugin_active('mf_auth/index.php') == false || get_option('setting_auth_active') == 'no')
+		if(is_plugin_active("mf_auth/index.php") == false || get_option('setting_auth_active') == 'no')
 		{
 			$arr_settings['setting_custom_login_allow_direct_link'] = __("Allow Direct Link to Login", 'lang_login');
 
@@ -566,13 +566,13 @@ class mf_custom_login
 						{
 							echo "<p><a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user, 'type' => 'profile'))."'>".__("URL", 'lang_login')."</a></p>
 							<div>"
-								.show_submit(array('type' => 'button', 'name' => 'btnDirectLoginRevoke', 'text' => __("Revoke", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"))
+								.show_button(array('type' => 'button', 'name' => 'btnDirectLoginRevoke', 'text' => __("Revoke", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"))
 							."</div>";
 						}
 
 						else
 						{
-							echo show_submit(array('type' => 'button', 'name' => 'btnDirectLoginCreate', 'text' => __("Generate Now", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"));
+							echo show_button(array('type' => 'button', 'name' => 'btnDirectLoginCreate', 'text' => __("Generate Now", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"));
 						}
 
 						echo "<div id='direct_login_debug'></div>
