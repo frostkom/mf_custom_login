@@ -9,6 +9,8 @@ if(!defined('ABSPATH'))
 	require_once($folder."wp-load.php");
 }
 
+$obj_custom_login = new mf_custom_login();
+
 $json_output = array();
 
 $action = check_var('action', 'char');
@@ -50,7 +52,7 @@ switch($action)
 					{
 						header("Status: 401 Unauthorized");
 
-						$json_output['error'] = sprintf(__("You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s.", 'lang_login'), "POST", "user_login", "user_pass");
+						$json_output['error'] = sprintf(__("You have not provided the correct login credentials. They should be sent by %s with the variables %s and %s.", $obj_custom_login->lang_key), "POST", "user_login", "user_pass");
 					}
 				}
 
@@ -58,7 +60,7 @@ switch($action)
 				{
 					header("Status: 401 Unauthorized");
 
-					$json_output['error'] = sprintf(__("You are already logged in as %s", 'lang_login'), get_user_info());
+					$json_output['error'] = sprintf(__("You are already logged in as %s", $obj_custom_login->lang_key), get_user_info());
 				}
 			}
 
@@ -66,7 +68,7 @@ switch($action)
 			{
 				header("Status: 503 Forbidden");
 
-				$json_output['error'] = __("The API login is inactivated on this site", 'lang_login');
+				$json_output['error'] = __("The API login is inactivated on this site", $obj_custom_login->lang_key);
 			}
 		}
 
@@ -74,14 +76,14 @@ switch($action)
 		{
 			header("Status: 503 Forbidden");
 
-			$json_output['error'] = __("You are not using SSL, therefor I cannot process your request", 'lang_login');
+			$json_output['error'] = __("You are not using SSL, therefor I cannot process your request", $obj_custom_login->lang_key);
 		}
 	break;
 
 	default:
 		header("Status: 503 Unknown Action");
 
-		$json_output['error'] = __("Unknown Action", 'lang_login').": ".$action;
+		$json_output['error'] = __("Unknown Action", $obj_custom_login->lang_key).": ".$action;
 	break;
 }
 
