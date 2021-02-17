@@ -666,10 +666,15 @@ class mf_custom_login
 
 		if(wp_verify_nonce($_POST['_wpnonce_login_send'], 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
-			do_log("wp_authenticate_user: The user did NOT have the correct NONCE...so should NOT be allowed to login (".var_export($user_data, true).", ".$_POST['_wpnonce_login_send'].")");
+			//do_log("Login FAILURE (".var_export($user_data, true).", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_login_send'].")");
 
-			//$userdata = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
+			$userdata = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
 		}
+
+		/*else
+		{
+			do_log("Login Success (".var_export($user_data, true).", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_login_send'].")");
+		}*/
 
 		return $userdata;
 	}
@@ -683,14 +688,14 @@ class mf_custom_login
 
 		if(wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
-			do_log("registration_errors: The user did NOT have the correct NONCE...so should NOT be allowed to register (".$user_login.", ".$user_email.", ".$_POST['_wpnonce_registration_send'].")");
+			//do_log("Registration FAILURE (".$user_login.", ".$user_email.", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_registration_send'].")");
 
-			//$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
+			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
 		}
 
 		else
 		{
-			do_log("registration_errors: The user did have the correct NONCE so was allowed to register (".$user_login.", ".$user_email.", ".$_POST['_wpnonce_registration_send'].")");
+			do_log("Registration Success (".$user_login.", ".$user_email.", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_registration_send'].")");
 		}
 
 		return $errors;
@@ -705,9 +710,14 @@ class mf_custom_login
 
 		if(wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
-			do_log("lostpassword_post: The user did NOT have the correct NONCE...so should NOT be allowed to request lost password (".var_export($user_data, true).", ".$_POST['_wpnonce_lost_password_send'].")");
+			do_log("Password FAILURE (".var_export($user_data, true).", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_lost_password_send'].")");
 
 			//$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
+		}
+
+		else
+		{
+			do_log("Password Success (".var_export($user_data, true).", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_lost_password_send'].")");
 		}*/
 	}
 
@@ -1111,7 +1121,7 @@ class mf_custom_login
 
 			if($post_id > 0)
 			{
-				$array[] = str_replace($site_url, "", get_permalink($post_id));
+				$array[] = str_replace($site_url, "", rtrim(get_permalink($post_id), "/"));
 			}
 		}
 
