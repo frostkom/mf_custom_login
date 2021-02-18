@@ -37,8 +37,6 @@ class mf_custom_login
 							if($meta_date < date("YmdHis", strtotime("-".$setting_custom_login_direct_link_expire." minute")))
 							{
 								delete_user_meta($user->ID, 'meta_login_auth');
-
-								//do_log("Removed meta_login_auth for ".$user->ID);
 							}
 						}
 					}
@@ -205,6 +203,8 @@ class mf_custom_login
 		{
 			$arr_settings['setting_custom_login_redirect_after_login'] = __("Who to Redirect", $this->lang_key);
 		}
+
+		$arr_settings['setting_custom_login_debug'] = __("Debug", $this->lang_key);
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 
@@ -396,6 +396,16 @@ class mf_custom_login
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option))));
+		}
+
+		function setting_custom_login_debug_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key, 'no');
+
+			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+
+			setting_time_limit(array('key' => $setting_key, 'value' => $option));
 		}
 
 		function setting_custom_login_redirect_after_login_callback()
@@ -627,6 +637,12 @@ class mf_custom_login
 		}
 	}
 
+	function signup_header()
+	{
+		wp_redirect(wp_registration_url());
+		die;
+	}
+
 	function login_headertext()
 	{
 		return get_bloginfo('name');
@@ -657,45 +673,51 @@ class mf_custom_login
 		return $redirect_to;
 	}
 
-	function wp_authenticate_user($userdata)
+	function wp_authenticate_user($user_data)
 	{
-		if(check_var('login_check') != '')
+		/*if(check_var('login_check') != '')
 		{
-			$userdata = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
-		}
+			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
+		}*/
 
 		if(wp_verify_nonce($_POST['_wpnonce_login_send'], 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
-			//do_log("Login FAILURE (".var_export($user_data, true).", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_login_send'].")");
+			if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				do_log("Login FAILURE (".$user_data->data->user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")"); //var_export($user_data, true)
+			}
 
-			$userdata = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
+			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
 		}
 
-		/*else
+		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Login Success (".var_export($user_data, true).", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_login_send'].")");
-		}*/
+			do_log("Login Allowed (".$user_data->data->user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")"); //var_export($user_data, true)
+		}
 
-		return $userdata;
+		return $user_data;
 	}
 
 	function registration_errors($errors, $user_login, $user_email)
 	{
-		if(check_var('registration_check') != '')
+		/*if(check_var('registration_check') != '')
 		{
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
-		}
+		}*/
 
 		if(wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
-			//do_log("Registration FAILURE (".$user_login.", ".$user_email.", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_registration_send'].")");
+			if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				do_log("Registration FAILURE (".$user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_registration_send'].")"); //, ".$user_email."
+			}
 
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
 		}
 
-		else
+		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Registration Success (".$user_login.", ".$user_email.", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_registration_send'].")");
+			do_log("Registration Allowed (".$user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_registration_send'].")"); //, ".$user_email."
 		}
 
 		return $errors;
@@ -703,22 +725,33 @@ class mf_custom_login
 
 	function lostpassword_post($errors, $user_data)
 	{
+		$has_errors = false;
+
 		/*if(check_var('lost_password_check') != '')
 		{
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
-		}
+
+			$has_errors = true;
+		}*/
 
 		if(wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
-			do_log("Password FAILURE (".var_export($user_data, true).", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_lost_password_send'].")");
+			if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				do_log("Lost Password FAILURE (".$user_data->data->user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")"); //var_export($user_data, true)
+			}
 
-			//$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
+			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
+
+			$has_errors = true;
 		}
 
-		else
+		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Password Success (".var_export($user_data, true).", ".$_SERVER['REMOTE_ADDR'].", ".$_POST['_wpnonce_lost_password_send'].")");
-		}*/
+			do_log("Lost Password Allowed (".$user_data->data->user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")"); //var_export($user_data, true)
+		}
+
+		return array($has_errors, $errors);
 	}
 
 	function login_init()
@@ -1064,23 +1097,20 @@ class mf_custom_login
 			</p>";
 		}
 
-		echo show_textfield(array('name' => 'login_check', 'text' => __("This field should not be visible", $this->lang_key), 'xtra_class' => "form_check", 'xtra' => " autocomplete='off'"));
-
+		//echo show_textfield(array('name' => 'login_check', 'text' => __("This field should not be visible", $this->lang_key), 'xtra_class' => "form_check", 'xtra' => " autocomplete='off'"));
 		echo wp_nonce_field('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_login_send', true, false);
 	}
 
 	function register_form()
 	{
-		echo show_textfield(array('name' => 'registration_check', 'text' => __("This field should not be visible", $this->lang_key), 'xtra_class' => "form_check", 'xtra' => " autocomplete='off'"));
-
+		//echo show_textfield(array('name' => 'registration_check', 'text' => __("This field should not be visible", $this->lang_key), 'xtra_class' => "form_check", 'xtra' => " autocomplete='off'"));
 		echo wp_nonce_field('registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_registration_send', true, false);
 	}
 
 	function lostpassword_form()
 	{
 		//echo show_textfield(array('name' => 'lost_password_check', 'text' => __("This field should not be visible", $this->lang_key), 'xtra_class' => "form_check", 'xtra' => " autocomplete='off'"));
-
-		//echo wp_nonce_field('lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_lost_password_send', true, false);
+		echo wp_nonce_field('lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_lost_password_send', true, false);
 	}
 
 	function wp_head()
@@ -1822,58 +1852,67 @@ class widget_lost_password_form extends WP_Widget
 
 		else
 		{
-			do_action('lostpassword_post', $errors, $user_data);
+			//$errors = do_action('lostpassword_post', $errors, $user_data);
+			list($has_errors, $errors) = $this->obj_custom_login->lostpassword_post($errors, $user_data);
 
-			$user_login = $user_data->user_login;
-			$user_email = $user_data->user_email;
-			$key = get_password_reset_key($user_data);
-
-			if(is_wp_error($key))
+			if($has_errors)
 			{
-				return $key;
+				return $errors;
 			}
 
 			else
 			{
-				if(is_multisite())
+				$user_login = $user_data->user_login;
+				$user_email = $user_data->user_email;
+				$key = get_password_reset_key($user_data);
+
+				if(is_wp_error($key))
 				{
-					$site_name = get_network()->site_name;
+					return $key;
 				}
 
 				else
 				{
-					/*
-					 * The blogname option is escaped with esc_html on the way into the database
-					 * in sanitize_option we want to reverse this for the plain text arena of emails.
-					 */
-					$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
-				}
+					if(is_multisite())
+					{
+						$site_name = get_network()->site_name;
+					}
 
-				$lost_password_link = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
+					else
+					{
+						/*
+						 * The blogname option is escaped with esc_html on the way into the database
+						 * in sanitize_option we want to reverse this for the plain text arena of emails.
+						 */
+						$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+					}
 
-				$message = "<p>"
-					.__("Someone has requested a password reset for the following account", $this->obj_custom_login->lang_key).":<br>"
-					.__("Username", $this->obj_custom_login->lang_key).": ".$user_login
-				."</p>
-				<p>".__("If this was a mistake, just ignore this email and nothing will happen.", $this->obj_custom_login->lang_key)."</p>
-				<p>"
-					.__("To reset your password, visit the following address").":<br>"
-					."<a href='".$lost_password_link."'>".$lost_password_link."</a>
-				</p>";
+					$lost_password_link = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
 
-				$title = sprintf(__("[%s] Password Reset", $this->obj_custom_login->lang_key), $site_name);
+					$message = "<p>"
+						.__("Someone has requested a password reset for the following account", $this->obj_custom_login->lang_key).":<br>"
+						.__("Username", $this->obj_custom_login->lang_key).": ".$user_login
+					."</p>
+					<p>".__("If this was a mistake, just ignore this email and nothing will happen.", $this->obj_custom_login->lang_key)."</p>
+					<p>"
+						.__("To reset your password, visit the following address").":<br>"
+						."<a href='".$lost_password_link."'>".$lost_password_link."</a>
+					</p>";
 
-				$title = apply_filters('retrieve_password_title', $title, $user_login, $user_data);
-				$message = apply_filters('retrieve_password_message', $message, $key, $user_login, $user_data);
+					$title = sprintf(__("[%s] Password Reset", $this->obj_custom_login->lang_key), $site_name);
 
-				if(send_email(array('to' => $user_email, 'subject' => wp_specialchars_decode($title), 'content' => $message)))
-				{
-					return true;
-				}
+					$title = apply_filters('retrieve_password_title', $title, $user_login, $user_data);
+					$message = apply_filters('retrieve_password_message', $message, $key, $user_login, $user_data);
 
-				else
-				{
-					wp_die(__("The email could not be sent.", $this->obj_custom_login->lang_key)."<br>\n".__("Possible reason: your host may have disabled the mail() function.", $this->obj_custom_login->lang_key));
+					if(send_email(array('to' => $user_email, 'subject' => wp_specialchars_decode($title), 'content' => $message)))
+					{
+						return true;
+					}
+
+					else
+					{
+						wp_die(__("The email could not be sent.", $this->obj_custom_login->lang_key)."<br>\n".__("Possible reason: your host may have disabled the mail() function.", $this->obj_custom_login->lang_key));
+					}
 				}
 			}
 		}

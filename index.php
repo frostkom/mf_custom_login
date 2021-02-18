@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 3.2.5
+Version: 3.2.7
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -40,12 +40,14 @@ if(is_admin())
 
 else
 {
+	add_action('signup_header', array($obj_custom_login, 'signup_header'));
+
 	add_filter('login_headertext', array($obj_custom_login, 'login_headertext'));
 
 	/* Validate fields on login, registration and lost password forms */
 	add_action('wp_authenticate_user', array($obj_custom_login, 'wp_authenticate_user'), 10);
 	add_filter('registration_errors', array($obj_custom_login, 'registration_errors'), 10, 3);
-	//add_action('lostpassword_post', array($obj_custom_login, 'lostpassword_post')); // This does not validate and return errors
+	//add_action('lostpassword_post', array($obj_custom_login, 'lostpassword_post'), 10, 3); // This does not validate and return errors
 
 	add_action('login_init', array($obj_custom_login, 'login_init'), 0);
 	add_filter('login_redirect', array($obj_custom_login, 'login_redirect'), 10, 3);
@@ -59,7 +61,7 @@ else
 	/* Add fields to login, registration and lost password forms */
 	add_action('login_form', array($obj_custom_login, 'login_form'));
 	add_action('register_form', array($obj_custom_login, 'register_form'));
-	//add_action('lostpassword_form', array($obj_custom_login, 'lostpassword_form'));
+	add_action('lostpassword_form', array($obj_custom_login, 'lostpassword_form'));
 
 	add_action('wp_head', array($obj_custom_login, 'wp_head'), 0);
 	add_filter('body_class', array($obj_custom_login, 'body_class'));
@@ -109,14 +111,6 @@ function activate_custom_login()
 		'loginUsername' => "ALTER TABLE [table] ADD [column] VARCHAR(40) DEFAULT NULL AFTER loginStatus",
 	);
 
-	$arr_update_column[$wpdb->base_prefix."custom_login"] = array(
-		//'login...' => "ALTER TABLE [table] CHANGE [column] login... VARCHAR(40) DEFAULT NULL",
-	);
-
-	$arr_add_index[$wpdb->prefix."custom_login"] = array(
-		//'login...' => "ALTER TABLE [table] ADD INDEX [column] ([column])",
-	);
-
 	update_columns($arr_update_column);
 	add_columns($arr_add_column);
 	add_index($arr_add_index);
@@ -125,7 +119,7 @@ function activate_custom_login()
 function uninstall_custom_login()
 {
 	mf_uninstall_plugin(array(
-		'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_redirect_after_login', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes'),
+		'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_redirect_after_login', 'setting_custom_login_debug', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes'),
 		'meta' => array('meta_login_auth'),
 		'tables' => array('custom_login'),
 	));
