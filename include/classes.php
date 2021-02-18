@@ -680,7 +680,7 @@ class mf_custom_login
 			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
 		}*/
 
-		if(wp_verify_nonce($_POST['_wpnonce_login_send'], 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+		if(!isset($_POST['_wpnonce_login_send']) || wp_verify_nonce($_POST['_wpnonce_login_send'], 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
@@ -705,7 +705,7 @@ class mf_custom_login
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
 		}*/
 
-		if(wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+		if(!isset($_POST['_wpnonce_registration_send']) || wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
@@ -734,7 +734,7 @@ class mf_custom_login
 			$has_errors = true;
 		}*/
 
-		if(wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+		if(!isset($_POST['_wpnonce_lost_password_send']) || wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
