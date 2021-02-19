@@ -9,6 +9,15 @@ class mf_custom_login
 		$this->lang_key = 'lang_login';
 	}
 
+	function get_wp_login_action_for_select()
+	{
+		return array(
+			'' => "-- ".__("Choose Here", $this->lang_key)." --",
+			'301' => __("Redirect to New Page", $this->lang_key),
+			'404' => __("Return Error", $this->lang_key),
+		);
+	}
+
 	function cron_base()
 	{
 		global $wpdb;
@@ -157,7 +166,12 @@ class mf_custom_login
 			}
 		}
 
-		if($has_login_widget == false)
+		if($has_login_widget)
+		{
+			$arr_settings['setting_custom_login_wp_login_action'] = __("Action on Old Login Page", $this->lang_key);
+		}
+
+		else
 		{
 			$arr_settings['setting_custom_login_page'] = __("Login", $this->lang_key);
 		}
@@ -290,6 +304,14 @@ class mf_custom_login
 			$option = get_option($setting_key);
 
 			echo get_media_library(array('type' => 'image', 'name' => $setting_key, 'value' => $option));
+		}
+
+		function setting_custom_login_wp_login_action_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key);
+
+			echo show_select(array('data' => $this->get_wp_login_action_for_select(), 'name' => $setting_key, 'value' => $option));
 		}
 
 		function setting_custom_login_page_callback()
@@ -754,8 +776,42 @@ class mf_custom_login
 		return array($has_errors, $errors);
 	}
 
+	function get_404_page()
+	{
+		global $wp_query;
+
+		$wp_query->set_404();
+		status_header(404);
+		get_template_part(404); 
+		exit;
+	}
+
 	function login_init()
 	{
+		if(strpos($_SERVER['REQUEST_URI'], "wp-login.php"))
+		{
+			$setting_custom_login_wp_login_action = get_option('setting_custom_login_wp_login_action');
+
+			if($setting_custom_login_wp_login_action != '')
+			{
+				switch($setting_custom_login_wp_login_action)
+				{
+					case 301:
+						mf_redirect(wp_login_url());
+					break;
+
+					case 404:
+						//header("Status: 404 Not Found");
+						$this->get_404_page();
+					break;
+
+					default:
+						do_log("login_init(): Unknown action ".$setting_custom_login_wp_login_action);
+					break;
+				}
+			}
+		}
+
 		$this->combined_head();
 
 		$action = check_var('action');
