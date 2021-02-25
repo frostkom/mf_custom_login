@@ -706,7 +706,7 @@ class mf_custom_login
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Login FAILURE (".$user_data->data->user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")"); //var_export($user_data, true)
+				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")"); //var_export($user_data, true)
 			}
 
 			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
@@ -714,7 +714,7 @@ class mf_custom_login
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Login Allowed (".$user_data->data->user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")"); //var_export($user_data, true)
+			do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")"); //var_export($user_data, true)
 		}
 
 		return $user_data;
@@ -760,7 +760,7 @@ class mf_custom_login
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Lost Password FAILURE (".$user_data->data->user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")"); //var_export($user_data, true)
+				do_log("Lost Password FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")"); //var_export($user_data, true)
 			}
 
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", $this->lang_key));
@@ -770,7 +770,7 @@ class mf_custom_login
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Lost Password Allowed (".$user_data->data->user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")"); //var_export($user_data, true)
+			do_log("Lost Password Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")"); //var_export($user_data, true)
 		}
 
 		return array($has_errors, $errors);
