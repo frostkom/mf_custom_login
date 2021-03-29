@@ -554,11 +554,6 @@ class mf_custom_login
 	{
 		global $pagenow;
 
-		if(!is_plugin_active("mf_base/index.php"))
-		{
-			deactivate_plugins(str_replace("include/classes.php", "index.php", plugin_basename(__FILE__)));
-		}
-
 		if(in_array($pagenow, array('user-edit.php', 'profile.php')) && IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
 			$plugin_include_url = plugin_dir_url(__FILE__);

@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 3.3.1
+Version: 3.3.2
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -14,113 +14,116 @@ Depends: MF Base
 GitHub Plugin URI: frostkom/mf_custom_login
 */
 
-include_once("include/classes.php");
-
-load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
-
-$obj_custom_login = new mf_custom_login();
-
-add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
-add_action('cron_base', array($obj_custom_login, 'cron_base'), mt_rand(1, 10));
-
-if(is_admin())
+if(is_plugin_active("mf_base/index.php"))
 {
-	register_activation_hook(__FILE__, 'activate_custom_login');
-	register_uninstall_hook(__FILE__, 'uninstall_custom_login');
+	include_once("include/classes.php");
 
-	add_action('admin_init', array($obj_custom_login, 'settings_custom_login'));
-	add_action('admin_init', array($obj_custom_login, 'admin_init'), 0);
+	load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
 
-	add_filter('user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
-	add_action('ms_user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
+	$obj_custom_login = new mf_custom_login();
 
-	add_action('show_user_profile', array($obj_custom_login, 'edit_user_profile'));
-	add_action('edit_user_profile', array($obj_custom_login, 'edit_user_profile'));
-}
+	add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
+	add_action('cron_base', array($obj_custom_login, 'cron_base'), mt_rand(1, 10));
 
-else
-{
-	add_action('signup_header', array($obj_custom_login, 'signup_header'));
+	if(is_admin())
+	{
+		register_activation_hook(__FILE__, 'activate_custom_login');
+		register_uninstall_hook(__FILE__, 'uninstall_custom_login');
 
-	add_filter('login_headertext', array($obj_custom_login, 'login_headertext'));
+		add_action('admin_init', array($obj_custom_login, 'settings_custom_login'));
+		add_action('admin_init', array($obj_custom_login, 'admin_init'), 0);
 
-	/* Validate fields on login, registration and lost password forms */
-	add_action('wp_authenticate_user', array($obj_custom_login, 'wp_authenticate_user'), 10);
-	add_filter('registration_errors', array($obj_custom_login, 'registration_errors'), 10, 3);
-	//add_action('lostpassword_post', array($obj_custom_login, 'lostpassword_post'), 10, 3); // This does not validate and return errors
+		add_filter('user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
+		add_action('ms_user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
 
-	add_action('login_init', array($obj_custom_login, 'login_init'), 0);
-	add_filter('login_redirect', array($obj_custom_login, 'login_redirect'), 10, 3);
-	add_filter('login_message', array($obj_custom_login, 'login_message'));
+		add_action('show_user_profile', array($obj_custom_login, 'edit_user_profile'));
+		add_action('edit_user_profile', array($obj_custom_login, 'edit_user_profile'));
+	}
 
-	/* Direct Link Login */
-	add_action('wp_login_errors', array($obj_custom_login, 'wp_login_errors'));
-	add_action('wp_login', array($obj_custom_login, 'wp_login'));
-	add_action('wp_logout', array($obj_custom_login, 'wp_logout'));
+	else
+	{
+		add_action('signup_header', array($obj_custom_login, 'signup_header'));
 
-	/* Add fields to login, registration and lost password forms */
-	add_action('login_form', array($obj_custom_login, 'login_form'));
-	add_action('register_form', array($obj_custom_login, 'register_form'));
-	add_action('lostpassword_form', array($obj_custom_login, 'lostpassword_form'));
+		add_filter('login_headertext', array($obj_custom_login, 'login_headertext'));
 
-	add_action('wp_head', array($obj_custom_login, 'wp_head'), 0);
-	add_filter('body_class', array($obj_custom_login, 'body_class'));
+		/* Validate fields on login, registration and lost password forms */
+		add_action('wp_authenticate_user', array($obj_custom_login, 'wp_authenticate_user'), 10);
+		add_filter('registration_errors', array($obj_custom_login, 'registration_errors'), 10, 3);
+		//add_action('lostpassword_post', array($obj_custom_login, 'lostpassword_post'), 10, 3); // This does not validate and return errors
 
-	add_filter('filter_cache_ignore', array($obj_custom_login, 'filter_cache_ignore'));
-}
+		add_action('login_init', array($obj_custom_login, 'login_init'), 0);
+		add_filter('login_redirect', array($obj_custom_login, 'login_redirect'), 10, 3);
+		add_filter('login_message', array($obj_custom_login, 'login_message'));
 
-add_filter('is_public_page', array($obj_custom_login, 'is_public_page'), 10, 2);
-add_filter('login_url', array($obj_custom_login, 'login_url'), 10, 2);
-add_filter('register_url', array($obj_custom_login, 'register_url'), 10, 2);
-add_filter('wp_new_user_notification_email_admin', array($obj_custom_login, 'wp_new_user_notification_email_admin'), 10, 2);
-add_filter('wp_new_user_notification_email', array($obj_custom_login, 'wp_new_user_notification_email'), 10, 2);
-add_filter('lostpassword_url', array($obj_custom_login, 'lostpassword_url'), 10, 2);
-add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
-add_filter('logout_url', array($obj_custom_login, 'logout_url'), 10, 2);
+		/* Direct Link Login */
+		add_action('wp_login_errors', array($obj_custom_login, 'wp_login_errors'));
+		add_action('wp_login', array($obj_custom_login, 'wp_login'));
+		add_action('wp_logout', array($obj_custom_login, 'wp_logout'));
 
-add_filter('determine_current_user', array($obj_custom_login, 'determine_current_user'), 21);
+		/* Add fields to login, registration and lost password forms */
+		add_action('login_form', array($obj_custom_login, 'login_form'));
+		add_action('register_form', array($obj_custom_login, 'register_form'));
+		add_action('lostpassword_form', array($obj_custom_login, 'lostpassword_form'));
 
-add_action('wp_ajax_create_direct_login', array($obj_custom_login, 'create_direct_login'));
-add_action('wp_ajax_revoke_direct_login', array($obj_custom_login, 'revoke_direct_login'));
+		add_action('wp_head', array($obj_custom_login, 'wp_head'), 0);
+		add_filter('body_class', array($obj_custom_login, 'body_class'));
 
-add_action('wp_ajax_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
-add_action('wp_ajax_nopriv_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
+		add_filter('filter_cache_ignore', array($obj_custom_login, 'filter_cache_ignore'));
+	}
 
-add_action('widgets_init', array($obj_custom_login, 'widgets_init'));
+	add_filter('is_public_page', array($obj_custom_login, 'is_public_page'), 10, 2);
+	add_filter('login_url', array($obj_custom_login, 'login_url'), 10, 2);
+	add_filter('register_url', array($obj_custom_login, 'register_url'), 10, 2);
+	add_filter('wp_new_user_notification_email_admin', array($obj_custom_login, 'wp_new_user_notification_email_admin'), 10, 2);
+	add_filter('wp_new_user_notification_email', array($obj_custom_login, 'wp_new_user_notification_email'), 10, 2);
+	add_filter('lostpassword_url', array($obj_custom_login, 'lostpassword_url'), 10, 2);
+	add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
+	add_filter('logout_url', array($obj_custom_login, 'logout_url'), 10, 2);
 
-function activate_custom_login()
-{
-	global $wpdb;
+	add_filter('determine_current_user', array($obj_custom_login, 'determine_current_user'), 21);
 
-	$default_charset = DB_CHARSET != '' ? DB_CHARSET : "utf8";
+	add_action('wp_ajax_create_direct_login', array($obj_custom_login, 'create_direct_login'));
+	add_action('wp_ajax_revoke_direct_login', array($obj_custom_login, 'revoke_direct_login'));
 
-	$arr_add_column = $arr_update_column = $arr_add_index = array();
+	add_action('wp_ajax_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
+	add_action('wp_ajax_nopriv_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
 
-	$wpdb->query("CREATE TABLE IF NOT EXISTS ".$wpdb->base_prefix."custom_login (
-		loginID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-		loginIP VARCHAR(15) DEFAULT NULL,
-		loginStatus ENUM('failure', 'success') NOT NULL DEFAULT 'failure',
-		loginUsername VARCHAR(40) DEFAULT NULL,
-		loginCreated DATETIME DEFAULT NULL,
-		PRIMARY KEY (loginID),
-		KEY logIP (loginIP),
-		KEY loginStatus (loginStatus)
-	) DEFAULT CHARSET=".$default_charset);
+	add_action('widgets_init', array($obj_custom_login, 'widgets_init'));
 
-	$arr_add_column[$wpdb->base_prefix."custom_login"] = array(
-		'loginUsername' => "ALTER TABLE [table] ADD [column] VARCHAR(40) DEFAULT NULL AFTER loginStatus",
-	);
+	function activate_custom_login()
+	{
+		global $wpdb;
 
-	update_columns($arr_update_column);
-	add_columns($arr_add_column);
-	add_index($arr_add_index);
-}
+		$default_charset = DB_CHARSET != '' ? DB_CHARSET : "utf8";
 
-function uninstall_custom_login()
-{
-	mf_uninstall_plugin(array(
-		'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_wp_login_action', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_redirect_after_login', 'setting_custom_login_debug', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes'),
-		'meta' => array('meta_login_auth'),
-		'tables' => array('custom_login'),
-	));
+		$arr_add_column = $arr_update_column = $arr_add_index = array();
+
+		$wpdb->query("CREATE TABLE IF NOT EXISTS ".$wpdb->base_prefix."custom_login (
+			loginID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			loginIP VARCHAR(15) DEFAULT NULL,
+			loginStatus ENUM('failure', 'success') NOT NULL DEFAULT 'failure',
+			loginUsername VARCHAR(40) DEFAULT NULL,
+			loginCreated DATETIME DEFAULT NULL,
+			PRIMARY KEY (loginID),
+			KEY logIP (loginIP),
+			KEY loginStatus (loginStatus)
+		) DEFAULT CHARSET=".$default_charset);
+
+		$arr_add_column[$wpdb->base_prefix."custom_login"] = array(
+			'loginUsername' => "ALTER TABLE [table] ADD [column] VARCHAR(40) DEFAULT NULL AFTER loginStatus",
+		);
+
+		update_columns($arr_update_column);
+		add_columns($arr_add_column);
+		add_index($arr_add_index);
+	}
+
+	function uninstall_custom_login()
+	{
+		mf_uninstall_plugin(array(
+			'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_wp_login_action', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_redirect_after_login', 'setting_custom_login_debug', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes'),
+			'meta' => array('meta_login_auth'),
+			'tables' => array('custom_login'),
+		));
+	}
 }
