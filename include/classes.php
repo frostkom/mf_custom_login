@@ -1249,11 +1249,29 @@ class mf_custom_login
 
 	function register_url($url)
 	{
-		$post_id = apply_filters('get_widget_search', 'registration-widget');
-
-		if($post_id > 0)
+		if(is_user_logged_in() && IS_ADMIN)
 		{
-			$url = get_permalink($post_id);
+			if(is_multisite() && IS_SUPER_ADMIN)
+			{
+				global $wpdb;
+
+				$url = network_admin_url("site-users.php?id=".$wpdb->blogid."#add-existing-user");
+			}
+
+			else
+			{
+				$url = admin_url("user-new.php");
+			}
+		}
+
+		else
+		{
+			$post_id = apply_filters('get_widget_search', 'registration-widget');
+
+			if($post_id > 0)
+			{
+				$url = get_permalink($post_id);
+			}
 		}
 
 		return $url;
