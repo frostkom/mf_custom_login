@@ -22,7 +22,7 @@ switch($action)
 		{
 			if(get_option('setting_custom_login_allow_api') == 'yes')
 			{
-				if(!is_user_logged_in())
+				if(is_user_logged_in() == false)
 				{
 					$user_login = check_var('user_login', 'char', true, '', false, 'post');
 					$user_pass = check_var('user_pass', 'char', true, '', false, 'post');

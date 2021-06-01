@@ -142,6 +142,8 @@ class mf_custom_login
 	{
 		$options_area_orig = $options_area = __FUNCTION__;
 
+		// Generic
+		############################
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
 		$has_login_widget = (apply_filters('get_widget_search', 'login-widget') > 0);
@@ -219,6 +221,7 @@ class mf_custom_login
 		$arr_settings['setting_custom_login_debug'] = __("Debug", 'lang_login');
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
+		############################
 
 		// Registration
 		############################
@@ -1837,7 +1840,7 @@ class widget_registration_form extends WP_Widget
 						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
 					."</div>";
 
-					if(!is_user_logged_in())
+					if(is_user_logged_in() == false)
 					{
 						echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
 					}
