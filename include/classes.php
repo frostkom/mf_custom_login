@@ -614,10 +614,12 @@ class mf_custom_login
 		$plugin_version = get_plugin_version(__FILE__);
 
 		mf_enqueue_style('style_custom_login', $plugin_include_url."style.php", $plugin_version);
-		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js", array('ajax_url' => admin_url('admin-ajax.php'), 'allow_direct_link' => get_option('setting_custom_login_allow_direct_link')), $plugin_version);
+		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js", $plugin_version);
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
+			mf_enqueue_script('script_custom_login_direct_link', $plugin_include_url."script_direct_link.js", array('ajax_url' => admin_url('admin-ajax.php')), $plugin_version);
+
 			switch(check_var('type'))
 			{
 				case 'link':
