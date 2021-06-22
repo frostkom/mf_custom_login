@@ -9,7 +9,10 @@ if(!defined('ABSPATH'))
 	require_once($folder."wp-load.php");
 }
 
-$obj_custom_login = new mf_custom_login();
+if(!isset($obj_custom_login))
+{
+	$obj_custom_login = new mf_custom_login();
+}
 
 $json_output = array();
 

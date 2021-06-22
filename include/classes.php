@@ -104,8 +104,6 @@ class mf_custom_login
 		{
 			foreach($user->errors as $error)
 			{
-				//$error_text = $error[0];
-
 				return array(
 					'success' => false,
 					'error' => $error[0],
@@ -693,16 +691,11 @@ class mf_custom_login
 
 	function wp_authenticate_user($user_data)
 	{
-		/*if(check_var('login_check') != '')
-		{
-			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
-		}*/
-
 		if(!isset($_POST['_wpnonce_login_send']) || wp_verify_nonce($_POST['_wpnonce_login_send'], 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")"); //var_export($user_data, true)
+				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
 			}
 
 			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
@@ -710,7 +703,7 @@ class mf_custom_login
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")"); //var_export($user_data, true)
+			do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
 		}
 
 		return $user_data;
@@ -718,16 +711,11 @@ class mf_custom_login
 
 	function registration_errors($errors, $user_login, $user_email)
 	{
-		/*if(check_var('registration_check') != '')
-		{
-			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
-		}*/
-
 		if(!isset($_POST['_wpnonce_registration_send']) || wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Registration FAILURE (".$user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_registration_send'].")"); //, ".$user_email."
+				do_log("Registration FAILURE (".$user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_registration_send'].")");
 			}
 
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
@@ -735,7 +723,7 @@ class mf_custom_login
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Registration Allowed (".$user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_registration_send'].")"); //, ".$user_email."
+			do_log("Registration Allowed (".$user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_registration_send'].")");
 		}
 
 		return $errors;
@@ -745,18 +733,11 @@ class mf_custom_login
 	{
 		$has_errors = false;
 
-		/*if(check_var('lost_password_check') != '')
-		{
-			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
-
-			$has_errors = true;
-		}*/
-
 		if(!isset($_POST['_wpnonce_lost_password_send']) || wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Lost Password FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")"); //var_export($user_data, true)
+				do_log("Lost Password FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")");
 			}
 
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
@@ -766,7 +747,7 @@ class mf_custom_login
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Lost Password Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")"); //var_export($user_data, true)
+			do_log("Lost Password Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")");
 		}
 
 		return array($has_errors, $errors);
@@ -797,7 +778,6 @@ class mf_custom_login
 					break;
 
 					case 404:
-						//header("Status: 404 Not Found");
 						$this->get_404_page();
 					break;
 
@@ -1164,13 +1144,7 @@ class mf_custom_login
 
 	function wp_head()
 	{
-		// This can't be used since it'll only allow styles etc. on a page where the login widget is present
-		/*$post_id = apply_filters('get_widget_search', 'login-widget');
-
-		if($post_id > 0)
-		{*/
-			$this->combined_head();
-		//}
+		$this->combined_head();
 	}
 
 	function body_class($classes)
@@ -1464,7 +1438,6 @@ class widget_login_form extends WP_Widget
 		$user_remember = check_var('rememberme', 'char', true, 'forever');
 
 		do_action('login_init');
-
 		//do_action('login_head');
 		//do_action('login_header');
 
@@ -1613,7 +1586,6 @@ class widget_registration_form extends WP_Widget
 			'registration_image' => '',
 			'registration_heading' => '',
 			'registration_who_can' => '',
-			//'registration_above_form' => '',
 			'registration_collect_name' => 'no',
 			'registration_fields' => array('username'),
 		);
@@ -1779,11 +1751,6 @@ class widget_registration_form extends WP_Widget
 
 			if($display_form == true)
 			{
-				/*if($instance['registration_above_form'] != '')
-				{
-					echo apply_filters('the_content', $instance['registration_above_form']);
-				}*/
-
 				echo "<form method='post' action='' class='mf_form'>";
 
 					if(in_array('username', $instance['registration_fields']))
@@ -1898,7 +1865,6 @@ class widget_lost_password_form extends WP_Widget
 		$this->arr_default = array(
 			'lost_password_image' => '',
 			'lost_password_heading' => '',
-			//'lost_password_above_form' => '',
 		);
 
 		parent::__construct('lost-password-widget', __("Lost Password Form", 'lang_login'), $this->widget_ops);
@@ -1947,10 +1913,7 @@ class widget_lost_password_form extends WP_Widget
 
 					else
 					{
-						/*
-						 * The blogname option is escaped with esc_html on the way into the database
-						 * in sanitize_option we want to reverse this for the plain text arena of emails.
-						 */
+						// The blogname option is escaped with esc_html on the way into the database in sanitize_option we want to reverse this for the plain text arena of emails
 						$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 					}
 
@@ -2125,11 +2088,6 @@ class widget_lost_password_form extends WP_Widget
 
 					if($display_form == true)
 					{
-						/*if($instance['lost_password_above_form'] != '')
-						{
-							echo apply_filters('the_content', $instance['lost_password_above_form']);
-						}*/
-
 						echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
 							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true));
 
