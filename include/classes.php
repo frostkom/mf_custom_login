@@ -693,19 +693,22 @@ class mf_custom_login
 
 	function wp_authenticate_user($user_data)
 	{
-		if(!isset($_POST['_wpnonce_login_send']) || wp_verify_nonce($_POST['_wpnonce_login_send'], 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+		//if(!isset($_POST['_wpnonce_login_send']) || wp_verify_nonce($_POST['_wpnonce_login_send'], 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+		if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")))
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
+				//do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
+				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_hash_login_send'].")");
 			}
 
-			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login')); //." (login_send_".$_SERVER['REMOTE_ADDR']."_".date("Ymd")." -> ".$_POST['_wpnonce_login_send']." != ".wp_create_nonce('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")).")"
 		}
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
+			//do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
+			do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_hash_login_send'].")");
 		}
 
 		return $user_data;
@@ -1131,7 +1134,15 @@ class mf_custom_login
 			</p>";
 		}
 
-		echo wp_nonce_field('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_login_send', true, false);
+		/*if($_SERVER['REMOTE_ADDR'] == "")
+		{
+			//echo "<p>login_send_".$_SERVER['REMOTE_ADDR']."_".date("Ymd")." -> ".wp_create_nonce('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))."</p>";
+			echo "<p>login_send_".$_SERVER['REMOTE_ADDR']."_".date("Ymd")." -> ".md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))."</p>";
+		}*/
+
+		// Does not work when logging out and then directly logging in again
+		//echo wp_nonce_field('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_login_send', true, false);
+		echo input_hidden(array('name' => '_hash_login_send', 'value' => md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))));
 	}
 
 	function register_form()
