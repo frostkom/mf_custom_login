@@ -699,7 +699,7 @@ class mf_custom_login
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
 				//do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
-				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_hash_login_send'].")");
+				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set").")");
 			}
 
 			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login')); //." (login_send_".$_SERVER['REMOTE_ADDR']."_".date("Ymd")." -> ".$_POST['_wpnonce_login_send']." != ".wp_create_nonce('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")).")"
