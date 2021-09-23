@@ -308,18 +308,13 @@ if(apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
 }
 ############################
 
-if($out_media_all != '')
-{
-	echo "@media all
-	{"
-		.$out_media_all
-	."}";
-}
+// Always make sure that something is echoed so that the cache does not notify
+/*if($out_media_all != '')
+{*/
+	echo "@media all{".$out_media_all."}";
+//}
 
 if($out_media_mobile != '')
 {
-	echo "@media (min-width: 740px)
-	{"
-		.$out_media_mobile
-	."}";
+	echo "@media (min-width: 740px){".$out_media_mobile."}";
 }

@@ -562,6 +562,26 @@ class mf_custom_login
 		}
 	}
 
+	function filter_sites_table_settings($arr_settings)
+	{
+		$arr_settings['settings_custom_login'] = array(
+			'setting_custom_login_allow_direct_link' => array(
+				'type' => 'bool',
+				'global' => false,
+				'icon' => "fas fa-link",
+				'name' => __("Allow Direct Link to Login", 'lang_login'),
+			),
+			'setting_custom_login_allow_api' => array(
+				'type' => 'bool',
+				'global' => false,
+				'icon' => "fas fa-project-diagram",
+				'name' => __("Allow API Login", 'lang_login'),
+			),
+		);
+
+		return $arr_settings;
+	}
+
 	function user_row_actions($actions, $user)
 	{
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && current_user_can('edit_user') && isset($user->roles[0]) && $user->roles[0] != '')
@@ -1401,6 +1421,13 @@ class mf_custom_login
 		echo json_encode($result);
 		die();
 	}
+
+	/*function get_ignore_styles_on_empty($array)
+	{
+		$array[] = 'style_custom_login';
+
+		return $array;
+	}*/
 
 	function widgets_init()
 	{
