@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 3.3.12
+Version: 3.3.13
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -89,8 +89,6 @@ if(function_exists('is_plugin_active') && is_plugin_active("mf_base/index.php"))
 
 	add_action('wp_ajax_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
 	add_action('wp_ajax_nopriv_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
-
-	//add_filter('get_ignore_styles_on_empty', array($obj_custom_login, 'get_ignore_styles_on_empty'), 10, 1);
 
 	add_action('widgets_init', array($obj_custom_login, 'widgets_init'));
 

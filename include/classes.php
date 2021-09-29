@@ -426,7 +426,7 @@ class mf_custom_login
 
 			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
 
-			setting_time_limit(array('key' => $setting_key, 'value' => $option));
+			setting_time_limit(array('key' => $setting_key, 'value' => $option, 'time_limit' => 24));
 		}
 
 		function setting_custom_login_redirect_after_login_callback()
@@ -650,7 +650,6 @@ class mf_custom_login
 					{
 						if($this->direct_link_login($this->username))
 						{
-							//$redirect_to = user_admin_url();
 							$redirect_to = admin_url();
 
 							$user = get_user_by('login', $this->username);
@@ -713,21 +712,18 @@ class mf_custom_login
 
 	function wp_authenticate_user($user_data)
 	{
-		//if(!isset($_POST['_wpnonce_login_send']) || wp_verify_nonce($_POST['_wpnonce_login_send'], 'login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 		if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")))
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				//do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
 				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set").")");
 			}
 
-			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login')); //." (login_send_".$_SERVER['REMOTE_ADDR']."_".date("Ymd")." -> ".$_POST['_wpnonce_login_send']." != ".wp_create_nonce('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")).")"
+			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
 		}
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			//do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_login_send'].")");
 			do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_hash_login_send'].")");
 		}
 
@@ -959,9 +955,7 @@ class mf_custom_login
 
 		if(is_a($user, 'WP_User'))
 		{
-			//wp_clear_auth_cookie();
 			wp_set_current_user($user->ID);
-			//wp_set_auth_cookie($user->ID, true);
 
 			if(is_user_logged_in())
 			{
@@ -1066,7 +1060,7 @@ class mf_custom_login
 		$exclude[] = "[username]";			$include[] = $user_data->display_name;
 		$exclude[] = "[user_email]";		$include[] = $user_data->user_email;
 
-		//wp_new_user_notification_email
+		// wp_new_user_notification_email
 		$exclude[] = "[blog_title]";		$include[] = $blog_title;
 		$exclude[] = "[site_url]";			$include[] = $site_url;
 		$exclude[] = "[confirm_link]";		$include[] = $lost_password_url.(preg_match("/\?/", $lost_password_url) ? "&" : "?").$confirm_link_action;
@@ -1096,10 +1090,10 @@ class mf_custom_login
 			$exclude[] = "[direct_registration_link]";		$include[] = $direct_registration_link;
 		}
 
-		//retrieve_password_message
-		$exclude[] = "[blogname]";			$include[] = $blog_title; //Replace with blog_title
-		$exclude[] = "[siteurl]";			$include[] = $site_url; //Replace with site_url
-		$exclude[] = "[loginurl]";			$include[] = $lost_password_url.(preg_match("/\?/", $lost_password_url) ? "&" : "?").$confirm_link_action; //Replace with confirm_link
+		// retrieve_password_message
+		$exclude[] = "[blogname]";			$include[] = $blog_title; // Replace with blog_title
+		$exclude[] = "[siteurl]";			$include[] = $site_url; // Replace with site_url
+		$exclude[] = "[loginurl]";			$include[] = $lost_password_url.(preg_match("/\?/", $lost_password_url) ? "&" : "?").$confirm_link_action; // Replace with confirm_link
 
 		return str_replace($exclude, $include, $string);
 	}
@@ -1154,14 +1148,6 @@ class mf_custom_login
 			</p>";
 		}
 
-		/*if($_SERVER['REMOTE_ADDR'] == "")
-		{
-			//echo "<p>login_send_".$_SERVER['REMOTE_ADDR']."_".date("Ymd")." -> ".wp_create_nonce('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))."</p>";
-			echo "<p>login_send_".$_SERVER['REMOTE_ADDR']."_".date("Ymd")." -> ".md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))."</p>";
-		}*/
-
-		// Does not work when logging out and then directly logging in again
-		//echo wp_nonce_field('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_login_send', true, false);
 		echo input_hidden(array('name' => '_hash_login_send', 'value' => md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))));
 	}
 
@@ -1421,13 +1407,6 @@ class mf_custom_login
 		echo json_encode($result);
 		die();
 	}
-
-	/*function get_ignore_styles_on_empty($array)
-	{
-		$array[] = 'style_custom_login';
-
-		return $array;
-	}*/
 
 	function widgets_init()
 	{
@@ -1925,7 +1904,6 @@ class widget_lost_password_form extends WP_Widget
 
 		else
 		{
-			//$errors = do_action('lostpassword_post', $errors, $user_data);
 			list($has_errors, $errors) = $this->obj_custom_login->lostpassword_post($errors, $user_data);
 
 			if($has_errors)
