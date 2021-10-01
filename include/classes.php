@@ -710,13 +710,23 @@ class mf_custom_login
 		return $redirect_to;
 	}
 
+	function get_log_message_base($data)
+	{
+		return ($data['user_login'] != '' ? $data['user_login'] : $data['user_email'])
+			.", ".$_SERVER['REQUEST_URI']
+			.", ".$_SERVER['REMOTE_ADDR']." + ".date("Ymd")." -> ";
+	}
+
 	function wp_authenticate_user($user_data)
 	{
 		if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")))
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Login FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set").")");
+				do_log("Login FAILURE ("
+					.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+					.md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
+				.")");
 			}
 
 			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
@@ -724,7 +734,10 @@ class mf_custom_login
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Login Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_hash_login_send'].")");
+			do_log("Login Allowed ("
+				.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+				.$_POST['_hash_login_send']
+			.")");
 		}
 
 		return $user_data;
@@ -736,7 +749,10 @@ class mf_custom_login
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Registration FAILURE (".$user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_registration_send'].")");
+				do_log("Registration FAILURE ("
+					.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
+					.$_POST['_wpnonce_registration_send']
+				.")");
 			}
 
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
@@ -744,7 +760,10 @@ class mf_custom_login
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Registration Allowed (".$user_login.", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_registration_send'].")");
+			do_log("Registration Allowed ("
+				.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
+				.$_POST['_wpnonce_registration_send']
+			.")");
 		}
 
 		return $errors;
@@ -758,7 +777,10 @@ class mf_custom_login
 		{
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				do_log("Lost Password FAILURE (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")");
+				do_log("Lost Password FAILURE ("
+					.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+					.$_POST['_wpnonce_lost_password_send']
+				.")");
 			}
 
 			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
@@ -768,7 +790,10 @@ class mf_custom_login
 
 		else if(get_option('setting_custom_login_debug') == 'yes')
 		{
-			do_log("Lost Password Allowed (".($user_data->data->user_login != '' ? $user_data->data->user_login : $user_data->data->user_email).", ".$_SERVER['REMOTE_ADDR'].", ".$_SERVER['REQUEST_URI'].", ".$_POST['_wpnonce_lost_password_send'].")");
+			do_log("Lost Password Allowed ("
+				.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+				.$_POST['_wpnonce_lost_password_send']
+			.")");
 		}
 
 		return array($has_errors, $errors);
@@ -1149,6 +1174,14 @@ class mf_custom_login
 		}
 
 		echo input_hidden(array('name' => '_hash_login_send', 'value' => md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))));
+
+		if(get_option('setting_custom_login_debug') == 'yes')
+		{
+			do_log("Login SET ("
+				.$_SERVER['REQUEST_URI'].", "
+				.$_SERVER['REMOTE_ADDR']." + ".date("Ymd")." -> ".md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))
+			.")");
+		}
 	}
 
 	function register_form()
