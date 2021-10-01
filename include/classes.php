@@ -158,20 +158,34 @@ class mf_custom_login
 				$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
 			}
 
+			else
+			{
+				delete_option('setting_custom_login_display_theme_logo');
+			}
+
 			if(get_option('setting_custom_login_display_theme_logo') != 'yes')
 			{
 				$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
+			}
+
+			else
+			{
+				delete_option('setting_custom_login_custom_logo');
 			}
 		}
 
 		if($has_login_widget)
 		{
 			$arr_settings['setting_custom_login_wp_login_action'] = __("Action on Old Login Page", 'lang_login');
+
+			delete_option('setting_custom_login_page');
 		}
 
 		else
 		{
 			$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
+
+			delete_option('setting_custom_login_wp_login_action');
 		}
 
 		if(is_plugin_active("mf_auth/index.php") == false || get_option('setting_auth_active') == 'no')
@@ -183,11 +197,19 @@ class mf_custom_login
 				$arr_settings['setting_custom_login_direct_link_expire'] = __("Direct Link Expires After", 'lang_login');
 				$arr_settings['setting_custom_login_direct_link_expire_after_login'] = __("Direct Link Expires After Login", 'lang_login');
 			}
+
+			else
+			{
+				delete_option('setting_custom_login_direct_link_expire');
+				delete_option('setting_custom_login_direct_link_expire_after_login');
+			}
 		}
 
 		else
 		{
 			delete_option('setting_custom_login_allow_direct_link');
+			delete_option('setting_custom_login_direct_link_expire');
+			delete_option('setting_custom_login_direct_link_expire_after_login');
 		}
 
 		if(substr(get_home_url(), 0, 5) == 'https')
@@ -198,12 +220,29 @@ class mf_custom_login
 			{
 				$arr_settings['setting_custom_login_allow_server_auth'] = __("Allow Server Authentication", 'lang_login');
 			}
+
+			else
+			{
+				delete_option('setting_custom_login_allow_server_auth');
+			}
 		}
 
 		else
 		{
 			delete_option('setting_custom_login_allow_api');
 			delete_option('setting_custom_login_allow_server_auth');
+		}
+
+		$arr_settings['setting_custom_login_prevent_direct_access'] = __("Prevent Direct Access to Login, Registration etc.", 'lang_login');
+
+		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{
+			$arr_settings['setting_custom_login_debug'] = " - ".__("Debug", 'lang_login');
+		}
+
+		else
+		{
+			delete_option('setting_custom_login_debug');
 		}
 
 		$arr_settings['setting_custom_login_limit_attempts'] = __("Limit Attempts", 'lang_login');
@@ -216,7 +255,10 @@ class mf_custom_login
 			$arr_settings['setting_custom_login_redirect_after_login'] = __("Who to Redirect", 'lang_login');
 		}
 
-		$arr_settings['setting_custom_login_debug'] = __("Debug", 'lang_login');
+		else
+		{
+			delete_option('setting_custom_login_redirect_after_login');
+		}
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 		############################
@@ -241,6 +283,16 @@ class mf_custom_login
 				{
 					$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 				}
+
+				else
+				{
+					delete_option('setting_custom_login_register');
+				}
+			}
+
+			else
+			{
+				delete_option('setting_custom_login_register');
 			}
 		}
 
@@ -249,12 +301,24 @@ class mf_custom_login
 			$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 		}
 
+		else
+		{
+			delete_option('setting_custom_login_register');
+		}
+
 		if($users_can_register)
 		{
 			$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
 			$arr_settings['setting_custom_login_email_admin_registration'] = __("Registration Email Content to Admin", 'lang_login');
 			$arr_settings['setting_custom_login_email_registration'] = __("Registration Email Content", 'lang_login');
+		}
+
+		else
+		{
+			delete_option('setting_custom_login_info');
+			delete_option('setting_custom_login_email_admin_registration');
+			delete_option('setting_custom_login_email_registration');
 		}
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
@@ -267,13 +331,18 @@ class mf_custom_login
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
 		$arr_settings = array();
-
 		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
 		if($has_lost_password_post_widget == false)
 		{
 			$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
 			$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
+		}
+
+		else
+		{
+			delete_option('setting_custom_login_lostpassword');
+			delete_option('setting_custom_login_recoverpassword');
 		}
 
 		$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password Email Content", 'lang_login');
@@ -390,6 +459,15 @@ class mf_custom_login
 			echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
 		}
 
+		function setting_custom_login_prevent_direct_access_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			settings_save_site_wide($setting_key);
+			$option = get_site_option($setting_key, get_option($setting_key, 'yes'));
+
+			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+		}
+
 		function setting_custom_login_limit_attempts_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
@@ -424,9 +502,9 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key, 'no');
 
-			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+			$description = setting_time_limit(array('key' => $setting_key, 'value' => $option, 'time_limit' => 24));
 
-			setting_time_limit(array('key' => $setting_key, 'value' => $option, 'time_limit' => 24));
+			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => $description));
 		}
 
 		function setting_custom_login_redirect_after_login_callback()
@@ -719,25 +797,28 @@ class mf_custom_login
 
 	function wp_authenticate_user($user_data)
 	{
-		if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")))
+		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			if(get_option('setting_custom_login_debug') == 'yes')
+			if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")))
 			{
-				do_log("Login FAILURE ("
-					.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-					.md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
-				.")");
+				if(get_option('setting_custom_login_debug') == 'yes')
+				{
+					do_log("Login FAILURE ("
+						.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+						.md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
+					.")");
+				}
+
+				$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
 			}
 
-			$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
-		}
-
-		else if(get_option('setting_custom_login_debug') == 'yes')
-		{
-			do_log("Login Allowed ("
-				.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-				.$_POST['_hash_login_send']
-			.")");
+			else if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				do_log("Login Allowed ("
+					.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+					.$_POST['_hash_login_send']
+				.")");
+			}
 		}
 
 		return $user_data;
@@ -745,25 +826,28 @@ class mf_custom_login
 
 	function registration_errors($errors, $user_login, $user_email)
 	{
-		if(!isset($_POST['_wpnonce_registration_send']) || wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			if(get_option('setting_custom_login_debug') == 'yes')
+			if(!isset($_POST['_wpnonce_registration_send']) || wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 			{
-				do_log("Registration FAILURE ("
+				if(get_option('setting_custom_login_debug') == 'yes')
+				{
+					do_log("Registration FAILURE ("
+						.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
+						.$_POST['_wpnonce_registration_send']
+					.")");
+				}
+
+				$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+			}
+
+			else if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				do_log("Registration Allowed ("
 					.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
 					.$_POST['_wpnonce_registration_send']
 				.")");
 			}
-
-			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
-		}
-
-		else if(get_option('setting_custom_login_debug') == 'yes')
-		{
-			do_log("Registration Allowed ("
-				.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
-				.$_POST['_wpnonce_registration_send']
-			.")");
 		}
 
 		return $errors;
@@ -773,27 +857,30 @@ class mf_custom_login
 	{
 		$has_errors = false;
 
-		if(!isset($_POST['_wpnonce_lost_password_send']) || wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			if(get_option('setting_custom_login_debug') == 'yes')
+			if(!isset($_POST['_wpnonce_lost_password_send']) || wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
 			{
-				do_log("Lost Password FAILURE ("
+				if(get_option('setting_custom_login_debug') == 'yes')
+				{
+					do_log("Lost Password FAILURE ("
+						.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+						.$_POST['_wpnonce_lost_password_send']
+					.")");
+				}
+
+				$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+
+				$has_errors = true;
+			}
+
+			else if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				do_log("Lost Password Allowed ("
 					.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
 					.$_POST['_wpnonce_lost_password_send']
 				.")");
 			}
-
-			$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
-
-			$has_errors = true;
-		}
-
-		else if(get_option('setting_custom_login_debug') == 'yes')
-		{
-			do_log("Lost Password Allowed ("
-				.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-				.$_POST['_wpnonce_lost_password_send']
-			.")");
 		}
 
 		return array($has_errors, $errors);
@@ -1173,25 +1260,34 @@ class mf_custom_login
 			</p>";
 		}
 
-		echo input_hidden(array('name' => '_hash_login_send', 'value' => md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))));
-
-		if(get_option('setting_custom_login_debug') == 'yes')
+		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			do_log("Login SET ("
-				.$_SERVER['REQUEST_URI'].", "
-				.$_SERVER['REMOTE_ADDR']." + ".date("Ymd")." -> ".md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))
-			.")");
+			echo input_hidden(array('name' => '_hash_login_send', 'value' => md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))));
+
+			if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				do_log("Login SET ("
+					.$_SERVER['REQUEST_URI'].", "
+					.$_SERVER['REMOTE_ADDR']." + ".date("Ymd")." -> ".md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))
+				.")");
+			}
 		}
 	}
 
 	function register_form()
 	{
-		echo wp_nonce_field('registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_registration_send', true, false);
+		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{
+			echo wp_nonce_field('registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_registration_send', true, false);
+		}
 	}
 
 	function lostpassword_form()
 	{
-		echo wp_nonce_field('lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_lost_password_send', true, false);
+		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{
+			echo wp_nonce_field('lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_lost_password_send', true, false);
+		}
 	}
 
 	function wp_head()
