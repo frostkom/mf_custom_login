@@ -5,6 +5,11 @@ class mf_custom_login
 	function __construct()
 	{
 		$this->error = "";
+
+		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{
+			$this->login_send_hash = md5('login_send_'.get_current_visitor_ip().'_'.date("Ymd"));
+		}
 	}
 
 	function get_wp_login_action_for_select()
@@ -792,20 +797,20 @@ class mf_custom_login
 	{
 		return ($data['user_login'] != '' ? $data['user_login'] : $data['user_email'])
 			.", ".$_SERVER['REQUEST_URI']
-			.", ".$_SERVER['REMOTE_ADDR']." + ".date("Ymd")." -> ";
+			.", ".get_current_visitor_ip()." + ".date("Ymd")." -> ";
 	}
 
 	function wp_authenticate_user($user_data)
 	{
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")))
+			if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != $this->login_send_hash)
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
 				{
 					do_log("Login FAILURE ("
 						.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-						.md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
+						.$this->login_send_hash." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
 					.")");
 				}
 
@@ -828,7 +833,7 @@ class mf_custom_login
 	{
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			if(!isset($_POST['_wpnonce_registration_send']) || wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+			if(!isset($_POST['_wpnonce_registration_send']) || wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.get_current_visitor_ip().'_'.date("Ymd")) == false)
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
 				{
@@ -859,7 +864,7 @@ class mf_custom_login
 
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			if(!isset($_POST['_wpnonce_lost_password_send']) || wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd")) == false)
+			if(!isset($_POST['_wpnonce_lost_password_send']) || wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.get_current_visitor_ip().'_'.date("Ymd")) == false)
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
 				{
@@ -1262,13 +1267,13 @@ class mf_custom_login
 
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			echo input_hidden(array('name' => '_hash_login_send', 'value' => md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))));
+			echo input_hidden(array('name' => '_hash_login_send', 'value' => $this->login_send_hash));
 
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
 				do_log("Login SET ("
 					.$_SERVER['REQUEST_URI'].", "
-					.$_SERVER['REMOTE_ADDR']." + ".date("Ymd")." -> ".md5('login_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"))
+					.get_current_visitor_ip()." + ".date("Ymd")." -> ".$this->login_send_hash
 				.")");
 			}
 		}
@@ -1278,7 +1283,7 @@ class mf_custom_login
 	{
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			echo wp_nonce_field('registration_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_registration_send', true, false);
+			echo wp_nonce_field('registration_send_'.get_current_visitor_ip().'_'.date("Ymd"), '_wpnonce_registration_send', true, false);
 		}
 	}
 
@@ -1286,7 +1291,7 @@ class mf_custom_login
 	{
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			echo wp_nonce_field('lost_password_send_'.$_SERVER['REMOTE_ADDR'].'_'.date("Ymd"), '_wpnonce_lost_password_send', true, false);
+			echo wp_nonce_field('lost_password_send_'.get_current_visitor_ip().'_'.date("Ymd"), '_wpnonce_lost_password_send', true, false);
 		}
 	}
 
@@ -1629,7 +1634,7 @@ class widget_login_form extends WP_Widget
 						$setting_custom_login_limit_attempts = get_site_option('setting_custom_login_limit_attempts', 20);
 						$setting_custom_login_limit_minutes = get_site_option('setting_custom_login_limit_minutes', 15);
 
-						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", $_SERVER['REMOTE_ADDR'], 'failure'));
+						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", get_current_visitor_ip(), 'failure'));
 						$login_failed_attempts = $wpdb->num_rows;
 
 						if($login_failed_attempts < $setting_custom_login_limit_attempts)
@@ -1645,7 +1650,7 @@ class widget_login_form extends WP_Widget
 							{
 								$error_text = $result['error'];
 
-								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", $_SERVER['REMOTE_ADDR'], 'failure', $user_login));
+								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", get_current_visitor_ip(), 'failure', $user_login));
 							}
 						}
 
