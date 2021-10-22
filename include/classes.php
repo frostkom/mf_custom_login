@@ -992,7 +992,7 @@ class mf_custom_login
 
 		if($post_id > 0)
 		{
-			$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, post_content FROM ".$wpdb->posts." WHERE ID = '%d' AND post_type = 'page' AND post_status = 'publish'", $post_id));
+			$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, post_content FROM ".$wpdb->posts." WHERE ID = '%d' AND post_type = %s AND post_status = %s", $post_id, 'page', 'publish'));
 
 			foreach($result as $r)
 			{
