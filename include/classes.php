@@ -2184,7 +2184,7 @@ class widget_lost_password_form extends WP_Widget
 					if($display_form == true)
 					{
 						echo "<form method='post' action='".wp_lostpassword_url()."?action=rp' class='mf_form'>"
-							.show_password_field(array('name' => 'user_pass', 'text' => __("New Password", 'lang_login'), 'value' => $user_pass, 'description' => wp_get_password_hint()));
+							.show_password_field(array('name' => 'user_pass', 'text' => __("New Password", 'lang_login'), 'value' => $user_pass, 'xtra' => " autocomplete='new-password'", 'description' => wp_get_password_hint()));
 
 							do_action('resetpass_form', $user);
 
