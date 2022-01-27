@@ -1631,8 +1631,8 @@ class widget_login_form extends WP_Widget
 
 					if(isset($_POST['btnSendLogin']))
 					{
-						$setting_custom_login_limit_attempts = get_site_option('setting_custom_login_limit_attempts', 20);
-						$setting_custom_login_limit_minutes = get_site_option('setting_custom_login_limit_minutes', 15);
+						$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
+						$setting_custom_login_limit_minutes = get_site_option_or_default('setting_custom_login_limit_minutes', 15);
 
 						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", get_current_visitor_ip(), 'failure'));
 						$login_failed_attempts = $wpdb->num_rows;
