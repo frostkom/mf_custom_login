@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: 
-Version: 3.4.4
+Version: 3.4.6
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -75,11 +75,12 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	add_filter('is_public_page', array($obj_custom_login, 'is_public_page'), 10, 2);
 	add_filter('login_url', array($obj_custom_login, 'login_url'), 10, 2);
+		add_filter('login_display_language_dropdown', '__return_false');
 	add_filter('register_url', array($obj_custom_login, 'register_url'), 10, 2);
-	add_filter('wp_new_user_notification_email_admin', array($obj_custom_login, 'wp_new_user_notification_email_admin'), 10, 2);
-	add_filter('wp_new_user_notification_email', array($obj_custom_login, 'wp_new_user_notification_email'), 10, 2);
+		add_filter('wp_new_user_notification_email_admin', array($obj_custom_login, 'wp_new_user_notification_email_admin'), 10, 2);
+		add_filter('wp_new_user_notification_email', array($obj_custom_login, 'wp_new_user_notification_email'), 10, 2);
 	add_filter('lostpassword_url', array($obj_custom_login, 'lostpassword_url'), 10, 2);
-	add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
+		add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
 	add_filter('logout_url', array($obj_custom_login, 'logout_url'), 10, 2);
 
 	add_filter('determine_current_user', array($obj_custom_login, 'determine_current_user'), 21);

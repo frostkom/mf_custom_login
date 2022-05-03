@@ -1586,8 +1586,8 @@ class widget_login_form extends WP_Widget
 		$action = check_var('action');
 		$redirect_to = check_var('redirect_to', 'char', true, admin_url());
 
-		$user_login = check_var('log');
-		$user_pass = check_var('pwd');
+		$user_login = check_var('user_login'); // log -> user_login
+		$user_pass = check_var('user_pass'); // pwd -> user_pass
 		$user_remember = check_var('rememberme', 'char', true, 'forever');
 
 		do_action('login_init');
@@ -1674,9 +1674,9 @@ class widget_login_form extends WP_Widget
 				echo apply_filters('the_content', $instance['login_above_form']);
 			}
 
-			echo "<form method='post' action='".wp_login_url()."' class='mf_form'>"
-				.show_textfield(array('name' => 'log', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true))
-				.show_password_field(array('name' => 'pwd', 'text' => __("Password"), 'value' => $user_pass, 'required' => true));
+			echo "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
+				.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true)) // log -> user_login
+				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)); // pwd -> user_pass
 
 				do_action('login_form');
 
@@ -1687,15 +1687,15 @@ class widget_login_form extends WP_Widget
 						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
 					."</div>
 				</div>
-				<p><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
+			</form>
+			<p><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
 
-				if(get_option('users_can_register'))
-				{
-					echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
-				}
+			if(get_option('users_can_register'))
+			{
+				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
+			}
 
-			echo "</form>"
-		.$after_widget;
+		echo $after_widget;
 
 		//do_action('login_footer');
 	}
