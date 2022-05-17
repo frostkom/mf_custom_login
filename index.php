@@ -80,6 +80,7 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 		add_filter('wp_new_user_notification_email_admin', array($obj_custom_login, 'wp_new_user_notification_email_admin'), 10, 2);
 		add_filter('wp_new_user_notification_email', array($obj_custom_login, 'wp_new_user_notification_email'), 10, 2);
 	add_filter('lostpassword_url', array($obj_custom_login, 'lostpassword_url'), 10, 2);
+		add_filter('retrieve_password_title', array($obj_custom_login, 'retrieve_password_title'), 10, 3);
 		add_filter('retrieve_password_message', array($obj_custom_login, 'retrieve_password_message'), 10, 4);
 	add_filter('logout_url', array($obj_custom_login, 'logout_url'), 10, 2);
 

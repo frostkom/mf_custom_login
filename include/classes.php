@@ -350,6 +350,7 @@ class mf_custom_login
 			delete_option('setting_custom_login_recoverpassword');
 		}
 
+		$arr_settings['setting_custom_login_email_lost_password_subject'] = __("Lost Password Email Subject", 'lang_login');
 		$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password Email Content", 'lang_login');
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
@@ -449,7 +450,7 @@ class mf_custom_login
 
 		function setting_custom_login_info_callback()
 		{
-			$tags = array("[first_name]", "[user_login]", "[username]", "[user_email]", "[blog_title]", "[site_url]", "[confirm_link]", "[login_link]");
+			$tags = array("[first_name]", "[user_login]", "[username]", "[user_email]", "[blog_title]", "[site_name]", "[site_url]", "[confirm_link]", "[login_link]");
 
 			if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 			{
@@ -598,6 +599,14 @@ class mf_custom_login
 
 		echo settings_header($setting_key, __("Login", 'lang_login')." - ".__("Password", 'lang_login'));
 	}
+
+		function setting_custom_login_email_lost_password_subject_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key);
+
+			echo show_textfield(array('name' => $setting_key, 'value' => $option, 'placeholder' => sprintf(__("%s Password Reset", 'lang_login'), "[site_name]")));
+		}
 
 		function setting_custom_login_email_lost_password_callback()
 		{
@@ -1237,6 +1246,30 @@ class mf_custom_login
 		}
 
 		return $array;
+	}
+
+	function retrieve_password_title($title, $user_login, $user_data)
+	{
+		$option = get_option('setting_custom_login_email_lost_password_subject');
+
+		if($option != '')
+		{
+			if(is_multisite())
+			{
+				$site_name = get_network()->site_name;
+			}
+
+			else
+			{
+				// The blogname option is escaped with esc_html on the way into the database in sanitize_option we want to reverse this for the plain text arena of emails
+				$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+			}
+
+			//$title = $this->email_replace_shortcodes($option, $user, $key);
+			$title = str_replace("[site_name]", $site_name, $option);
+		}
+
+		return $title;
 	}
 
 	function retrieve_password_message($message, $key, $user_login, $user)
@@ -2058,16 +2091,8 @@ class widget_lost_password_form extends WP_Widget
 
 				else
 				{
-					if(is_multisite())
-					{
-						$site_name = get_network()->site_name;
-					}
-
-					else
-					{
-						// The blogname option is escaped with esc_html on the way into the database in sanitize_option we want to reverse this for the plain text arena of emails
-						$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
-					}
+					$title = sprintf(__("%s Password Reset", 'lang_login'), "[site_name]");
+					$title = apply_filters('retrieve_password_title', $title, $user_login, $user_data);
 
 					$lost_password_link = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
 
@@ -2081,9 +2106,6 @@ class widget_lost_password_form extends WP_Widget
 						."<a href='".$lost_password_link."'>".$lost_password_link."</a>
 					</p>";
 
-					$title = sprintf(__("[%s] Password Reset", 'lang_login'), $site_name);
-
-					$title = apply_filters('retrieve_password_title', $title, $user_login, $user_data);
 					$message = apply_filters('retrieve_password_message', $message, $key, $user_login, $user_data);
 
 					if(send_email(array('to' => $user_email, 'subject' => wp_specialchars_decode($title), 'content' => $message)))
