@@ -906,7 +906,7 @@ class mf_custom_login
 
 		$wp_query->set_404();
 		status_header(404);
-		get_template_part(404); 
+		get_template_part(404);
 		exit;
 	}
 
@@ -1721,7 +1721,7 @@ class widget_login_form extends WP_Widget
 					."</div>
 				</div>
 			</form>
-			<p><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
+			<p id='lost_password_link'><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
 
 			if(get_option('users_can_register'))
 			{
