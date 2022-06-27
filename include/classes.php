@@ -2270,8 +2270,8 @@ class widget_lost_password_form extends WP_Widget
 							echo "<div class='form_button'>"
 								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
 							."</div>
-							<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>
-						</form>";
+						</form>
+						<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
 					}
 				break;
 			}
