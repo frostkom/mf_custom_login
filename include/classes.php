@@ -545,9 +545,7 @@ class mf_custom_login
 
 			if($option == 1)
 			{
-				$registration_widget = apply_filters('get_widget_search', 'registration-widget');
-
-				if(!($registration_widget > 0))
+				if(!(apply_filters('get_widget_search', 'registration-widget') > 0))
 				{
 					echo "<p class='display_warning'>"
 						."<i class='fa fa-exclamation-triangle yellow'></i> "
@@ -1348,25 +1346,6 @@ class mf_custom_login
 		return $classes;
 	}
 
-	function filter_cache_ignore($array)
-	{
-		$site_url = get_site_url();
-
-		$arr_widget_search = array('login-widget', 'registration-widget', 'lost-password-widget');
-
-		foreach($arr_widget_search as $widget_key)
-		{
-			$post_id = apply_filters('get_widget_search', $widget_key);
-
-			if($post_id > 0)
-			{
-				$array[] = str_replace($site_url, "", rtrim(get_permalink($post_id), "/"));
-			}
-		}
-
-		return $array;
-	}
-
 	function is_public_page($out)
 	{
 		$site_url = get_site_url();
@@ -1453,8 +1432,7 @@ class mf_custom_login
 
 		if($post_id > 0)
 		{
-			$url = get_permalink($post_id)."?action=logout";
-			$url = wp_nonce_url($url, 'log-out');
+			$url = wp_nonce_url(get_permalink($post_id)."?action=logout", 'log-out');
 		}
 
 		return $url;
@@ -1574,6 +1552,67 @@ class mf_custom_login
 		echo json_encode($result);
 		die();
 	}
+
+	function filter_cache_ignore($array)
+	{
+		//$site_url = get_site_url();
+
+		$arr_widget_search = array(
+			'login-widget',
+			'registration-widget',
+			'lost-password-widget',
+		);
+
+		foreach($arr_widget_search as $widget_key)
+		{
+			$post_id = apply_filters('get_widget_search', $widget_key);
+
+			if($post_id > 0)
+			{
+				//$array[] = str_replace($site_url, "", rtrim(get_permalink($post_id), "/"));
+				$array[] = "/".mf_get_post_content($post_id, 'post_name')."/";
+			}
+		}
+
+		return $array;
+	}
+
+	/*function filter_deny_before_set_cache($deny, $file_address)
+	{
+		global $wpdb;
+
+		$arr_search_for = array(
+			'login-widget',
+			'registration-widget',
+			'lost-password-widget',
+		);
+
+		foreach($arr_search_for as $search_for)
+		{
+			if($deny == false)
+			{
+				$post_id = apply_filters('get_widget_search', $search_for);
+
+				if($post_id > 0)
+				{
+					$post_name = $wpdb->get_var($wpdb->prepare("SELECT post_name FROM ".$wpdb->posts." WHERE post_id = '%d' LIMIT 0, 1", $post_id));
+					//$post_name = mf_get_post_content($post_id, 'post_name');
+
+					if(strpos($file_address, "/".$post_name."/"))
+					{
+						if(get_option_or_default('setting_cache_debug') == 'yes')
+						{
+							do_log("filter_deny_before_set_cache: Denied ".$file_address." because ".$search_for." -> #".$post_id." -> ".$post_name);
+						}
+
+						$deny = true;
+					}
+				}
+			}
+		}
+
+		return $deny;
+	}*/
 
 	function widgets_init()
 	{
