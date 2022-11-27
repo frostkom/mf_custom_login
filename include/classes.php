@@ -1116,7 +1116,7 @@ class mf_custom_login
 	function direct_link_url($data)
 	{
 		if(!isset($data['user_meta_exists'])){		$data['user_meta_exists'] = false;}
-		if(!isset($data['key'])){					$data['key'] = md5(AUTH_SALT.$data['user_data']->user_login.$data['user_data']->user_email);}
+		if(!isset($data['key'])){					$data['key'] = md5((defined('NONCE_SALT') ? NONCE_SALT : '').$data['user_data']->user_login.$data['user_data']->user_email);}
 		if(!isset($data['type'])){					$data['type'] = '';}
 
 		if($data['user_meta_exists'] == false)
