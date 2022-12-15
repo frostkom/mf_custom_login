@@ -1666,7 +1666,7 @@ class widget_login_form extends WP_Widget
 		//do_action('login_head');
 		//do_action('login_header');
 
-		echo $before_widget;
+		echo apply_filters('filter_before_widget', $before_widget);
 
 			if($instance['login_image'] != '')
 			{
@@ -1879,7 +1879,7 @@ class widget_registration_form extends WP_Widget
 			$role = check_var('role', 'char', true, $role);
 		}
 
-		echo $before_widget;
+		echo apply_filters('filter_before_widget', $before_widget);
 
 			if($instance['registration_image'] != '')
 			{
@@ -2170,7 +2170,7 @@ class widget_lost_password_form extends WP_Widget
 
 		$action = check_var('action');
 
-		echo $before_widget;
+		echo apply_filters('filter_before_widget', $before_widget);
 
 			//do_action('lost_password');
 
@@ -2379,7 +2379,7 @@ class widget_logged_in_info extends WP_Widget
 
 		if(is_user_logged_in())
 		{
-			echo $before_widget;
+			echo apply_filters('filter_before_widget', $before_widget);
 
 				/*if($instance['logged_in_info_heading'] != '')
 				{
