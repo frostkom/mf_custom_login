@@ -259,7 +259,7 @@ if(apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
 		float: right;
 	}
 
-		header .logged_in_info > *
+		header .section.logged_in_info > *
 		{
 			display: block;
 			-webkit-box-flex: 1 1 0;
@@ -268,7 +268,7 @@ if(apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
 			flex: 1 1 0;
 		}
 
-			header .logged_in_info > * + *
+			header .section.logged_in_info > * + *
 			{
 				margin-left: 1em;
 			}
