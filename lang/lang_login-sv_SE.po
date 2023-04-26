@@ -419,7 +419,7 @@ msgstr "Roll"
 
 #: ../include/classes.php:1989
 msgid "I consent to having this website store my submitted information, so that they can contact me if necessary"
-msgstr "Jag godkänner att denna webbsida sparar min skickade information, så att de kan kontakta mig om nödvändigt"
+msgstr "Jag godkänner att denna webbsida sparar min skickade information, så att de kan kontakta mig om det är nödvändigt"
 
 #: ../include/classes.php:1998
 #: ../include/classes.php:2273

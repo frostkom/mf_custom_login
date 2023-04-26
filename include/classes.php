@@ -1031,39 +1031,36 @@ class mf_custom_login
 
 	function check_auth()
 	{
+		$out = false;
+
 		$user = get_user_by('login', $this->username);
 
-		$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
-
-		if($this->auth == $meta_login_auth)
+		if(isset($user->ID))
 		{
-			$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
+			$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
 
-			if($setting_custom_login_direct_link_expire > 0)
+			if($this->auth == $meta_login_auth)
 			{
-				list($meta_date, $rest) = explode("_", $meta_login_auth);
+				$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
 
-				if($meta_date > date("YmdHis", strtotime("-".$setting_custom_login_direct_link_expire." minute")))
+				if($setting_custom_login_direct_link_expire > 0)
 				{
-					return true;
+					list($meta_date, $rest) = explode("_", $meta_login_auth);
+
+					if($meta_date > date("YmdHis", strtotime("-".$setting_custom_login_direct_link_expire." minute")))
+					{
+						$out = true;
+					}
 				}
 
 				else
 				{
-					return false;
+					$out = true;
 				}
 			}
-
-			else
-			{
-				return true;
-			}
 		}
 
-		else
-		{
-			return false;
-		}
+		return $out;
 	}
 
 	function direct_link_login($username)
@@ -1662,7 +1659,11 @@ class widget_login_form extends WP_Widget
 		$user_pass = check_var('user_pass'); // pwd -> user_pass
 		$user_remember = check_var('rememberme', 'char', true, 'forever');
 
-		do_action('login_init');
+		if(!isset($_GET['fl_builder']))
+		{
+			do_action('login_init');
+		}
+
 		//do_action('login_head');
 		//do_action('login_header');
 
@@ -1732,7 +1733,7 @@ class widget_login_form extends WP_Widget
 						}
 					}
 
-					else
+					else if(!isset($_GET['fl_builder']))
 					{
 						$obj_custom_login->check_if_logged_in(array('redirect' => true));
 					}
@@ -1812,7 +1813,7 @@ class widget_registration_form extends WP_Widget
 			'registration_heading' => '',
 			'registration_who_can' => '',
 			'registration_collect_name' => 'no',
-			'registration_fields' => array('username'),
+			'registration_fields' => array(), //'username'
 		);
 
 		parent::__construct('registration-widget', __("Registration Form", 'lang_login'), $this->widget_ops);
@@ -1839,12 +1840,16 @@ class widget_registration_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
-		global $error_text, $done_text;
+		global $obj_custom_login, $error_text, $done_text;
 
 		extract($args);
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
-		$obj_custom_login = new mf_custom_login();
+		if(!isset($obj_custom_login))
+		{
+			$obj_custom_login = new mf_custom_login();
+		}
+
 		$obj_custom_login->check_if_logged_in();
 
 		$is_allowed = (!isset($instance['registration_who_can']) || $instance['registration_who_can'] == '' || current_user_can($instance['registration_who_can']));
@@ -2052,7 +2057,7 @@ class widget_registration_form extends WP_Widget
 		$instance['registration_heading'] = sanitize_text_field($new_instance['registration_heading']);
 		$instance['registration_who_can'] = sanitize_text_field($new_instance['registration_who_can']);
 		$instance['registration_collect_name'] = sanitize_text_field($new_instance['registration_collect_name']);
-		$instance['registration_fields'] = is_array($new_instance['registration_fields']) ? $new_instance['registration_fields'] : array();
+		$instance['registration_fields'] = (is_array($new_instance['registration_fields']) ? $new_instance['registration_fields'] : array());
 
 		return $instance;
 	}
@@ -2062,7 +2067,7 @@ class widget_registration_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('registration_image'), 'value' => $instance['registration_image']))
+			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('registration_image'), 'label' => __("Logo", 'lang_login'), 'value' => $instance['registration_image']))
 			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
 			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_login'), 'value' => $instance['registration_who_can']));
 
@@ -2163,7 +2168,7 @@ class widget_lost_password_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
-		global $error_text, $done_text;
+		global $obj_custom_login, $error_text, $done_text;
 
 		extract($args);
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
@@ -2293,7 +2298,11 @@ class widget_lost_password_form extends WP_Widget
 
 					else
 					{
-						$obj_custom_login = new mf_custom_login();
+						if(!isset($obj_custom_login))
+						{
+							$obj_custom_login = new mf_custom_login();
+						}
+
 						$obj_custom_login->check_if_logged_in();
 					}
 
@@ -2334,7 +2343,7 @@ class widget_lost_password_form extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('lost_password_image'), 'value' => $instance['lost_password_image']))
+			.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('lost_password_image'), 'label' => __("Logo", 'lang_login'), 'value' => $instance['lost_password_image']))
 			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
 		."</div>";
 	}
