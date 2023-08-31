@@ -1630,20 +1630,30 @@ class mf_custom_login
 
 class widget_login_form extends WP_Widget
 {
+	var $obj_custom_login = "";
+
+	var $widget_ops = array();
+
+	var $arr_default = array(
+		'login_image' => '',
+		'login_heading' => '',
+		'login_above_form' => '',
+	);
+
 	function __construct()
 	{
 		$this->obj_custom_login = new mf_custom_login();
 
 		$this->widget_ops = array(
 			'classname' => 'login_form',
-			'description' => __("Display a Login Form", 'lang_login')
+			'description' => __("Display a Login Form", 'lang_login'),
 		);
 
-		$this->arr_default = array(
+		/*$this->arr_default = array(
 			'login_image' => '',
 			'login_heading' => '',
 			'login_above_form' => '',
-		);
+		);*/
 
 		parent::__construct('login-widget', __("Login Form", 'lang_login'), $this->widget_ops);
 	}
@@ -1802,22 +1812,34 @@ class widget_login_form extends WP_Widget
 
 class widget_registration_form extends WP_Widget
 {
+	var $obj_custom_login = "";
+
+	var $widget_ops = array();
+
+	var $arr_default = array(
+		'registration_image' => '',
+		'registration_heading' => '',
+		'registration_who_can' => '',
+		'registration_collect_name' => 'no',
+		'registration_fields' => array(), //'username'
+	);
+
 	function __construct()
 	{
 		$this->obj_custom_login = new mf_custom_login();
 
 		$this->widget_ops = array(
 			'classname' => 'registration_form',
-			'description' => __("Display a Registration Form", 'lang_login')
+			'description' => __("Display a Registration Form", 'lang_login'),
 		);
 
-		$this->arr_default = array(
+		/*$this->arr_default = array(
 			'registration_image' => '',
 			'registration_heading' => '',
 			'registration_who_can' => '',
 			'registration_collect_name' => 'no',
 			'registration_fields' => array(), //'username'
-		);
+		);*/
 
 		parent::__construct('registration-widget', __("Registration Form", 'lang_login'), $this->widget_ops);
 	}
@@ -2086,19 +2108,28 @@ class widget_registration_form extends WP_Widget
 
 class widget_lost_password_form extends WP_Widget
 {
+	var $obj_custom_login = "";
+
+	var $widget_ops = array();
+
+	var $arr_default = array(
+		'lost_password_image' => '',
+		'lost_password_heading' => '',
+	);
+
 	function __construct()
 	{
 		$this->obj_custom_login = new mf_custom_login();
 
 		$this->widget_ops = array(
 			'classname' => 'lost_password_form',
-			'description' => __("Display a Lost Password Form", 'lang_login')
+			'description' => __("Display a Lost Password Form", 'lang_login'),
 		);
 
-		$this->arr_default = array(
+		/*$this->arr_default = array(
 			'lost_password_image' => '',
 			'lost_password_heading' => '',
-		);
+		);*/
 
 		parent::__construct('lost-password-widget', __("Lost Password Form", 'lang_login'), $this->widget_ops);
 	}
@@ -2354,19 +2385,28 @@ class widget_lost_password_form extends WP_Widget
 
 class widget_logged_in_info extends WP_Widget
 {
+	var $obj_custom_login = "";
+
+	var $widget_ops = array();
+
+	var $arr_default = array(
+		//'logged_in_info_heading' => '',
+		'logged_in_info_display' => array(),
+	);
+
 	function __construct()
 	{
 		$this->obj_custom_login = new mf_custom_login();
 
 		$this->widget_ops = array(
 			'classname' => 'logged_in_info',
-			'description' => __("Display Information About the Logged in User", 'lang_login')
+			'description' => __("Display Information About the Logged in User", 'lang_login'),
 		);
 
-		$this->arr_default = array(
+		/*$this->arr_default = array(
 			//'logged_in_info_heading' => '',
 			'logged_in_info_display' => array(),
-		);
+		);*/
 
 		parent::__construct(str_replace("_", "-", $this->widget_ops['classname']).'-widget', __("Logged in Information", 'lang_login'), $this->widget_ops);
 	}
