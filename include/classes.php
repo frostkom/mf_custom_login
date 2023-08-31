@@ -2,9 +2,12 @@
 
 class mf_custom_login
 {
+	var $error = "";
+	var $login_send_hash = "";
+
 	function __construct()
 	{
-		$this->error = "";
+		//$this->error = "";
 
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
