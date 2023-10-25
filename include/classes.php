@@ -1526,7 +1526,7 @@ class mf_custom_login
 		if(isset($user->user_email) && $user->user_email != '')
 		{
 			$mail_to = $user->user_email;
-			$mail_subject = sprintf(__("[%s] Here comes you link to direct login", 'lang_login'), get_bloginfo('name'));
+			$mail_subject = sprintf(__("[%s] Here comes your link to direct login", 'lang_login'), get_bloginfo('name'));
 			$mail_content = $this->direct_link_text(array('user_data' => $user));
 
 			$sent = send_email(array('to' => $mail_to, 'subject' => $mail_subject, 'content' => $mail_content));
