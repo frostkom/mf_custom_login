@@ -1252,20 +1252,22 @@ class mf_custom_login
 
 		if($option != '')
 		{
-			if(is_multisite())
-			{
-				$site_name = get_network()->site_name;
-			}
-
-			else
-			{
-				// The blogname option is escaped with esc_html on the way into the database in sanitize_option we want to reverse this for the plain text arena of emails
-				$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
-			}
-
-			//$title = $this->email_replace_shortcodes($option, $user, $key);
-			$title = str_replace("[site_name]", $site_name, $option);
+			$title = $option;
 		}
+
+		if(is_multisite())
+		{
+			$site_name = get_network()->site_name;
+		}
+
+		else
+		{
+			// The blogname option is escaped with esc_html on the way into the database in sanitize_option we want to reverse this for the plain text arena of emails
+			$site_name = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+		}
+
+		//$title = $this->email_replace_shortcodes($title, $user, $key);
+		$title = str_replace("[site_name]", $site_name, $title);
 
 		return $title;
 	}
