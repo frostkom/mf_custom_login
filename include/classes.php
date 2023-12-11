@@ -646,7 +646,7 @@ class mf_custom_login
 	{
 		global $pagenow;
 
-		if(in_array($pagenow, array('user-edit.php', 'profile.php')) && IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
+		if(in_array($pagenow, array('user-edit.php', 'profile.php')) && IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
 			$plugin_include_url = plugin_dir_url(__FILE__);
 			$plugin_version = get_plugin_version(__FILE__);
@@ -692,7 +692,7 @@ class mf_custom_login
 
 	function edit_user_profile($user)
 	{
-		if(IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
+		if(IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
 			echo "<table class='form-table'>
 				<tr>
@@ -1388,7 +1388,7 @@ class mf_custom_login
 
 	function register_url($url)
 	{
-		if(is_user_logged_in() && IS_ADMIN)
+		if(is_user_logged_in() && IS_ADMINISTRATOR)
 		{
 			if(is_multisite() && IS_SUPER_ADMIN)
 			{
@@ -1465,7 +1465,7 @@ class mf_custom_login
 
 		if($user_id > 0)
 		{
-			if(IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
+			if(IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
 			{
 				$user_data = get_userdata($user_id);
 
@@ -1495,7 +1495,7 @@ class mf_custom_login
 
 		if($user_id > 0)
 		{
-			if(IS_ADMIN && get_option('setting_custom_login_allow_direct_link') == 'yes')
+			if(IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
 			{
 				delete_user_meta($user_id, 'meta_login_auth');
 
@@ -1906,7 +1906,7 @@ class widget_registration_form extends WP_Widget
 
 		$role = get_option('default_role');
 
-		if(is_user_logged_in() && IS_ADMIN)
+		if(is_user_logged_in() && IS_ADMINISTRATOR)
 		{
 			$role = check_var('role', 'char', true, $role);
 		}
@@ -2036,7 +2036,7 @@ class widget_registration_form extends WP_Widget
 
 					if(is_user_logged_in())
 					{
-						if(IS_ADMIN)
+						if(IS_ADMINISTRATOR)
 						{
 							$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false, 'exclude' => array('administrator')));
 
