@@ -1602,9 +1602,9 @@ class mf_custom_login
 
 					if(strpos($file_address, "/".$post_name."/"))
 					{
-						if(get_option_or_default('setting_cache_debug') == 'yes')
+						if(get_option('setting_cache_debug') == 'yes')
 						{
-							do_log("filter_deny_before_set_cache: Denied ".$file_address." because ".$search_for." -> #".$post_id." -> ".$post_name);
+							do_log(__FUNCTION__.": Denied ".$file_address." because ".$search_for." -> #".$post_id." -> ".$post_name);
 						}
 
 						$deny = true;
