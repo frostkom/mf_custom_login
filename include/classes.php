@@ -1768,7 +1768,7 @@ class widget_login_form extends WP_Widget
 
 				do_action('login_form');
 
-				echo "<div class='flex_flow'>"
+				echo "<div class='login_actions flex_flow'>"
 					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
 					."<div class='form_button'>"
 						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
