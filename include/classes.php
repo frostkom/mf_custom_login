@@ -4,11 +4,11 @@ class mf_custom_login
 {
 	var $error = "";
 	var $login_send_hash = "";
+	var $username;
+	var $auth;
 
 	function __construct()
 	{
-		//$this->error = "";
-
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
 			$this->login_send_hash = md5('login_send_'.get_current_visitor_ip().'_'.date("Ymd"));
