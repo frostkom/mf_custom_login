@@ -47,12 +47,12 @@ jQuery(function($)
 
 					if(data.success)
 					{
-						$("#loginform").before("<p class='message'>" + data.message + "</p>");
+						$("#loginform").before("<p class='message updated'>" + data.message + "</p>");
 					}
 
 					else
 					{
-						$("#loginform").before("<div id='login_error'>" + data.error + "</div>");
+						$("#loginform").before("<div id='login_error' class='error'>" + data.error + "</div>");
 					}
 				}
 			});
