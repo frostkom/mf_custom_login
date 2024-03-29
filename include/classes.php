@@ -511,7 +511,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key, 'no');
 
-			$description = setting_time_limit(array('key' => $setting_key, 'value' => $option, 'time_limit' => 24));
+			list($option, $description) = setting_time_limit(array('key' => $setting_key, 'value' => $option, 'time_limit' => 24, 'return' => 'array'));
 
 			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => $description));
 		}
