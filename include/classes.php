@@ -77,12 +77,12 @@ class mf_custom_login
 
 		$user = wp_signon(array('user_login' => $data['user_login'], 'user_password' => $data['user_pass'], 'remember' => $data['user_remember']), $secure_cookie);
 
-		$requested_redirect_to = check_var('redirect_to');
-
-		$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
-
 		if(!is_wp_error($user))
 		{
+			$requested_redirect_to = check_var('redirect_to');
+
+			$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
+
 			if(empty($data['redirect_to']) || $data['redirect_to'] == 'wp-admin/' || $data['redirect_to'] == admin_url())
 			{
 				// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
@@ -793,9 +793,6 @@ class mf_custom_login
 				if($post_url != '')
 				{
 					$redirect_to = $post_url;
-
-					wp_redirect($redirect_to, 302);
-					exit;
 				}
 			}
 		}
@@ -953,6 +950,9 @@ class mf_custom_login
 					$user_data = get_userdata(get_current_user_id());
 
 					$redirect_to = $this->get_login_redirect($redirect_to, $user_data);
+
+					wp_redirect($redirect_to, 302);
+					exit;
 				}
 			break;
 		}
@@ -1632,10 +1632,8 @@ class mf_custom_login
 
 class widget_login_form extends WP_Widget
 {
-	var $obj_custom_login = "";
-
-	var $widget_ops = array();
-
+	var $obj_custom_login;
+	var $widget_ops;
 	var $arr_default = array(
 		'login_image' => '',
 		'login_heading' => '',
@@ -1650,12 +1648,6 @@ class widget_login_form extends WP_Widget
 			'classname' => 'login_form',
 			'description' => __("Display a Login Form", 'lang_login'),
 		);
-
-		/*$this->arr_default = array(
-			'login_image' => '',
-			'login_heading' => '',
-			'login_above_form' => '',
-		);*/
 
 		parent::__construct('login-widget', __("Login Form", 'lang_login'), $this->widget_ops);
 	}
