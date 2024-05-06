@@ -64,6 +64,58 @@ class mf_custom_login
 		$obj_cron->end();
 	}
 
+	function block_render_callback($attributes)
+	{
+		//if(!isset($attributes[''])){	$attributes[''] = "";}
+
+		$out = "";
+
+		// How do I deal with all four widgets here?
+
+		return $out;
+	}
+
+	function init()
+	{
+		// Blocks
+		#######################
+		/*$plugin_include_url = plugin_dir_url(__FILE__);
+		$plugin_version = get_plugin_version(__FILE__);
+
+		wp_register_script('script_custom_login_block_wp', $plugin_include_url."block/script_wp.js", array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor'), $plugin_version);
+
+		wp_localize_script('script_custom_login_block_wp', 'script_custom_login_block_wp', array());
+
+		register_block_type('mf/customlogin', array(
+			'editor_script' => 'script_custom_login_block_wp',
+			'editor_style' => 'style_base_block_wp',
+			'render_callback' => array($this, 'block_render_callback'),
+			//'style' => 'style_base_block_wp',
+		));
+		
+		register_block_type('mf/customregistration', array(
+			'editor_script' => 'script_custom_login_block_wp',
+			'editor_style' => 'style_base_block_wp',
+			'render_callback' => array($this, 'block_render_callback'),
+			//'style' => 'style_base_block_wp',
+		));
+		
+		register_block_type('mf/customlost', array(
+			'editor_script' => 'script_custom_login_block_wp',
+			'editor_style' => 'style_base_block_wp',
+			'render_callback' => array($this, 'block_render_callback'),
+			//'style' => 'style_base_block_wp',
+		));
+		
+		register_block_type('mf/customloggedin', array(
+			'editor_script' => 'script_custom_login_block_wp',
+			'editor_style' => 'style_base_block_wp',
+			'render_callback' => array($this, 'block_render_callback'),
+			//'style' => 'style_base_block_wp',
+		));*/
+		#######################
+	}
+
 	function do_login($data = array())
 	{
 		if(!isset($data['user_login'])){		$data['user_login'] = '';}

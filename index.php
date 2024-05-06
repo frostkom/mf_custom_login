@@ -25,6 +25,8 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 	add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
 	add_action('cron_base', array($obj_custom_login, 'cron_base'), mt_rand(1, 10));
 
+	add_action('init', array($obj_custom_login, 'init'), 1);
+
 	if(is_admin())
 	{
 		register_activation_hook(__FILE__, 'activate_custom_login');
