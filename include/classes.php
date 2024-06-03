@@ -92,21 +92,21 @@ class mf_custom_login
 			'render_callback' => array($this, 'block_render_callback'),
 			//'style' => 'style_base_block_wp',
 		));
-		
+
 		register_block_type('mf/customregistration', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_callback'),
 			//'style' => 'style_base_block_wp',
 		));
-		
+
 		register_block_type('mf/customlost', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_callback'),
 			//'style' => 'style_base_block_wp',
 		));
-		
+
 		register_block_type('mf/customloggedin', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
@@ -194,6 +194,13 @@ class mf_custom_login
 				$done_text = sprintf(__("You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?", 'lang_login'), $user_data->user_login, "<a href='".admin_url()."'>", "</a>", "<a href='".wp_logout_url()."'>", "</a>");
 			}
 		}
+	}
+
+	function site_transient_update_plugins($arr_plugins)
+	{
+		unset($arr_plugins->response['wp-smushit/wp-smush.php']);
+
+		return $arr_plugins;
 	}
 
 	function settings_custom_login()
