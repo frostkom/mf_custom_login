@@ -4,13 +4,16 @@
 		el = wp.element.createElement,
 		registerBlockType = wp.blocks.registerBlockType,
 		SelectControl = wp.components.SelectControl,
-		TextControl = wp.components.TextControl;
+		TextControl = wp.components.TextControl,
+		MediaUpload = wp.blockEditor.MediaUpload,
+	    Button = wp.components.Button,
+		MediaUploadCheck = wp.blockEditor.MediaUploadCheck;
 
 	registerBlockType('mf/customlogin',
 	{
-		title: __("Custom Login", 'lang_custom_login'),
-		description: __("Display a Custom Login", 'lang_custom_login'),
-		icon: 'unlock', /* https://developer.wordpress.org/resource/dashicons/ */
+		title: __("Custom Login", 'lang_login'),
+		description: __("Display a Custom Login", 'lang_login'),
+		icon: 'lock', /* https://developer.wordpress.org/resource/dashicons/ */
 		category: 'widgets', /* common, formatting, layout, widgets, embed */
 		'attributes':
 		{
@@ -19,15 +22,26 @@
 				'type': 'string',
 				'default': ''
 			},
+			'login_image':
+			{
+                'type': 'string',
+                'default': ''
+            },
+			'login_image_id':
+			{
+                'type': 'string',
+                'default': ''
+            },
 			'login_heading':
 			{
                 'type': 'string',
                 'default': ''
+            },
+			'login_above_form':
+			{
+                'type': 'string',
+                'default': ''
             }
-
-			/*.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('login_image'), 'label' => __("Logo", 'lang_login'), 'value' => $instance['login_image']))
-			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
-			.show_textarea(array('name' => $this->get_field_name('login_above_form'), 'text' => __("Content Above Form", 'lang_login'), 'value' => $instance['login_above_form']))*/
 		},
 		'supports':
 		{
@@ -56,6 +70,46 @@
 		{
 			var arr_out = [];
 
+			/* Media */
+			/* ################### */
+			arr_out.push(el(
+				'div',
+				{className: "wp_mf_block " + props.className},
+				el(
+                    MediaUploadCheck,
+                    {},
+                    el(
+                        MediaUpload,
+                        {
+                            onSelect: function(value)
+							{
+								props.setAttributes({login_image: value.url, login_image_id: value.id});
+							},
+                            allowedTypes: ['image'],
+                            value: props.attributes.login_image_id,
+                            render: function(obj)
+							{
+                                return el(
+                                    Button,
+                                    {
+                                        onClick: obj.open
+                                    },
+                                    __("Logo", 'lang_login')
+                                );
+                            }
+                        }
+                    )
+                ),
+                props.attributes.login_image && el(
+                    'img',
+                    {
+                        src: props.attributes.login_image,
+                        alt: ''
+                    }
+                )
+			));
+			/* ################### */
+			
 			/* Text */
 			/* ################### */
 			arr_out.push(el(
@@ -64,10 +118,9 @@
 				el(
 					TextControl,
 					{
-						label: __("Heading", 'lang_custom_login'),
+						label: __("Heading", 'lang_login'),
 						type: 'text',
 						value: props.attributes.login_heading,
-						/*help: __("Description...", 'lang_custom_login'),*/
 						onChange: function(value)
 						{
 							props.setAttributes({login_heading: value});
@@ -77,41 +130,25 @@
 			));
 			/* ################### */
 
-			/* Select */
+			/* Text */
 			/* ################### */
-			var arr_options = [];
-
-			jQuery.each(script_custom_login_block_wp.login_id, function(index, value)
-			{
-				if(index == "")
-				{
-					index = 0;
-				}
-
-				arr_options.push({label: value, value: index});
-			});
-
 			arr_out.push(el(
 				'div',
 				{className: "wp_mf_block " + props.className},
 				el(
-					SelectControl,
+					TextControl,
 					{
-						label: __("List", 'lang_custom_login'),
-						value: props.attributes.login_id,
-						options: arr_options,
+						label: __("Content Above Form", 'lang_login'),
+						type: 'text',
+						value: props.attributes.login_above_form,
 						onChange: function(value)
 						{
-							props.setAttributes({login_id: value});
+							props.setAttributes({login_above_form: value});
 						}
 					}
 				)
 			));
 			/* ################### */
-
-			/*.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('login_image'), 'label' => __("Logo", 'lang_login'), 'value' => $instance['login_image']))
-			.show_textfield(array('name' => $this->get_field_name('login_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['login_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
-			.show_textarea(array('name' => $this->get_field_name('login_above_form'), 'text' => __("Content Above Form", 'lang_login'), 'value' => $instance['login_above_form']))*/
 
 			return arr_out;
 		},
@@ -124,9 +161,9 @@
 
 	registerBlockType('mf/customregistration',
 	{
-		title: __("Custom Login", 'lang_custom_login'),
-		description: __("Display a Custom Login", 'lang_custom_login'),
-		icon: 'unlock', /* https://developer.wordpress.org/resource/dashicons/ */
+		title: __("Custom Login", 'lang_login'),
+		description: __("Display a Custom Login", 'lang_login'),
+		icon: 'users', /* https://developer.wordpress.org/resource/dashicons/ */
 		category: 'widgets', /* common, formatting, layout, widgets, embed */
 		'attributes':
 		{
@@ -135,17 +172,36 @@
 				'type': 'string',
 				'default': ''
 			},
-			'login_heading':
+			'registration_image':
 			{
                 'type': 'string',
                 'default': ''
+            },
+			'registration_image_id':
+			{
+                'type': 'string',
+                'default': ''
+            },
+			'registration_heading':
+			{
+                'type': 'string',
+                'default': ''
+            },
+			'registration_who_can':
+			{
+                'type': 'string',
+                'default': ''
+            },
+			'registration_collect_name':
+			{
+                'type': 'string',
+                'default': ''
+            },
+			'registration_fields':
+			{
+                'type': 'array',
+                'default': ''
             }
-
-			/*.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('registration_image'), 'label' => __("Logo", 'lang_login'), 'value' => $instance['registration_image']))
-			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
-			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_login'), 'value' => $instance['registration_who_can']));
-			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']));
-			echo show_select(array('data' => $this->get_fields_for_select(), 'name' => $this->get_field_name('registration_fields')."[]", 'text' => __("Fields to Display", 'lang_login'), 'value' => $instance['registration_fields']))*/
 		},
 		'supports':
 		{
@@ -174,6 +230,46 @@
 		{
 			var arr_out = [];
 
+			/* Media */
+			/* ################### */
+			arr_out.push(el(
+				'div',
+				{className: "wp_mf_block " + props.className},
+				el(
+                    MediaUploadCheck,
+                    {},
+                    el(
+                        MediaUpload,
+                        {
+                            onSelect: function(value)
+							{
+								props.setAttributes({login_image: value.url, login_image_id: value.id});
+							},
+                            allowedTypes: ['image'],
+                            value: props.attributes.login_image_id,
+                            render: function(obj)
+							{
+                                return el(
+                                    Button,
+                                    {
+                                        onClick: obj.open
+                                    },
+                                    __("Logo", 'lang_login')
+                                );
+                            }
+                        }
+                    )
+                ),
+                props.attributes.login_image && el(
+                    'img',
+                    {
+                        src: props.attributes.login_image,
+                        alt: ''
+                    }
+                )
+			));
+			/* ################### */
+
 			/* Text */
 			/* ################### */
 			arr_out.push(el(
@@ -182,10 +278,10 @@
 				el(
 					TextControl,
 					{
-						label: __("Heading", 'lang_custom_login'),
+						label: __("Heading", 'lang_login'),
 						type: 'text',
 						value: props.attributes.login_heading,
-						/*help: __("Description...", 'lang_custom_login'),*/
+						/*help: __("Description...", 'lang_login'),*/
 						onChange: function(value)
 						{
 							props.setAttributes({login_heading: value});
@@ -199,7 +295,7 @@
 			/* ################### */
 			var arr_options = [];
 
-			jQuery.each(script_custom_login_block_wp.login_id, function(index, value)
+			jQuery.each(script_custom_login_block_wp.registration_who_can, function(index, value)
 			{
 				if(index == "")
 				{
@@ -215,23 +311,82 @@
 				el(
 					SelectControl,
 					{
-						label: __("List", 'lang_custom_login'),
-						value: props.attributes.login_id,
+						label: __("Who Can Register?", 'lang_login'),
+						value: props.attributes.registration_who_can,
 						options: arr_options,
 						onChange: function(value)
 						{
-							props.setAttributes({login_id: value});
+							props.setAttributes({registration_who_can: value});
 						}
 					}
 				)
 			));
 			/* ################### */
 
-			/*.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('registration_image'), 'label' => __("Logo", 'lang_login'), 'value' => $instance['registration_image']))
-			.show_textfield(array('name' => $this->get_field_name('registration_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['registration_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
-			.show_select(array('data' => $this->get_roles_for_select(), 'name' => $this->get_field_name('registration_who_can'), 'text' => __("Who Can Register?", 'lang_login'), 'value' => $instance['registration_who_can']));
-			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $this->get_field_name('registration_collect_name'), 'text' => __("Collect full name from user", 'lang_login'), 'value' => $instance['registration_collect_name']));
-			echo show_select(array('data' => $this->get_fields_for_select(), 'name' => $this->get_field_name('registration_fields')."[]", 'text' => __("Fields to Display", 'lang_login'), 'value' => $instance['registration_fields']))*/
+			/* Select */
+			/* ################### */
+			var arr_options = [];
+
+			jQuery.each(script_custom_login_block_wp.get_yes_no_for_select, function(index, value)
+			{
+				if(index == "")
+				{
+					index = 0;
+				}
+
+				arr_options.push({label: value, value: index});
+			});
+
+			arr_out.push(el(
+				'div',
+				{className: "wp_mf_block " + props.className},
+				el(
+					SelectControl,
+					{
+						label: __("Collect full name from user", 'lang_login'),
+						value: props.attributes.registration_collect_name,
+						options: arr_options,
+						onChange: function(value)
+						{
+							props.setAttributes({registration_collect_name: value});
+						}
+					}
+				)
+			));
+			/* ################### */
+
+			/* Select */
+			/* ################### */
+			var arr_options = [];
+
+			jQuery.each(script_custom_login_block_wp.registration_fields, function(index, value)
+			{
+				if(index == "")
+				{
+					index = 0;
+				}
+
+				arr_options.push({label: value, value: index});
+			});
+
+			arr_out.push(el(
+				'div',
+				{className: "wp_mf_block " + props.className},
+				el(
+					SelectControl,
+					{
+						label: __("Fields to Display", 'lang_login'),
+						value: props.attributes.registration_fields,
+						options: arr_options,
+						multiple: true,
+						onChange: function(value)
+						{
+							props.setAttributes({registration_fields: value});
+						}
+					}
+				)
+			));
+			/* ################### */
 
 			return arr_out;
 		},
@@ -244,9 +399,9 @@
 
 	registerBlockType('mf/customlost',
 	{
-		title: __("Custom Login", 'lang_custom_login'),
-		description: __("Display a Custom Login", 'lang_custom_login'),
-		icon: 'unlock', /* https://developer.wordpress.org/resource/dashicons/ */
+		title: __("Custom Login", 'lang_login'),
+		description: __("Display a Custom Login", 'lang_login'),
+		icon: 'email', /* https://developer.wordpress.org/resource/dashicons/ */
 		category: 'widgets', /* common, formatting, layout, widgets, embed */
 		'attributes':
 		{
@@ -255,14 +410,21 @@
 				'type': 'string',
 				'default': ''
 			},
-			'login_heading':
+			'lost_password_image':
+			{
+                'type': 'string',
+                'default': ''
+            },
+			'lost_password_image_id':
+			{
+                'type': 'string',
+                'default': ''
+            },
+			'lost_password_heading':
 			{
                 'type': 'string',
                 'default': ''
             }
-
-			/*.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('lost_password_image'), 'label' => __("Logo", 'lang_login'), 'value' => $instance['lost_password_image']))
-			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))*/
 		},
 		'supports':
 		{
@@ -291,6 +453,46 @@
 		{
 			var arr_out = [];
 
+			/* Media */
+			/* ################### */
+			arr_out.push(el(
+				'div',
+				{className: "wp_mf_block " + props.className},
+				el(
+                    MediaUploadCheck,
+                    {},
+                    el(
+                        MediaUpload,
+                        {
+                            onSelect: function(value)
+							{
+								props.setAttributes({lost_password_image: value.url, lost_password_image_id: value.id});
+							},
+                            allowedTypes: ['image'],
+                            value: props.attributes.lost_password_image_id,
+                            render: function(obj)
+							{
+                                return el(
+                                    Button,
+                                    {
+                                        onClick: obj.open
+                                    },
+                                    __("Logo", 'lang_login')
+                                );
+                            }
+                        }
+                    )
+                ),
+                props.attributes.lost_password_image && el(
+                    'img',
+                    {
+                        src: props.attributes.lost_password_image,
+                        alt: ''
+                    }
+                )
+			));
+			/* ################### */
+
 			/* Text */
 			/* ################### */
 			arr_out.push(el(
@@ -299,53 +501,18 @@
 				el(
 					TextControl,
 					{
-						label: __("Heading", 'lang_custom_login'),
+						label: __("Heading", 'lang_login'),
 						type: 'text',
-						value: props.attributes.login_heading,
-						/*help: __("Description...", 'lang_custom_login'),*/
+						value: props.attributes.lost_password_heading,
+						/*help: __("Description...", 'lang_login'),*/
 						onChange: function(value)
 						{
-							props.setAttributes({login_heading: value});
+							props.setAttributes({lost_password_heading: value});
 						}
 					}
 				)
 			));
 			/* ################### */
-
-			/* Select */
-			/* ################### */
-			var arr_options = [];
-
-			jQuery.each(script_custom_login_block_wp.login_id, function(index, value)
-			{
-				if(index == "")
-				{
-					index = 0;
-				}
-
-				arr_options.push({label: value, value: index});
-			});
-
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					SelectControl,
-					{
-						label: __("List", 'lang_custom_login'),
-						value: props.attributes.login_id,
-						options: arr_options,
-						onChange: function(value)
-						{
-							props.setAttributes({login_id: value});
-						}
-					}
-				)
-			));
-			/* ################### */
-
-			/*.get_media_library(array('type' => 'image', 'name' => $this->get_field_name('lost_password_image'), 'label' => __("Logo", 'lang_login'), 'value' => $instance['lost_password_image']))
-			.show_textfield(array('name' => $this->get_field_name('lost_password_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['lost_password_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))*/
 
 			return arr_out;
 		},
@@ -358,8 +525,8 @@
 
 	registerBlockType('mf/customloggedin',
 	{
-		title: __("Custom Login", 'lang_custom_login'),
-		description: __("Display a Custom Login", 'lang_custom_login'),
+		title: __("Logged in Information", 'lang_login'),
+		description: __("Display Information About the Logged in User", 'lang_login'),
 		icon: 'unlock', /* https://developer.wordpress.org/resource/dashicons/ */
 		category: 'widgets', /* common, formatting, layout, widgets, embed */
 		'attributes':
@@ -369,13 +536,11 @@
 				'type': 'string',
 				'default': ''
 			},
-			'login_heading':
+			'logged_in_info_display':
 			{
-                'type': 'string',
+                'type': 'array',
                 'default': ''
             }
-
-			/*.show_select(array('data' => $this->get_user_info_for_select(), 'name' => $this->get_field_name('logged_in_info_display')."[]", 'value' => $instance['logged_in_info_display']))*/
 		},
 		'supports':
 		{
@@ -404,32 +569,11 @@
 		{
 			var arr_out = [];
 
-			/* Text */
-			/* ################### */
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					TextControl,
-					{
-						label: __("Heading", 'lang_custom_login'),
-						type: 'text',
-						value: props.attributes.login_heading,
-						/*help: __("Description...", 'lang_custom_login'),*/
-						onChange: function(value)
-						{
-							props.setAttributes({login_heading: value});
-						}
-					}
-				)
-			));
-			/* ################### */
-
 			/* Select */
 			/* ################### */
 			var arr_options = [];
 
-			jQuery.each(script_custom_login_block_wp.login_id, function(index, value)
+			jQuery.each(script_custom_login_block_wp.logged_in_info_display, function(index, value)
 			{
 				if(index == "")
 				{
@@ -445,19 +589,18 @@
 				el(
 					SelectControl,
 					{
-						label: __("List", 'lang_custom_login'),
-						value: props.attributes.login_id,
+						label: __("List", 'lang_login'),
+						value: props.attributes.logged_in_info_display,
 						options: arr_options,
+						multiple: true,
 						onChange: function(value)
 						{
-							props.setAttributes({login_id: value});
+							props.setAttributes({logged_in_info_display: value});
 						}
 					}
 				)
 			));
 			/* ################### */
-
-			/*.show_select(array('data' => $this->get_user_info_for_select(), 'name' => $this->get_field_name('logged_in_info_display')."[]", 'value' => $instance['logged_in_info_display']))*/
 
 			return arr_out;
 		},
