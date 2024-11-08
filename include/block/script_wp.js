@@ -109,7 +109,7 @@
                 )
 			));
 			/* ################### */
-			
+
 			/* Text */
 			/* ################### */
 			arr_out.push(el(
@@ -604,7 +604,6 @@
 
 			return arr_out;
 		},
-
 		save: function()
 		{
 			return null;

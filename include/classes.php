@@ -85,23 +85,16 @@ class mf_custom_login
 			do_action('login_init');
 		}
 
-		//do_action('login_head');
-		//do_action('login_header');
-
-		echo apply_filters('filter_before_widget', $before_widget);
+		$out .= "<div class='widget login_form".(isset($attributes['className']) && $attributes['className'] != '' ? " ".$attributes['className'] : "")."'>";
 
 			if($instance['login_image'] != '')
 			{
-				echo "<p><img src='".$instance['login_image']."'></p>";
+				$out .= "<p><img src='".$instance['login_image']."'></p>";
 			}
 
 			if($instance['login_heading'] != '')
 			{
-				$instance['login_heading'] = apply_filters('widget_title', $instance['login_heading'], $instance, $this->id_base);
-
-				echo $before_title
-					.$instance['login_heading']
-				.$after_title;
+				$out .= "<h3>".$instance['login_heading']."</h3>";
 			}
 
 			switch($action)
@@ -161,20 +154,20 @@ class mf_custom_login
 				break;
 			}
 
-			echo get_notification();
+			$out .= get_notification();
 
 			if($instance['login_above_form'] != '')
 			{
-				echo apply_filters('the_content', $instance['login_above_form']);
+				$out .= apply_filters('the_content', $instance['login_above_form']);
 			}
 
-			echo "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
+			$out .= "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
 				.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true)) // log -> user_login
 				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)); // pwd -> user_pass
 
 				do_action('login_form');
 
-				echo "<div class='login_actions flex_flow'>"
+				$out .= "<div class='login_actions flex_flow'>"
 					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
 					."<div class='form_button'>"
 						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
@@ -186,10 +179,10 @@ class mf_custom_login
 
 			if(get_option('users_can_register'))
 			{
-				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
+				$out .= "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
 			}
 
-		echo $after_widget;*/
+		$out .= "</div>";*/
 
 		return $out;
 	}
@@ -198,31 +191,31 @@ class mf_custom_login
 	{
 		//if(!isset($attributes[''])){	$attributes[''] = "";}
 		/*'registration_image':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'registration_image_id':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'registration_heading':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'registration_who_can':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'registration_collect_name':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'registration_fields'*/
+		{
+			'type': 'string',
+			'default': ''
+		},
+		'registration_image_id':
+		{
+			'type': 'string',
+			'default': ''
+		},
+		'registration_heading':
+		{
+			'type': 'string',
+			'default': ''
+		},
+		'registration_who_can':
+		{
+			'type': 'string',
+			'default': ''
+		},
+		'registration_collect_name':
+		{
+			'type': 'string',
+			'default': ''
+		},
+		'registration_fields'*/
 
 		$out = "";
 		/*$obj_custom_login->check_if_logged_in();
@@ -259,7 +252,7 @@ class mf_custom_login
 			$role = check_var('role', 'char', true, $role);
 		}
 
-		echo apply_filters('filter_before_widget', $before_widget);
+		echo apply_filters('filter_before_widget', $before_widget); //".(isset($attributes['className']) && $attributes['className'] != '' ? " ".$attributes['className'] : "")."
 
 			if($instance['registration_image'] != '')
 			{
@@ -435,7 +428,7 @@ class mf_custom_login
 
 		/*$action = check_var('action');
 
-		echo apply_filters('filter_before_widget', $before_widget);
+		echo apply_filters('filter_before_widget', $before_widget); //".(isset($attributes['className']) && $attributes['className'] != '' ? " ".$attributes['className'] : "")."
 
 			//do_action('lost_password');
 
@@ -597,7 +590,7 @@ class mf_custom_login
 
 		/*if(is_user_logged_in())
 		{
-			echo apply_filters('filter_before_widget', $before_widget);
+			echo apply_filters('filter_before_widget', $before_widget); //".(isset($attributes['className']) && $attributes['className'] != '' ? " ".$attributes['className'] : "")."
 
 				if($instance['logged_in_info_heading'] != '')
 				{
@@ -693,7 +686,7 @@ class mf_custom_login
 	{
 		// Blocks
 		#######################
-		/*$plugin_include_url = plugin_dir_url(__FILE__);
+		$plugin_include_url = plugin_dir_url(__FILE__);
 		$plugin_version = get_plugin_version(__FILE__);
 
 		wp_register_script('script_custom_login_block_wp', $plugin_include_url."block/script_wp.js", array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor'), $plugin_version);
@@ -712,7 +705,7 @@ class mf_custom_login
 			//'style' => 'style_base_block_wp',
 		));
 
-		register_block_type('mf/customregistration', array(
+		/*register_block_type('mf/customregistration', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_registration_callback'),
