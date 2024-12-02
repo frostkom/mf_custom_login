@@ -64,6 +64,10 @@
 			{
 				'fontSize': true,
 				'lineHeight': true
+			},
+			"__experimentalBorder":
+			{
+				"radius": true
 			}
 		},
 		edit: function(props)
@@ -224,6 +228,10 @@
 			{
 				'fontSize': true,
 				'lineHeight': true
+			},
+			"__experimentalBorder":
+			{
+				"radius": true
 			}
 		},
 		edit: function(props)
@@ -447,6 +455,10 @@
 			{
 				'fontSize': true,
 				'lineHeight': true
+			},
+			"__experimentalBorder":
+			{
+				"radius": true
 			}
 		},
 		edit: function(props)
@@ -527,8 +539,8 @@
 	{
 		title: __("Logged in Information", 'lang_login'),
 		description: __("Display Information About the Logged in User", 'lang_login'),
-		icon: 'unlock', /* https://developer.wordpress.org/resource/dashicons/ */
-		category: 'widgets', /* common, formatting, layout, widgets, embed */
+		icon: 'unlock',
+		category: 'widgets',
 		'attributes':
 		{
 			'align':
@@ -563,6 +575,10 @@
 			{
 				'fontSize': true,
 				'lineHeight': true
+			},
+			"__experimentalBorder":
+			{
+				"radius": true
 			}
 		},
 		edit: function(props)

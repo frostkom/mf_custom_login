@@ -169,7 +169,7 @@ class mf_custom_login
 
 				$out .= "<div class='login_actions flex_flow'>"
 					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
-					."<div class='form_button'>"
+					."<div".get_form_button_classes().">"
 						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
 						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
 					."</div>
@@ -401,7 +401,7 @@ class mf_custom_login
 						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
 					}
 
-					echo "<div class='form_button'>"
+					echo "<div".get_form_button_classes().">"
 						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
 					."</div>";
 
@@ -507,7 +507,7 @@ class mf_custom_login
 
 							do_action('resetpass_form', $user);
 
-							echo "<div class='form_button'>"
+							echo "<div".get_form_button_classes().">"
 								.show_button(array('name' => 'btnSendResetPassword', 'text' => __("Reset Password", 'lang_login')))
 								.input_hidden(array('name' => 'login', 'value' => $user_login, 'xtra' => " id='user_login'"))
 								.input_hidden(array('name' => 'key', 'value' => $user_key))
@@ -568,7 +568,7 @@ class mf_custom_login
 
 							do_action('lostpassword_form');
 
-							echo "<div class='form_button'>"
+							echo "<div".get_form_button_classes().">"
 								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
 							."</div>
 						</form>
@@ -2433,7 +2433,7 @@ class widget_login_form extends WP_Widget
 
 				echo "<div class='login_actions flex_flow'>"
 					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
-					."<div class='form_button'>"
+					."<div".get_form_button_classes().">"
 						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
 						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
 					."</div>
@@ -2713,7 +2713,7 @@ class widget_registration_form extends WP_Widget
 						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
 					}
 
-					echo "<div class='form_button'>"
+					echo "<div".get_form_button_classes().">"
 						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
 					."</div>";
 
@@ -2936,7 +2936,7 @@ class widget_lost_password_form extends WP_Widget
 
 							do_action('resetpass_form', $user);
 
-							echo "<div class='form_button'>"
+							echo "<div".get_form_button_classes().">"
 								.show_button(array('name' => 'btnSendResetPassword', 'text' => __("Reset Password", 'lang_login')))
 								.input_hidden(array('name' => 'login', 'value' => $user_login, 'xtra' => " id='user_login'"))
 								.input_hidden(array('name' => 'key', 'value' => $user_key))
@@ -2997,7 +2997,7 @@ class widget_lost_password_form extends WP_Widget
 
 							do_action('lostpassword_form');
 
-							echo "<div class='form_button'>"
+							echo "<div".get_form_button_classes().">"
 								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
 							."</div>
 						</form>

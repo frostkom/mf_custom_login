@@ -178,12 +178,12 @@ if(apply_filters('get_widget_search', 'login-widget') > 0)
 		max-width: 400px;
 	}
 
-		.login_form form .flex_flow .form_button
+		.login_form form .flex_flow .form_button, .login_form form .flex_flow .wp-block-button
 		{
 			text-align: right;
 		}
 
-			.login_form form .flex_flow .form_button button:last-of-type
+			.login_form form .flex_flow .form_button button:last-of-type, .login_form form .flex_flow .wp-block-button button:last-of-type
 			{
 				margin-right: 0 !important;
 			}

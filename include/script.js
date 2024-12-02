@@ -1,6 +1,6 @@
 jQuery(function($)
 {
-	var dom_obj = $("#loginform .submit input[name='redirect_to'], .widget.login_form .form_button input[name='redirect_to']");
+	var dom_obj = $("#loginform .submit input[name='redirect_to'], .widget.login_form .form_button input[name='redirect_to'], .widget.login_form .wp-block-button input[name='redirect_to']");
 
 	if(dom_obj.length > 0)
 	{
