@@ -85,7 +85,7 @@ class mf_custom_login
 			do_action('login_init');
 		}
 
-		$out .= "<div class='widget login_form".(isset($attributes['className']) && $attributes['className'] != '' ? " ".$attributes['className'] : "")."'>";
+		$out .= "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
 
 			if($instance['login_image'] != '')
 			{
@@ -684,6 +684,8 @@ class mf_custom_login
 
 	function init()
 	{
+		load_plugin_textdomain('lang_login', false, str_replace("/include", "", dirname(plugin_basename(__FILE__)))."/lang/");
+
 		// Blocks
 		#######################
 		$plugin_include_url = plugin_dir_url(__FILE__);
