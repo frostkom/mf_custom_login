@@ -301,18 +301,6 @@
 
 			/* Select */
 			/* ################### */
-			var arr_options = [];
-
-			jQuery.each(script_custom_login_block_wp.registration_who_can, function(index, value)
-			{
-				if(index == "")
-				{
-					index = 0;
-				}
-
-				arr_options.push({label: value, value: index});
-			});
-
 			arr_out.push(el(
 				'div',
 				{className: "wp_mf_block " + props.className},
@@ -321,7 +309,7 @@
 					{
 						label: __("Who Can Register?", 'lang_login'),
 						value: props.attributes.registration_who_can,
-						options: arr_options,
+						options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_who_can),
 						onChange: function(value)
 						{
 							props.setAttributes({registration_who_can: value});
@@ -333,18 +321,6 @@
 
 			/* Select */
 			/* ################### */
-			var arr_options = [];
-
-			jQuery.each(script_custom_login_block_wp.get_yes_no_for_select, function(index, value)
-			{
-				if(index == "")
-				{
-					index = 0;
-				}
-
-				arr_options.push({label: value, value: index});
-			});
-
 			arr_out.push(el(
 				'div',
 				{className: "wp_mf_block " + props.className},
@@ -353,7 +329,7 @@
 					{
 						label: __("Collect full name from user", 'lang_login'),
 						value: props.attributes.registration_collect_name,
-						options: arr_options,
+						options: convert_php_array_to_block_js(script_custom_login_block_wp.get_yes_no_for_select),
 						onChange: function(value)
 						{
 							props.setAttributes({registration_collect_name: value});
@@ -365,18 +341,6 @@
 
 			/* Select */
 			/* ################### */
-			var arr_options = [];
-
-			jQuery.each(script_custom_login_block_wp.registration_fields, function(index, value)
-			{
-				if(index == "")
-				{
-					index = 0;
-				}
-
-				arr_options.push({label: value, value: index});
-			});
-
 			arr_out.push(el(
 				'div',
 				{className: "wp_mf_block " + props.className},
@@ -385,7 +349,7 @@
 					{
 						label: __("Fields to Display", 'lang_login'),
 						value: props.attributes.registration_fields,
-						options: arr_options,
+						options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_fields),
 						multiple: true,
 						onChange: function(value)
 						{
@@ -587,18 +551,6 @@
 
 			/* Select */
 			/* ################### */
-			var arr_options = [];
-
-			jQuery.each(script_custom_login_block_wp.logged_in_info_display, function(index, value)
-			{
-				if(index == "")
-				{
-					index = 0;
-				}
-
-				arr_options.push({label: value, value: index});
-			});
-
 			arr_out.push(el(
 				'div',
 				{className: "wp_mf_block " + props.className},
@@ -607,7 +559,7 @@
 					{
 						label: __("List", 'lang_login'),
 						value: props.attributes.logged_in_info_display,
-						options: arr_options,
+						options: convert_php_array_to_block_js(script_custom_login_block_wp.logged_in_info_display),
 						multiple: true,
 						onChange: function(value)
 						{
