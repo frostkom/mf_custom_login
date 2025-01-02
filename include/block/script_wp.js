@@ -1,7 +1,6 @@
 (function()
 {
-	var __ = wp.i18n.__,
-		el = wp.element.createElement,
+	var el = wp.element.createElement,
 		registerBlockType = wp.blocks.registerBlockType,
 		SelectControl = wp.components.SelectControl,
 		TextControl = wp.components.TextControl,
@@ -11,10 +10,10 @@
 
 	registerBlockType('mf/customlogin',
 	{
-		title: __("Custom Login", 'lang_login'),
-		description: __("Display a Custom Login", 'lang_login'),
-		icon: 'lock', /* https://developer.wordpress.org/resource/dashicons/ */
-		category: 'widgets', /* common, formatting, layout, widgets, embed */
+		title: script_custom_login_block_wp.block_title,
+		description: script_custom_login_block_wp.block_description,
+		icon: 'lock',
+		category: 'widgets',
 		'attributes':
 		{
 			'align':
@@ -72,89 +71,77 @@
 		},
 		edit: function(props)
 		{
-			var arr_out = [];
-
-			/* Media */
-			/* ################### */
-			arr_out.push(el(
+			return el(
 				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-                    MediaUploadCheck,
-                    {},
-                    el(
-                        MediaUpload,
-                        {
-                            onSelect: function(value)
+				{className: 'wp_mf_block_container'},
+				[
+					el(
+						InspectorControls,
+						'div',
+						el(
+							TextControl,
 							{
-								props.setAttributes({login_image: value.url, login_image_id: value.id});
-							},
-                            allowedTypes: ['image'],
-                            value: props.attributes.login_image_id,
-                            render: function(obj)
+								label: script_custom_login_block_wp.login_heading_label,
+								type: 'text',
+								value: props.attributes.login_heading,
+								onChange: function(value)
+								{
+									props.setAttributes({login_heading: value});
+								}
+							}
+						),
+						el(
+							TextControl,
 							{
-                                return el(
-                                    Button,
-                                    {
-                                        onClick: obj.open
-                                    },
-                                    __("Logo", 'lang_login')
-                                );
-                            }
-                        }
-                    )
-                ),
-                props.attributes.login_image && el(
-                    'img',
-                    {
-                        src: props.attributes.login_image,
-                        alt: ''
-                    }
-                )
-			));
-			/* ################### */
-
-			/* Text */
-			/* ################### */
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					TextControl,
-					{
-						label: __("Heading", 'lang_login'),
-						type: 'text',
-						value: props.attributes.login_heading,
-						onChange: function(value)
+								label: script_custom_login_block_wp.login_above_form_label,
+								type: 'text',
+								value: props.attributes.login_above_form,
+								onChange: function(value)
+								{
+									props.setAttributes({login_above_form: value});
+								}
+							}
+						)
+					),
+					el(
+						'strong',
+						{className: props.className},
+						script_custom_login_block_wp.block_title
+					),
+					el(
+						MediaUploadCheck,
+						{},
+						el(
+							MediaUpload,
+							{
+								onSelect: function(value)
+								{
+									props.setAttributes({login_image: value.url, login_image_id: value.id});
+								},
+								allowedTypes: ['image'],
+								value: props.attributes.login_image_id,
+								render: function(obj)
+								{
+									return el(
+										Button,
+										{
+											onClick: obj.open
+										},
+										script_custom_login_block_wp.login_image_label
+									);
+								}
+							}
+						)
+					),
+					props.attributes.login_image && el(
+						'img',
 						{
-							props.setAttributes({login_heading: value});
+							src: props.attributes.login_image,
+							alt: ''
 						}
-					}
-				)
-			));
-			/* ################### */
-
-			/* Text */
-			/* ################### */
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					TextControl,
-					{
-						label: __("Content Above Form", 'lang_login'),
-						type: 'text',
-						value: props.attributes.login_above_form,
-						onChange: function(value)
-						{
-							props.setAttributes({login_above_form: value});
-						}
-					}
-				)
-			));
-			/* ################### */
-
-			return arr_out;
+					)
+				]
+			);
 		},
 
 		save: function()
@@ -165,10 +152,10 @@
 
 	registerBlockType('mf/customregistration',
 	{
-		title: __("Custom Login", 'lang_login'),
-		description: __("Display a Custom Login", 'lang_login'),
-		icon: 'users', /* https://developer.wordpress.org/resource/dashicons/ */
-		category: 'widgets', /* common, formatting, layout, widgets, embed */
+		title: script_custom_login_block_wp.block_title2,
+		description: script_custom_login_block_wp.block_description2,
+		icon: 'users',
+		category: 'widgets',
 		'attributes':
 		{
 			'align':
@@ -236,131 +223,102 @@
 		},
 		edit: function(props)
 		{
-			var arr_out = [];
-
-			/* Media */
-			/* ################### */
-			arr_out.push(el(
+			return el(
 				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-                    MediaUploadCheck,
-                    {},
-                    el(
-                        MediaUpload,
-                        {
-                            onSelect: function(value)
+				{className: 'wp_mf_block_container'},
+				[
+					el(
+						InspectorControls,
+						'div',
+						el(
+							TextControl,
 							{
-								props.setAttributes({login_image: value.url, login_image_id: value.id});
-							},
-                            allowedTypes: ['image'],
-                            value: props.attributes.login_image_id,
-                            render: function(obj)
+								label: script_custom_login_block_wp.login_heading_label,
+								type: 'text',
+								value: props.attributes.login_heading,
+								onChange: function(value)
+								{
+									props.setAttributes({login_heading: value});
+								}
+							}
+						),
+						el(
+							SelectControl,
 							{
-                                return el(
-                                    Button,
-                                    {
-                                        onClick: obj.open
-                                    },
-                                    __("Logo", 'lang_login')
-                                );
-                            }
-                        }
-                    )
-                ),
-                props.attributes.login_image && el(
-                    'img',
-                    {
-                        src: props.attributes.login_image,
-                        alt: ''
-                    }
-                )
-			));
-			/* ################### */
-
-			/* Text */
-			/* ################### */
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					TextControl,
-					{
-						label: __("Heading", 'lang_login'),
-						type: 'text',
-						value: props.attributes.login_heading,
-						/*help: __("Description...", 'lang_login'),*/
-						onChange: function(value)
+								label: script_custom_login_block_wp.registration_who_can_label,
+								value: props.attributes.registration_who_can,
+								options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_who_can),
+								onChange: function(value)
+								{
+									props.setAttributes({registration_who_can: value});
+								}
+							}
+						),
+						el(
+							SelectControl,
+							{
+								label: script_custom_login_block_wp.registration_collect_name_label,
+								value: props.attributes.registration_collect_name,
+								options: convert_php_array_to_block_js(script_custom_login_block_wp.yes_no_for_select),
+								onChange: function(value)
+								{
+									props.setAttributes({registration_collect_name: value});
+								}
+							}
+						),
+						el(
+							SelectControl,
+							{
+								label: script_custom_login_block_wp.registration_fields_label,
+								value: props.attributes.registration_fields,
+								options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_fields),
+								multiple: true,
+								onChange: function(value)
+								{
+									props.setAttributes({registration_fields: value});
+								}
+							}
+						)
+					),
+					el(
+						'strong',
+						{className: props.className},
+						script_custom_login_block_wp.block_title2
+					),
+					el(
+						MediaUploadCheck,
+						{},
+						el(
+							MediaUpload,
+							{
+								onSelect: function(value)
+								{
+									props.setAttributes({login_image: value.url, login_image_id: value.id});
+								},
+								allowedTypes: ['image'],
+								value: props.attributes.login_image_id,
+								render: function(obj)
+								{
+									return el(
+										Button,
+										{
+											onClick: obj.open
+										},
+										script_custom_login_block_wp.login_image_label
+									);
+								}
+							}
+						)
+					),
+					props.attributes.login_image && el(
+						'img',
 						{
-							props.setAttributes({login_heading: value});
+							src: props.attributes.login_image,
+							alt: ''
 						}
-					}
-				)
-			));
-			/* ################### */
-
-			/* Select */
-			/* ################### */
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					SelectControl,
-					{
-						label: __("Who Can Register?", 'lang_login'),
-						value: props.attributes.registration_who_can,
-						options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_who_can),
-						onChange: function(value)
-						{
-							props.setAttributes({registration_who_can: value});
-						}
-					}
-				)
-			));
-			/* ################### */
-
-			/* Select */
-			/* ################### */
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					SelectControl,
-					{
-						label: __("Collect full name from user", 'lang_login'),
-						value: props.attributes.registration_collect_name,
-						options: convert_php_array_to_block_js(script_custom_login_block_wp.get_yes_no_for_select),
-						onChange: function(value)
-						{
-							props.setAttributes({registration_collect_name: value});
-						}
-					}
-				)
-			));
-			/* ################### */
-
-			/* Select */
-			/* ################### */
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					SelectControl,
-					{
-						label: __("Fields to Display", 'lang_login'),
-						value: props.attributes.registration_fields,
-						options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_fields),
-						multiple: true,
-						onChange: function(value)
-						{
-							props.setAttributes({registration_fields: value});
-						}
-					}
-				)
-			));
-			/* ################### */
-
-			return arr_out;
+					)
+				]
+			);
 		},
 
 		save: function()
@@ -371,10 +329,10 @@
 
 	registerBlockType('mf/customlost',
 	{
-		title: __("Custom Login", 'lang_login'),
-		description: __("Display a Custom Login", 'lang_login'),
-		icon: 'email', /* https://developer.wordpress.org/resource/dashicons/ */
-		category: 'widgets', /* common, formatting, layout, widgets, embed */
+		title: script_custom_login_block_wp.block_title3,
+		description: script_custom_login_block_wp.block_description3,
+		icon: 'email',
+		category: 'widgets',
 		'attributes':
 		{
 			'align':
@@ -427,70 +385,69 @@
 		},
 		edit: function(props)
 		{
-			var arr_out = [];
-
-			/* Media */
-			/* ################### */
-			arr_out.push(el(
+			return el(
 				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-                    MediaUploadCheck,
-                    {},
-                    el(
-                        MediaUpload,
-                        {
-                            onSelect: function(value)
+				{className: 'wp_mf_block_container'},
+				[
+					el(
+						InspectorControls,
+						'div',
+						el(
+							TextControl,
 							{
-								props.setAttributes({lost_password_image: value.url, lost_password_image_id: value.id});
-							},
-                            allowedTypes: ['image'],
-                            value: props.attributes.lost_password_image_id,
-                            render: function(obj)
+								label: .login_heading_label,
+								type: 'text',
+								value: props.attributes.lost_password_heading,
+								onChange: function(value)
+								{
+									props.setAttributes({lost_password_heading: value});
+								}
+							}
+						)
+					),
+					el(
+						'strong',
+						{className: props.className},
+						script_custom_login_block_wp.block_title3
+					),
+					el(
+						'div',
+						{className: "wp_mf_block " + props.className},
+						el(
+							MediaUploadCheck,
+							{},
+							el(
+								MediaUpload,
+								{
+									onSelect: function(value)
+									{
+										props.setAttributes({lost_password_image: value.url, lost_password_image_id: value.id});
+									},
+									allowedTypes: ['image'],
+									value: props.attributes.lost_password_image_id,
+									render: function(obj)
+									{
+										return el(
+											Button,
+											{
+												onClick: obj.open
+											},
+											script_custom_login_block_wp.login_image_label
+										);
+									}
+								}
+							)
+						),
+						props.attributes.lost_password_image && el(
+							'img',
 							{
-                                return el(
-                                    Button,
-                                    {
-                                        onClick: obj.open
-                                    },
-                                    __("Logo", 'lang_login')
-                                );
-                            }
-                        }
-                    )
-                ),
-                props.attributes.lost_password_image && el(
-                    'img',
-                    {
-                        src: props.attributes.lost_password_image,
-                        alt: ''
-                    }
-                )
-			));
-			/* ################### */
-
-			/* Text */
-			/* ################### */
-			arr_out.push(el(
-				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					TextControl,
-					{
-						label: __("Heading", 'lang_login'),
-						type: 'text',
-						value: props.attributes.lost_password_heading,
-						/*help: __("Description...", 'lang_login'),*/
-						onChange: function(value)
-						{
-							props.setAttributes({lost_password_heading: value});
-						}
-					}
-				)
-			));
-			/* ################### */
-
-			return arr_out;
+								src: props.attributes.lost_password_image,
+								alt: ''
+							}
+						)
+					)
+				]
+			);
 		},
 
 		save: function()
@@ -501,8 +458,8 @@
 
 	registerBlockType('mf/customloggedin',
 	{
-		title: __("Logged in Information", 'lang_login'),
-		description: __("Display Information About the Logged in User", 'lang_login'),
+		title: script_custom_login_block_wp.block_title4,
+		description: script_custom_login_block_wp.block_description4,
 		icon: 'unlock',
 		category: 'widgets',
 		'attributes':
@@ -547,30 +504,34 @@
 		},
 		edit: function(props)
 		{
-			var arr_out = [];
-
-			/* Select */
-			/* ################### */
-			arr_out.push(el(
+			return el(
 				'div',
-				{className: "wp_mf_block " + props.className},
-				el(
-					SelectControl,
-					{
-						label: __("List", 'lang_login'),
-						value: props.attributes.logged_in_info_display,
-						options: convert_php_array_to_block_js(script_custom_login_block_wp.logged_in_info_display),
-						multiple: true,
-						onChange: function(value)
-						{
-							props.setAttributes({logged_in_info_display: value});
-						}
-					}
-				)
-			));
-			/* ################### */
-
-			return arr_out;
+				{className: 'wp_mf_block_container'},
+				[
+					el(
+						InspectorControls,
+						'div',
+						el(
+							SelectControl,
+							{
+								label: script_custom_login_block_wp.logged_in_info_display_label,
+								value: props.attributes.logged_in_info_display,
+								options: convert_php_array_to_block_js(script_custom_login_block_wp.logged_in_info_display),
+								multiple: true,
+								onChange: function(value)
+								{
+									props.setAttributes({logged_in_info_display: value});
+								}
+							}
+						)
+					),
+					el(
+						'strong',
+						{className: props.className},
+						script_custom_login_block_wp.block_title4
+					)
+				]
+			);
 		},
 		save: function()
 		{

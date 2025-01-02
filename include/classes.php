@@ -691,12 +691,27 @@ class mf_custom_login
 		$plugin_include_url = plugin_dir_url(__FILE__);
 		$plugin_version = get_plugin_version(__FILE__);
 
-		wp_register_script('script_custom_login_block_wp', $plugin_include_url."block/script_wp.js", array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-editor'), $plugin_version);
+		wp_register_script('script_custom_login_block_wp', $plugin_include_url."block/script_wp.js", array('wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-block-editor'), $plugin_version);
 
 		wp_localize_script('script_custom_login_block_wp', 'script_custom_login_block_wp', array(
+			'block_title' => __("Custom Login", 'lang_login'),
+			'block_description' => __("Display a Custom Login", 'lang_login'),
+			'login_heading_label' => __("Heading", 'lang_login'),
+			'login_above_form_label' => __("Content Above Form", 'lang_login'),
+			'login_image_label' => __("Logo", 'lang_login'),
+			'block_title2' => __("Custom Registration", 'lang_login'),
+			'block_description2' => __("Display a Custom Registration", 'lang_login'),
+			'registration_who_can_label' => __("Who Can Register?", 'lang_login'),
 			'registration_who_can' => $this->get_roles_for_select(),
-			'get_yes_no_for_select' => get_yes_no_for_select(),
+			'registration_collect_name_label' => __("Collect full name from user", 'lang_login'),
+			'yes_no_for_select' => get_yes_no_for_select(),
+			'registration_fields_label' => __("Fields to Display", 'lang_login'),
 			'registration_fields' => $this->get_fields_for_select(),
+			'block_title3' => __("Custom Lost Password", 'lang_login'),
+			'block_description3' => __("Display a Custom Lost Password", 'lang_login'),
+			'block_title4' => __("Logged in Information", 'lang_login'),
+			'block_description4' => __("Display Information About the Logged in User", 'lang_login'),
+			'logged_in_info_display_label' => __("List", 'lang_login'),
 			'logged_in_info_display' => $this->get_user_info_for_select(),
 		));
 
@@ -707,7 +722,7 @@ class mf_custom_login
 			//'style' => 'style_base_block_wp',
 		));
 
-		/*register_block_type('mf/customregistration', array(
+		register_block_type('mf/customregistration', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_registration_callback'),
@@ -726,7 +741,7 @@ class mf_custom_login
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_loggedin_callback'),
 			//'style' => 'style_base_block_wp',
-		));*/
+		));
 		#######################
 	}
 
