@@ -102,13 +102,38 @@
 									props.setAttributes({login_above_form: value});
 								}
 							}
+						),
+						el(
+							MediaUploadCheck,
+							{},
+							el(
+								MediaUpload,
+								{
+									onSelect: function(value)
+									{
+										props.setAttributes({login_image: value.url, login_image_id: value.id});
+									},
+									allowedTypes: ['image'],
+									value: props.attributes.login_image_id,
+									render: function(obj)
+									{
+										return el(
+											Button,
+											{
+												onClick: obj.open
+											},
+											script_custom_login_block_wp.login_image_label
+										);
+									}
+								}
+							)
 						)
 					),
 					el(
 						'strong',
 						{className: props.className},
 						script_custom_login_block_wp.block_title
-					),
+					)/*,
 					el(
 						MediaUploadCheck,
 						{},
@@ -140,7 +165,7 @@
 							src: props.attributes.login_image,
 							alt: ''
 						}
-					)
+					)*/
 				]
 			);
 		},
@@ -151,7 +176,7 @@
 		}
 	});
 
-	registerBlockType('mf/customregistration',
+	/*registerBlockType('mf/customregistration',
 	{
 		title: script_custom_login_block_wp.block_title2,
 		description: script_custom_login_block_wp.block_description2,
@@ -538,5 +563,5 @@
 		{
 			return null;
 		}
-	});
+	});*/
 })();

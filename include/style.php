@@ -172,13 +172,16 @@ if($setting_custom_login_page > 0)
 ############################
 if(apply_filters('get_widget_search', 'login-widget') > 0)
 {
-	$out_media_all .= ".login_form
+	if(!wp_is_block_theme())
 	{
-		margin: 0 auto;
-		max-width: 400px;
+		$out_media_all .= ".login_form
+		{
+			margin: 0 auto;
+			max-width: 400px;
+		}";
 	}
 
-		.login_form form .flex_flow .form_button, .login_form form .flex_flow .wp-block-button
+		$out_media_all .= ".login_form form .flex_flow .form_button, .login_form form .flex_flow .wp-block-button
 		{
 			text-align: right;
 		}
