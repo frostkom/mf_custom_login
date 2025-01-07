@@ -1,7 +1,5 @@
 jQuery(function($)
 {
-	/*$("html, body").scrollTop(0);*/
-
 	function check_credentials()
 	{
 		var has_username = $("#user_login").val() != '',

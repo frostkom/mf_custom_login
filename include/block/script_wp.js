@@ -22,7 +22,7 @@
 				'type': 'string',
 				'default': ''
 			},
-			'login_image':
+			/*'login_image':
 			{
                 'type': 'string',
                 'default': ''
@@ -31,7 +31,7 @@
 			{
                 'type': 'string',
                 'default': ''
-            },
+            },*/
 			'login_heading':
 			{
                 'type': 'string',
@@ -102,31 +102,6 @@
 									props.setAttributes({login_above_form: value});
 								}
 							}
-						),
-						el(
-							MediaUploadCheck,
-							{},
-							el(
-								MediaUpload,
-								{
-									onSelect: function(value)
-									{
-										props.setAttributes({login_image: value.url, login_image_id: value.id});
-									},
-									allowedTypes: ['image'],
-									value: props.attributes.login_image_id,
-									render: function(obj)
-									{
-										return el(
-											Button,
-											{
-												onClick: obj.open
-											},
-											script_custom_login_block_wp.login_image_label
-										);
-									}
-								}
-							)
 						)
 					),
 					el(
@@ -176,11 +151,11 @@
 		}
 	});
 
-	/*registerBlockType('mf/customregistration',
+	registerBlockType('mf/customregistration',
 	{
 		title: script_custom_login_block_wp.block_title2,
 		description: script_custom_login_block_wp.block_description2,
-		icon: 'users',
+		icon: 'lock',
 		category: 'widgets',
 		'attributes':
 		{
@@ -189,7 +164,7 @@
 				'type': 'string',
 				'default': ''
 			},
-			'registration_image':
+			/*'registration_image':
 			{
                 'type': 'string',
                 'default': ''
@@ -198,7 +173,7 @@
 			{
                 'type': 'string',
                 'default': ''
-            },
+            },*/
 			'registration_heading':
 			{
                 'type': 'string',
@@ -310,7 +285,7 @@
 						'strong',
 						{className: props.className},
 						script_custom_login_block_wp.block_title2
-					),
+					)/*,
 					el(
 						MediaUploadCheck,
 						{},
@@ -342,7 +317,7 @@
 							src: props.attributes.login_image,
 							alt: ''
 						}
-					)
+					)*/
 				]
 			);
 		},
@@ -366,7 +341,7 @@
 				'type': 'string',
 				'default': ''
 			},
-			'lost_password_image':
+			/*'lost_password_image':
 			{
                 'type': 'string',
                 'default': ''
@@ -375,7 +350,7 @@
 			{
                 'type': 'string',
                 'default': ''
-            },
+            },*/
 			'lost_password_heading':
 			{
                 'type': 'string',
@@ -421,7 +396,7 @@
 						el(
 							TextControl,
 							{
-								label: .login_heading_label,
+								label: script_custom_login_block_wp.login_heading_label,
 								type: 'text',
 								value: props.attributes.lost_password_heading,
 								onChange: function(value)
@@ -435,7 +410,7 @@
 						'strong',
 						{className: props.className},
 						script_custom_login_block_wp.block_title3
-					),
+					)/*,
 					el(
 						'div',
 						{className: "wp_mf_block " + props.className},
@@ -471,7 +446,7 @@
 								alt: ''
 							}
 						)
-					)
+					)*/
 				]
 			);
 		},
@@ -563,5 +538,5 @@
 		{
 			return null;
 		}
-	});*/
+	});
 })();

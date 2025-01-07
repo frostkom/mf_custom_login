@@ -68,12 +68,10 @@ class mf_custom_login
 	{
 		global $wpdb;
 
-		if(!isset($attributes['login_image'])){			$attributes['login_image'] = "";}
-		if(!isset($attributes['login_image_id'])){		$attributes['login_image_id'] = 0;}
 		if(!isset($attributes['login_heading'])){		$attributes['login_heading'] = "";}
 		if(!isset($attributes['login_above_form'])){	$attributes['login_above_form'] = "";}
 
-		$out = "";
+		ob_start();
 
 		$action = check_var('action');
 		$redirect_to = check_var('redirect_to', 'char', true, admin_url());
@@ -82,16 +80,11 @@ class mf_custom_login
 		$user_pass = check_var('user_pass'); // pwd -> user_pass
 		$user_remember = check_var('rememberme', 'char', true, 'forever');
 
-		$out .= "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
-
-			if($attributes['login_image'] != '')
-			{
-				$out .= "<p><img src='".$attributes['login_image']."'></p>";
-			}
+		echo "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
 
 			if($attributes['login_heading'] != '')
 			{
-				$out .= "<h3>".$attributes['login_heading']."</h3>";
+				echo "<h3>".$attributes['login_heading']."</h3>";
 			}
 
 			switch($action)
@@ -138,59 +131,62 @@ class mf_custom_login
 							$error_text = sprintf(__("You have exceeded the limit of %d logins in the last %d minutes. Please try again later.", 'lang_login'), $setting_custom_login_limit_attempts, $setting_custom_login_limit_minutes);
 						}
 					}
-
-					else
-					{
-						$this->check_if_logged_in(array('redirect' => true));
-					}
 				break;
 			}
 
-			$out .= get_notification();
+			echo get_notification();
 
 			if($attributes['login_above_form'] != '')
 			{
-				$out .= apply_filters('the_content', $attributes['login_above_form']);
+				echo apply_filters('the_content', $attributes['login_above_form']);
 			}
 
-			$out .= "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
+			echo "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
 				.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true)) // log -> user_login
 				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)); // pwd -> user_pass
 
 				do_action('login_form');
 
-				$out .= "<div class='login_actions flex_flow'>"
+				echo "<div class='login_actions'>"
 					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
 					."<div".get_form_button_classes().">"
 						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
 						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
 					."</div>
 				</div>
-			</form>
-			<p id='lost_password_link'><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
+			</form>";
+
+			if(is_user_logged_in())
+			{
+				echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
+			}
+
+			else
+			{
+				echo "<p>".__("Have you forgotten your login credentials?", 'lang_login')." <a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Request a new one", 'lang_login')."</a></p>";
+			}
 
 			if(get_option('users_can_register'))
 			{
-				$out .= "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
+				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
 			}
 
-		$out .= "</div>";
+		echo "</div>";
+
+		$out = ob_get_contents();
+		ob_end_clean();
 
 		return $out;
 	}
 
 	function block_render_registration_callback($attributes)
 	{
-		if(!isset($attributes['registration_image'])){			$attributes['registration_image'] = "";}
-		if(!isset($attributes['registration_image_id'])){		$attributes['registration_image_id'] = "";}
 		if(!isset($attributes['registration_heading'])){		$attributes['registration_heading'] = "";}
 		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = "";}
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = "";}
 		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = "";}
 
-		$out = "";
-
-		/*$this->check_if_logged_in();
+		ob_start();
 
 		$is_allowed = (!isset($attributes['registration_who_can']) || $attributes['registration_who_can'] == '' || current_user_can($attributes['registration_who_can']));
 
@@ -224,18 +220,13 @@ class mf_custom_login
 			$role = check_var('role', 'char', true, $role);
 		}
 
-		$out .= "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
-
-			if($attributes['registration_image'] != '')
-			{
-				$out .= "<p><img src='".$attributes['registration_image']."'></p>";
-			}
+		echo "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
 
 			if($attributes['registration_heading'] != '')
 			{
 				$attributes['registration_heading'] = apply_filters('widget_title', $attributes['registration_heading'], $attributes, $this->id_base);
 
-				$out .= $before_title
+				echo $before_title
 					.$attributes['registration_heading']
 				.$after_title;
 			}
@@ -317,22 +308,22 @@ class mf_custom_login
 				$display_form = false;
 			}
 
-			$out .= get_notification();
+			echo get_notification();
 
 			if($display_form == true)
 			{
-				$out .= "<form method='post' action='' class='mf_form'>";
+				echo "<form method='post' action='' class='mf_form'>";
 
 					if(in_array('username', $attributes['registration_fields']))
 					{
-						$out .= show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true));
+						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true));
 					}
 
-					$out .= show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => get_placeholder_email(), 'required' => true));
+					echo show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => get_placeholder_email(), 'required' => true));
 
 					if($attributes['registration_collect_name'] == 'yes' || in_array('full_name', $attributes['registration_fields']))
 					{
-						$out .= "<div class='flex_flow'>"
+						echo "<div class='flex_flow'>"
 							.show_textfield(array('name' => 'first_name', 'text' => __("First Name", 'lang_login'), 'value' => $first_name, 'placeholder' => "Jane", 'required' => true))
 							.show_textfield(array('name' => 'last_name', 'text' => __("Last Name", 'lang_login'), 'value' => $last_name, 'placeholder' => "Doe", 'required' => true))
 						."</div>";
@@ -340,7 +331,7 @@ class mf_custom_login
 
 					if(in_array('company', $attributes['registration_fields']))
 					{
-						$out .= "<div class='flex_flow'>"
+						echo "<div class='flex_flow'>"
 							.show_textfield(array('name' => 'profile_company', 'text' => __("Company", 'lang_login'), 'value' => $profile_company, 'required' => true))
 						."</div>";
 					}
@@ -355,14 +346,14 @@ class mf_custom_login
 
 							if(count($arr_data) > 1)
 							{
-								$out .= show_select(array('data' => $arr_data, 'name' => 'role', 'text' => __("Role", 'lang_login'), 'value' => $role));
+								echo show_select(array('data' => $arr_data, 'name' => 'role', 'text' => __("Role", 'lang_login'), 'value' => $role));
 							}
 
 							else
 							{
 								foreach($arr_data as $key => $value)
 								{
-									$out .= input_hidden(array('name' => 'role', 'value' => $key));
+									echo input_hidden(array('name' => 'role', 'value' => $key));
 								}
 							}
 						}
@@ -370,50 +361,51 @@ class mf_custom_login
 
 					else
 					{
-						$out .= show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
+						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
 					}
 
-					$out .= "<div".get_form_button_classes().">"
+					echo "<div".get_form_button_classes().">"
 						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
 					."</div>";
 
-					if(is_user_logged_in() == false)
+					if(is_user_logged_in())
 					{
-						$out .= "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
+						echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
 					}
 
-				$out .= "</form>";
+					else
+					{
+						echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
+					}
+
+				echo "</form>";
 			}
 
-		$out .= "</div>";*/
+		echo "</div>";
+
+		$out = ob_get_contents();
+		ob_end_clean();
 
 		return $out;
 	}
 
 	function block_render_lost_callback($attributes)
 	{
-		if(!isset($attributes['lost_password_image'])){		$attributes['lost_password_image'] = "";}
-		if(!isset($attributes['lost_password_image_id'])){	$attributes['lost_password_image_id'] = 0;}
 		if(!isset($attributes['lost_password_heading'])){	$attributes['lost_password_heading'] = "";}
 
-		$out = "";
+		ob_start();
 
-		/*$action = check_var('action');
+		$action = check_var('action');
 
-		$out .= "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
+		echo "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
 
 			//do_action('lost_password');
-
-			if($attributes['lost_password_image'] != '')
-			{
-				$out .= "<p><img src='".$attributes['lost_password_image']."'></p>";
-			}
 
 			if($attributes['lost_password_heading'] != '')
 			{
 				$attributes['lost_password_heading'] = apply_filters('widget_title', $attributes['lost_password_heading'], $attributes, $this->id_base);
 
-				$out .= $before_title
+				echo $before_title
 					.$attributes['lost_password_heading']
 				.$after_title;
 			}
@@ -470,16 +462,16 @@ class mf_custom_login
 						}
 					}
 
-					$out .= get_notification();
+					echo get_notification();
 
 					if($display_form == true)
 					{
-						$out .= "<form method='post' action='".wp_lostpassword_url()."?action=rp' class='mf_form'>"
+						echo "<form method='post' action='".wp_lostpassword_url()."?action=rp' class='mf_form'>"
 							.show_password_field(array('name' => 'user_pass', 'text' => __("New Password", 'lang_login'), 'value' => $user_pass, 'xtra' => " autocomplete='new-password'", 'description' => wp_get_password_hint()));
 
 							do_action('resetpass_form', $user);
 
-							$out .= "<div".get_form_button_classes().">"
+							echo "<div".get_form_button_classes().">"
 								.show_button(array('name' => 'btnSendResetPassword', 'text' => __("Reset Password", 'lang_login')))
 								.input_hidden(array('name' => 'login', 'value' => $user_login, 'xtra' => " id='user_login'"))
 								.input_hidden(array('name' => 'key', 'value' => $user_key))
@@ -521,30 +513,37 @@ class mf_custom_login
 						}
 					}
 
-					else
-					{
-						$this->check_if_logged_in();
-					}
-
-					$out .= get_notification();
+					echo get_notification();
 
 					if($display_form == true)
 					{
-						$out .= "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
+						echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
 							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true));
 
 							do_action('lostpassword_form');
 
-							$out .= "<div".get_form_button_classes().">"
+							echo "<div".get_form_button_classes().">"
 								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
 							."</div>
-						</form>
-						<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
+						</form>";
+
+						if(is_user_logged_in())
+						{
+							echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
+						}
+
+						else
+						{
+							echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
+						}
 					}
 				break;
 			}
 
-		$out .= "</div>";*/
+		echo "</div>";
+
+		$out = ob_get_contents();
+		ob_end_clean();
 
 		return $out;
 	}
@@ -553,28 +552,28 @@ class mf_custom_login
 	{
 		if(!isset($attributes['logged_in_info_display'])){	$attributes['logged_in_info_display'] = "";}
 
-		$out = "";
+		ob_start();
 
-		/*if(is_user_logged_in())
+		if(is_user_logged_in())
 		{
-			$out .= "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
+			echo "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
 
 				if($attributes['logged_in_info_heading'] != '')
 				{
 					$attributes['logged_in_info_heading'] = apply_filters('widget_title', $attributes['logged_in_info_heading'], $attributes, $this->id_base);
 
-					//$out .= "<h3>".$attributes['logged_in_info_heading']."</h3>";
+					//echo "<h3>".$attributes['logged_in_info_heading']."</h3>";
 				}
 
-				$out .= "<div class='logged_in_info section'>";
+				echo "<div class='logged_in_info section'>";
 
 					if(count($attributes['logged_in_info_display']) == 0 || in_array('name', $attributes['logged_in_info_display']) || in_array('profile', $attributes['logged_in_info_display']) || in_array('logout', $attributes['logged_in_info_display']))
 					{
-						$out .= "<ul>";
+						echo "<ul>";
 
 							if(count($attributes['logged_in_info_display']) == 0 || in_array('name', $attributes['logged_in_info_display']))
 							{
-								$out .= "<li>"
+								echo "<li>"
 									.get_user_info();
 
 									if(in_array('role', $attributes['logged_in_info_display']))
@@ -582,37 +581,40 @@ class mf_custom_login
 										$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
 										$user_role = get_current_user_role(get_current_user_id());
 
-										$out .= " (".$arr_roles[$user_role].")";
+										echo " (".$arr_roles[$user_role].")";
 									}
 
-								$out .= "</li>";
+								echo "</li>";
 							}
 
 							if(count($attributes['logged_in_info_display']) == 0 || in_array('profile', $attributes['logged_in_info_display']))
 							{
-								$out .= "<li><a href='".get_edit_profile_url()."'>".__("Your Profile", 'lang_login')."</a></li>";
+								echo "<li><a href='".get_edit_profile_url()."'>".__("Your Profile", 'lang_login')."</a></li>";
 							}
 
 							if(count($attributes['logged_in_info_display']) == 0 || in_array('logout', $attributes['logged_in_info_display']))
 							{
-								$out .= "<li><a href='".wp_logout_url()."'>".__("Log Out", 'lang_login')."</a></li>";
+								echo "<li><a href='".wp_logout_url()."'>".__("Log Out", 'lang_login')."</a></li>";
 							}
 
-						$out .= "</ul>";
+						echo "</ul>";
 					}
 
 					if(count($attributes['logged_in_info_display']) == 0 || in_array('image', $attributes['logged_in_info_display']))
 					{
-						$out .= "<div>
+						echo "<div>
 							<div class='logged_in_avatar'>"
 								.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), get_user_info()))
 							."</div>
 						</div>";
 					}
 
-				$out .= "</div>"
+				echo "</div>"
 			.$after_widget;
-		}*/
+		}
+
+		$out = ob_get_contents();
+		ob_end_clean();
 
 		return $out;
 	}
@@ -689,7 +691,7 @@ class mf_custom_login
 			//'style' => 'style_base_block_wp',
 		));
 
-		/*register_block_type('mf/customregistration', array(
+		register_block_type('mf/customregistration', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_registration_callback'),
@@ -708,7 +710,7 @@ class mf_custom_login
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_loggedin_callback'),
 			//'style' => 'style_base_block_wp',
-		));*/
+		));
 		#######################
 	}
 
