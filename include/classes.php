@@ -2,6 +2,8 @@
 
 class mf_custom_login
 {
+	var $post_type = 'mf_login';
+	var $meta_prefix;
 	var $error;
 	var $login_send_hash;
 	var $username;
@@ -9,6 +11,8 @@ class mf_custom_login
 
 	function __construct()
 	{
+		$this->meta_prefix = $this->post_type.'_';
+
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
 			$this->login_send_hash = md5('login_send_'.get_current_visitor_ip().'_'.date("Ymd"));
@@ -183,8 +187,8 @@ class mf_custom_login
 	{
 		if(!isset($attributes['registration_heading'])){		$attributes['registration_heading'] = "";}
 		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = "";}
-		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = "";}
-		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = "";}
+		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
+		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = array();}
 
 		ob_start();
 
@@ -1332,6 +1336,30 @@ class mf_custom_login
 		return $arr_settings;
 	}
 
+	function display_post_states($post_states, $post)
+	{
+		global $wpdb;
+
+		$arr_page_types = array(
+			'mf/customlogin' => __("Custom Login", 'lang_login'),
+			'mf/customregistration' => __("Custom Registration", 'lang_login'),
+			'mf/customlost' => __("Custom Lost Password", 'lang_login'),
+			'mf/customloggedin' => __("Logged in Information", 'lang_login'),
+		);
+
+		foreach($arr_page_types as $key => $value)
+		{
+			if(has_block($key, $post->ID))
+			{
+				list($prefix, $type) = explode("/", $key);
+
+				$post_states[$this->meta_prefix.$type] = $value;
+			}
+		}
+
+		return $post_states;
+	}
+
 	function user_row_actions($actions, $user)
 	{
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && current_user_can('edit_user') && isset($user->roles[0]) && $user->roles[0] != '')
@@ -2033,7 +2061,12 @@ class mf_custom_login
 
 	function login_url($url)
 	{
-		$post_id = apply_filters('get_widget_search', 'login-widget');
+		$post_id = apply_filters('get_block_search', 'mf/customlogin');
+
+		if(!($post_id > 0))
+		{
+			$post_id = apply_filters('get_widget_search', 'login-widget');
+		}
 
 		if($post_id > 0)
 		{
@@ -2062,7 +2095,12 @@ class mf_custom_login
 
 		else
 		{
-			$post_id = apply_filters('get_widget_search', 'registration-widget');
+			$post_id = apply_filters('get_block_search', 'mf/customregistration');
+
+			if(!($post_id > 0))
+			{
+				$post_id = apply_filters('get_widget_search', 'registration-widget');
+			}
 
 			if($post_id > 0)
 			{
@@ -2075,7 +2113,12 @@ class mf_custom_login
 
 	function lostpassword_url($url)
 	{
-		$post_id = apply_filters('get_widget_search', 'lost-password-widget');
+		$post_id = apply_filters('get_block_search', 'mf/customlost');
+
+		if(!($post_id > 0))
+		{
+			$post_id = apply_filters('get_widget_search', 'lost-password-widget');
+		}
 
 		if($post_id > 0)
 		{
@@ -2087,7 +2130,12 @@ class mf_custom_login
 
 	function logout_url($url)
 	{
-		$post_id = apply_filters('get_widget_search', 'login-widget');
+		$post_id = apply_filters('get_block_search', 'mf/customlogin');
+
+		if(!($post_id > 0))
+		{
+			$post_id = apply_filters('get_widget_search', 'login-widget');
+		}
 
 		if($post_id > 0)
 		{
