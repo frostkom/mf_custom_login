@@ -70,7 +70,7 @@ class mf_custom_login
 
 	function block_render_login_callback($attributes)
 	{
-		global $wpdb;
+		global $wpdb, $done_text, $error_text;
 
 		if(!isset($attributes['login_heading'])){		$attributes['login_heading'] = "";}
 		if(!isset($attributes['login_above_form'])){	$attributes['login_above_form'] = "";}
@@ -138,7 +138,7 @@ class mf_custom_login
 				break;
 			}
 
-			echo get_notification();
+			echo get_notification(array('add_container' => true));
 
 			if($attributes['login_above_form'] != '')
 			{
@@ -167,7 +167,7 @@ class mf_custom_login
 
 			else
 			{
-				echo "<p>".__("Have you forgotten your login credentials?", 'lang_login')." <a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Request a new one", 'lang_login')."</a></p>";
+				echo "<p>".__("Have you forgotten your login credentials?", 'lang_login')." <a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Click here", 'lang_login')."</a></p>";
 			}
 
 			if(get_option('users_can_register'))
@@ -185,6 +185,8 @@ class mf_custom_login
 
 	function block_render_registration_callback($attributes)
 	{
+		global $error_text;
+
 		if(!isset($attributes['registration_heading'])){		$attributes['registration_heading'] = "";}
 		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = "";}
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
@@ -312,7 +314,7 @@ class mf_custom_login
 				$display_form = false;
 			}
 
-			echo get_notification();
+			echo get_notification(array('add_container' => true));
 
 			if($display_form == true)
 			{
@@ -395,6 +397,8 @@ class mf_custom_login
 
 	function block_render_lost_callback($attributes)
 	{
+		global $done_text, $error_text;
+
 		if(!isset($attributes['lost_password_heading'])){	$attributes['lost_password_heading'] = "";}
 
 		ob_start();
@@ -466,7 +470,7 @@ class mf_custom_login
 						}
 					}
 
-					echo get_notification();
+					echo get_notification(array('add_container' => true));
 
 					if($display_form == true)
 					{
@@ -517,7 +521,7 @@ class mf_custom_login
 						}
 					}
 
-					echo get_notification();
+					echo get_notification(array('add_container' => true));
 
 					if($display_form == true)
 					{
@@ -1347,13 +1351,13 @@ class mf_custom_login
 			'mf/customloggedin' => __("Logged in Information", 'lang_login'),
 		);
 
-		foreach($arr_page_types as $key => $value)
+		foreach($arr_page_types as $handle => $label)
 		{
-			if(has_block($key, $post->ID))
+			if(has_block($handle, $post))
 			{
-				list($prefix, $type) = explode("/", $key);
+				list($prefix, $type) = explode("/", $handle);
 
-				$post_states[$this->meta_prefix.$type] = $value;
+				$post_states[$this->meta_prefix.$type] = $label;
 			}
 		}
 
