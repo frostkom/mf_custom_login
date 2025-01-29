@@ -1314,9 +1314,8 @@ class mf_custom_login
 		if(in_array($pagenow, array('user-edit.php', 'profile.php')) && IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
 			$plugin_include_url = plugin_dir_url(__FILE__);
-			$plugin_version = get_plugin_version(__FILE__);
 
-			mf_enqueue_script('script_login_profile', $plugin_include_url."script_profile.js", array('ajax_url' => admin_url('admin-ajax.php')), $plugin_version);
+			mf_enqueue_script('script_login_profile', $plugin_include_url."script_profile.js", array('ajax_url' => admin_url('admin-ajax.php')));
 		}
 	}
 
@@ -1413,14 +1412,13 @@ class mf_custom_login
 	function combined_head()
 	{
 		$plugin_include_url = plugin_dir_url(__FILE__);
-		$plugin_version = get_plugin_version(__FILE__);
 
-		mf_enqueue_style('style_custom_login', $plugin_include_url."style.php", $plugin_version);
-		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js", $plugin_version);
+		mf_enqueue_style('style_custom_login', $plugin_include_url."style.php");
+		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js");
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
-			mf_enqueue_script('script_custom_login_direct_link', $plugin_include_url."script_direct_link.js", array('ajax_url' => admin_url('admin-ajax.php')), $plugin_version);
+			mf_enqueue_script('script_custom_login_direct_link', $plugin_include_url."script_direct_link.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
 			switch(check_var('type'))
 			{
