@@ -170,7 +170,7 @@ if($setting_custom_login_page > 0)
 
 // Widget Styles
 ############################
-if(apply_filters('get_widget_search', 'login-widget') > 0)
+if(apply_filters('get_block_search', 'mf/customlogin') > 0 || apply_filters('get_widget_search', 'login-widget') > 0)
 {
 	if(!wp_is_block_theme())
 	{
@@ -206,7 +206,7 @@ if(apply_filters('get_widget_search', 'login-widget') > 0)
 	}";
 }
 
-if(apply_filters('get_widget_search', 'registration-widget') > 0)
+if(apply_filters('get_block_search', 'mf/customregistration') > 0 || apply_filters('get_widget_search', 'registration-widget') > 0)
 {
 	$out_media_all .= ".registration_form
 	{
@@ -231,7 +231,7 @@ if(apply_filters('get_widget_search', 'registration-widget') > 0)
 		}";
 }
 
-if(apply_filters('get_widget_search', 'lost-password-widget') > 0)
+if(apply_filters('get_block_search', 'mf/customlost') > 0 || apply_filters('get_widget_search', 'lost-password-widget') > 0)
 {
 	$out_media_all .= ".lost_password_form
 	{
@@ -251,7 +251,7 @@ if(apply_filters('get_widget_search', 'lost-password-widget') > 0)
 		}";
 }
 
-if(apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
+if(apply_filters('get_block_search', 'mf/customloggedin') > 0 || apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
 {
 	$out_media_all .= "header .logged_in_info
 	{

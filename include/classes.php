@@ -817,10 +817,10 @@ class mf_custom_login
 		############################
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
-		$has_login_widget = (apply_filters('get_widget_search', 'login-widget') > 0);
+		$has_login_widget = (apply_filters('get_block_search', 'mf/customlogin') > 0 || apply_filters('get_widget_search', 'login-widget') > 0);
 		$users_can_register = get_option('users_can_register');
-		$has_registration_widget = ($users_can_register ? (apply_filters('get_widget_search', 'registration-widget') > 0) : false);
-		$has_lost_password_post_widget = (apply_filters('get_widget_search', 'lost-password-widget'));
+		$has_registration_widget = ($users_can_register ? (apply_filters('get_block_search', 'mf/customregistration') > 0 || apply_filters('get_widget_search', 'registration-widget') > 0) : false);
+		$has_lost_password_post_widget = (apply_filters('get_block_search', 'mf/customlost') > 0 || apply_filters('get_widget_search', 'lost-password-widget') > 0);
 
 		$arr_settings = array();
 
@@ -1124,7 +1124,7 @@ class mf_custom_login
 			{
 				$tags[] = "[direct_link]";
 
-				if(apply_filters('get_widget_search', 'registration-widget') > 0)
+				if(apply_filters('get_block_search', 'mf/customregistration') > 0 || apply_filters('get_widget_search', 'registration-widget') > 0)
 				{
 					$tags[] = "[direct_registration_link]";
 				}
@@ -1213,7 +1213,7 @@ class mf_custom_login
 
 			if($option == 1)
 			{
-				if(!(apply_filters('get_widget_search', 'registration-widget') > 0))
+				if(!(apply_filters('get_block_search', 'mf/customregistration') > 0 || apply_filters('get_widget_search', 'registration-widget') > 0))
 				{
 					echo "<p class='display_warning'>"
 						."<i class='fa fa-exclamation-triangle yellow'></i> "
@@ -1887,7 +1887,12 @@ class mf_custom_login
 
 			if(isset($user_data->roles) && in_array('administrator', $user_data->roles))
 			{
-				$registration_post_id = apply_filters('get_widget_search', 'registration-widget');
+				$registration_post_id = apply_filters('get_block_search', 'mf/customregistration');
+
+				if(!($registration_post_id > 0))
+				{
+					$registration_post_id = apply_filters('get_widget_search', 'registration-widget');
+				}
 
 				if($registration_post_id > 0)
 				{
@@ -2026,7 +2031,7 @@ class mf_custom_login
 
 		if(isset($post) && isset($post->ID) && $post->ID > 0)
 		{
-			if(apply_filters('get_widget_search', 'login-widget') == $post->ID || apply_filters('get_widget_search', 'registration-widget') == $post->ID || apply_filters('get_widget_search', 'lost-password-widget') == $post->ID)
+			if(apply_filters('get_block_search', 'mf/customlogin') > 0 || apply_filters('get_block_search', 'mf/customregistration') > 0 || apply_filters('get_block_search', 'mf/customlost') > 0 || apply_filters('get_widget_search', 'login-widget') == $post->ID || apply_filters('get_widget_search', 'registration-widget') == $post->ID || apply_filters('get_widget_search', 'lost-password-widget') == $post->ID)
 			{
 				$classes[] = "is_login_page";
 			}
