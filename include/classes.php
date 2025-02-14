@@ -824,6 +824,16 @@ class mf_custom_login
 
 		$arr_settings = array();
 
+		if(get_option('blog_public') == 0 || get_option('setting_no_public_pages') == 'yes' || get_option('setting_theme_core_login') == 'yes')
+		{
+			$arr_settings['setting_no_public_pages'] = __("Always redirect visitors to the login page", 'lang_login');
+
+			if(get_option('setting_no_public_pages') != 'yes')
+			{
+				$arr_settings['setting_theme_core_login'] = __("Require login for public site", 'lang_login');
+			}
+		}
+
 		if($has_login_widget == false && $has_registration_widget == false && $has_lost_password_post_widget == false)
 		{
 			if(is_plugin_active("mf_theme_core/index.php"))
@@ -1031,6 +1041,22 @@ class mf_custom_login
 
 		echo settings_header($setting_key, __("Login", 'lang_login'));
 	}
+
+		function setting_no_public_pages_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option_or_default($setting_key, 'no');
+
+			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+		}
+
+		function setting_theme_core_login_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option_or_default($setting_key, 'no');
+
+			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+		}
 
 		function setting_custom_login_display_theme_logo_callback()
 		{
@@ -1321,6 +1347,21 @@ class mf_custom_login
 
 	function filter_sites_table_settings($arr_settings)
 	{
+		$arr_settings['settings_theme_core'] = array(
+			'setting_no_public_pages' => array(
+				'type' => 'bool',
+				'global' => false,
+				'icon' => "fas fa-lock",
+				'name' => __("Always redirect visitors to the login page", 'lang_login'),
+			),
+			'setting_theme_core_login' => array(
+				'type' => 'bool',
+				'global' => false,
+				'icon' => "fas fa-user-lock",
+				'name' => __("Require login for public site", 'lang_login'),
+			),
+		);
+
 		$arr_settings['settings_custom_login'] = array(
 			'setting_custom_login_allow_direct_link' => array(
 				'type' => 'bool',
@@ -2023,6 +2064,26 @@ class mf_custom_login
 	function wp_head()
 	{
 		$this->combined_head();
+
+		if(!is_user_logged_in())
+		{
+			$setting_maintenance_page = get_option('setting_maintenance_page');
+
+			if($setting_maintenance_page > 0 && get_option('setting_activate_maintenance') == 'yes')
+			{
+				// Do nothing here...
+			}
+
+			else if(get_option('setting_no_public_pages') == 'yes')
+			{
+				mf_redirect(get_site_url()."/wp-admin/");
+			}
+
+			else if(get_option('setting_theme_core_login') == 'yes' && apply_filters('is_public_page', true))
+			{
+				mf_redirect(wp_login_url()."?redirect_to=".$_SERVER['REQUEST_URI']);
+			}
+		}
 	}
 
 	function body_class($classes)
