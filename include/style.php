@@ -191,11 +191,12 @@ if(apply_filters('get_block_search', 'mf/customlogin') > 0 || apply_filters('get
 				margin-right: 0 !important;
 			}
 
-		.login_form form p
+		/* Has to be more specific to not screw up BankID */
+		/*.login_form form p
 		{
 			margin-top: .5em;
 			text-align: center;
-		}
+		}*/
 
 	.login_form + .widget_text
 	{

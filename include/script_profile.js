@@ -24,7 +24,7 @@ jQuery(function($)
 
 				else
 				{
-					obj.button.addClass('is_disabled'); /*.attr('disabled', true)*/
+					obj.button.addClass('is_disabled');
 				}
 
 				if(data.success)
