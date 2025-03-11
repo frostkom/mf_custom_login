@@ -72,9 +72,6 @@ class mf_custom_login
 	{
 		global $wpdb, $done_text, $error_text;
 
-		if(!isset($attributes['login_heading'])){		$attributes['login_heading'] = "";}
-		if(!isset($attributes['login_above_form'])){	$attributes['login_above_form'] = "";}
-
 		ob_start();
 
 		$action = check_var('action');
@@ -85,11 +82,6 @@ class mf_custom_login
 		$user_remember = check_var('rememberme', 'char', true, 'forever');
 
 		echo "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
-
-			if($attributes['login_heading'] != '')
-			{
-				echo "<h3>".$attributes['login_heading']."</h3>";
-			}
 
 			switch($action)
 			{
@@ -138,14 +130,8 @@ class mf_custom_login
 				break;
 			}
 
-			echo get_notification(array('add_container' => true));
-
-			if($attributes['login_above_form'] != '')
-			{
-				echo apply_filters('the_content', $attributes['login_above_form']);
-			}
-
-			echo "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
+			echo get_notification(array('add_container' => true))
+			."<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
 				.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true)) // log -> user_login
 				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)); // pwd -> user_pass
 
@@ -673,9 +659,6 @@ class mf_custom_login
 		wp_localize_script('script_custom_login_block_wp', 'script_custom_login_block_wp', array(
 			'block_title' => __("Custom Login", 'lang_login'),
 			'block_description' => __("Display a Custom Login", 'lang_login'),
-			'login_heading_label' => __("Heading", 'lang_login'),
-			'login_above_form_label' => __("Content Above Form", 'lang_login'),
-			'login_image_label' => __("Logo", 'lang_login'),
 			'block_title2' => __("Custom Registration", 'lang_login'),
 			'block_description2' => __("Display a Custom Registration", 'lang_login'),
 			'registration_who_can_label' => __("Who Can Register?", 'lang_login'),
@@ -1541,13 +1524,13 @@ class mf_custom_login
 		{
 			if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != $this->login_send_hash)
 			{
-				if(get_option('setting_custom_login_debug') == 'yes')
-				{
+				/*if(get_option('setting_custom_login_debug') == 'yes')
+				{*/
 					do_log("Login FAILURE ("
 						.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
 						.$this->login_send_hash." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
 					.")");
-				}
+				//}
 
 				$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
 			}

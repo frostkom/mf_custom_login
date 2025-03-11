@@ -21,27 +21,7 @@
 			{
 				'type': 'string',
 				'default': ''
-			},
-			/*'login_image':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'login_image_id':
-			{
-                'type': 'string',
-                'default': ''
-            },*/
-			'login_heading':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'login_above_form':
-			{
-                'type': 'string',
-                'default': ''
-            }
+			}
 		},
 		'supports':
 		{
@@ -77,70 +57,10 @@
 				{className: 'wp_mf_block_container'},
 				[
 					el(
-						InspectorControls,
-						'div',
-						el(
-							TextControl,
-							{
-								label: script_custom_login_block_wp.login_heading_label,
-								type: 'text',
-								value: props.attributes.login_heading,
-								onChange: function(value)
-								{
-									props.setAttributes({login_heading: value});
-								}
-							}
-						),
-						el(
-							TextControl,
-							{
-								label: script_custom_login_block_wp.login_above_form_label,
-								type: 'text',
-								value: props.attributes.login_above_form,
-								onChange: function(value)
-								{
-									props.setAttributes({login_above_form: value});
-								}
-							}
-						)
-					),
-					el(
 						'strong',
 						{className: props.className},
 						script_custom_login_block_wp.block_title
-					)/*,
-					el(
-						MediaUploadCheck,
-						{},
-						el(
-							MediaUpload,
-							{
-								onSelect: function(value)
-								{
-									props.setAttributes({login_image: value.url, login_image_id: value.id});
-								},
-								allowedTypes: ['image'],
-								value: props.attributes.login_image_id,
-								render: function(obj)
-								{
-									return el(
-										Button,
-										{
-											onClick: obj.open
-										},
-										script_custom_login_block_wp.login_image_label
-									);
-								}
-							}
-						)
-					),
-					props.attributes.login_image && el(
-						'img',
-						{
-							src: props.attributes.login_image,
-							alt: ''
-						}
-					)*/
+					)
 				]
 			);
 		},
@@ -164,21 +84,6 @@
 				'type': 'string',
 				'default': ''
 			},
-			/*'registration_image':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'registration_image_id':
-			{
-                'type': 'string',
-                'default': ''
-            },*/
-			'registration_heading':
-			{
-                'type': 'string',
-                'default': ''
-            },
 			'registration_who_can':
 			{
                 'type': 'string',
@@ -232,18 +137,6 @@
 						InspectorControls,
 						'div',
 						el(
-							TextControl,
-							{
-								label: script_custom_login_block_wp.login_heading_label,
-								type: 'text',
-								value: props.attributes.login_heading,
-								onChange: function(value)
-								{
-									props.setAttributes({login_heading: value});
-								}
-							}
-						),
-						el(
 							SelectControl,
 							{
 								label: script_custom_login_block_wp.registration_who_can_label,
@@ -285,39 +178,7 @@
 						'strong',
 						{className: props.className},
 						script_custom_login_block_wp.block_title2
-					)/*,
-					el(
-						MediaUploadCheck,
-						{},
-						el(
-							MediaUpload,
-							{
-								onSelect: function(value)
-								{
-									props.setAttributes({login_image: value.url, login_image_id: value.id});
-								},
-								allowedTypes: ['image'],
-								value: props.attributes.login_image_id,
-								render: function(obj)
-								{
-									return el(
-										Button,
-										{
-											onClick: obj.open
-										},
-										script_custom_login_block_wp.login_image_label
-									);
-								}
-							}
-						)
-					),
-					props.attributes.login_image && el(
-						'img',
-						{
-							src: props.attributes.login_image,
-							alt: ''
-						}
-					)*/
+					)
 				]
 			);
 		},
@@ -340,22 +201,7 @@
 			{
 				'type': 'string',
 				'default': ''
-			},
-			/*'lost_password_image':
-			{
-                'type': 'string',
-                'default': ''
-            },
-			'lost_password_image_id':
-			{
-                'type': 'string',
-                'default': ''
-            },*/
-			'lost_password_heading':
-			{
-                'type': 'string',
-                'default': ''
-            }
+			}
 		},
 		'supports':
 		{
@@ -391,62 +237,10 @@
 				{className: 'wp_mf_block_container'},
 				[
 					el(
-						InspectorControls,
-						'div',
-						el(
-							TextControl,
-							{
-								label: script_custom_login_block_wp.login_heading_label,
-								type: 'text',
-								value: props.attributes.lost_password_heading,
-								onChange: function(value)
-								{
-									props.setAttributes({lost_password_heading: value});
-								}
-							}
-						)
-					),
-					el(
 						'strong',
 						{className: props.className},
 						script_custom_login_block_wp.block_title3
-					)/*,
-					el(
-						'div',
-						{className: "wp_mf_block " + props.className},
-						el(
-							MediaUploadCheck,
-							{},
-							el(
-								MediaUpload,
-								{
-									onSelect: function(value)
-									{
-										props.setAttributes({lost_password_image: value.url, lost_password_image_id: value.id});
-									},
-									allowedTypes: ['image'],
-									value: props.attributes.lost_password_image_id,
-									render: function(obj)
-									{
-										return el(
-											Button,
-											{
-												onClick: obj.open
-											},
-											script_custom_login_block_wp.login_image_label
-										);
-									}
-								}
-							)
-						),
-						props.attributes.lost_password_image && el(
-							'img',
-							{
-								src: props.attributes.lost_password_image,
-								alt: ''
-							}
-						)
-					)*/
+					)
 				]
 			);
 		},
