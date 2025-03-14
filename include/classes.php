@@ -1524,13 +1524,13 @@ class mf_custom_login
 		{
 			if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != $this->login_send_hash)
 			{
-				/*if(get_option('setting_custom_login_debug') == 'yes')
-				{*/
+				if(get_option('setting_custom_login_debug') == 'yes')
+				{
 					do_log("Login FAILURE ("
 						.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
 						.$this->login_send_hash." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
 					.")");
-				//}
+				}
 
 				$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
 			}
