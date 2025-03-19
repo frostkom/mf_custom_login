@@ -36,22 +36,24 @@ jQuery(function($)
 				type: 'post',
 				dataType: 'json',
 				data: {
-					action: "send_direct_link_email",
+					action: "api_custom_login_direct_link_email",
 					username: dom_user
 				},
 				success: function(data)
 				{
 					$("#login > .message, #login_error, #direct_login_link").remove();
 
-					if(data.success)
+					/*if(data.success)
 					{
-						$("#loginform").before("<p class='message updated'>" + data.message + "</p>");
+						$("#loginform").before("<p class='message updated'>" + data.html + "</p>");
 					}
 
 					else
 					{
-						$("#loginform").before("<div id='login_error' class='error'>" + data.error + "</div>");
-					}
+						$("#loginform").before("<div id='login_error' class='error'>" + data.html + "</div>");
+					}*/
+
+					$("#loginform").before(data.html);
 				}
 			});
 		}

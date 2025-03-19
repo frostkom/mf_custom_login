@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description:
-Version: 3.5.29
+Version: 3.6.0
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -88,11 +88,11 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	add_filter('determine_current_user', array($obj_custom_login, 'determine_current_user'), 21);
 
-	add_action('wp_ajax_create_direct_login', array($obj_custom_login, 'create_direct_login'));
-	add_action('wp_ajax_revoke_direct_login', array($obj_custom_login, 'revoke_direct_login'));
+	add_action('wp_ajax_api_custom_login_direct_create', array($obj_custom_login, 'api_custom_login_direct_create'));
+	add_action('wp_ajax_api_custom_login_direct_revoke', array($obj_custom_login, 'api_custom_login_direct_revoke'));
 
-	add_action('wp_ajax_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
-	add_action('wp_ajax_nopriv_send_direct_link_email', array($obj_custom_login, 'send_direct_link_email'));
+	add_action('wp_ajax_api_custom_login_direct_link_email', array($obj_custom_login, 'api_custom_login_direct_link_email'));
+	add_action('wp_ajax_nopriv_api_custom_login_direct_link_email', array($obj_custom_login, 'api_custom_login_direct_link_email'));
 
 	add_filter('filter_cache_ignore', array($obj_custom_login, 'filter_cache_ignore'));
 

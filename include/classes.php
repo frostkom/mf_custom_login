@@ -1424,7 +1424,7 @@ class mf_custom_login
 							echo show_button(array('type' => 'button', 'name' => 'btnDirectLoginCreate', 'text' => __("Generate Now", 'lang_login'), 'class' => "button-secondary", 'xtra' => "data-user-id='".$user->ID."'"));
 						}
 
-						echo "<div id='direct_login_debug'></div>
+						echo "<div class='api_custom_login_direct_login'></div>
 					</td>
 				</tr>
 			</table>";
@@ -2213,8 +2213,14 @@ class mf_custom_login
 		return $user_id;
 	}
 
-	function create_direct_login()
+	function api_custom_login_direct_create()
 	{
+		global $done_text, $error_text;
+
+		$json_output = array(
+			'success' => false,
+		);
+
 		$user_id = check_var('user_id');
 
 		if($user_id > 0)
@@ -2223,28 +2229,38 @@ class mf_custom_login
 			{
 				$user_data = get_userdata($user_id);
 
-				$result['success'] = true;
-				$result['message'] = "<a href='".$this->direct_link_url(array('user_data' => $user_data, 'type' => 'profile'))."'>".__("URL", 'lang_login')."</a>";
+				$json_output['success'] = true;
+				$json_output['html'] = "<a href='".$this->direct_link_url(array('user_data' => $user_data, 'type' => 'profile'))."'>".__("URL", 'lang_login')."</a>";
 			}
 
 			else
 			{
-				$result['error'] = __("You do not have the rights to perform this action", 'lang_login');
+				$error_text = __("You do not have the rights to perform this action", 'lang_login');
+
+				$json_output['html'] = get_notification();
 			}
 		}
 
 		else
 		{
-			$result['error'] = __("There was no User ID attached to the request", 'lang_login');
+			$error_text = __("There was no User ID attached to the request", 'lang_login');
+
+			$json_output['html'] = get_notification();
 		}
 
 		header('Content-Type: application/json');
-		echo json_encode($result);
+		echo json_encode($json_output);
 		die();
 	}
 
-	function revoke_direct_login()
+	function api_custom_login_direct_revoke()
 	{
+		global $done_text, $error_text;
+
+		$json_output = array(
+			'success' => false,
+		);
+
 		$user_id = check_var('user_id');
 
 		if($user_id > 0)
@@ -2253,28 +2269,36 @@ class mf_custom_login
 			{
 				delete_user_meta($user_id, 'meta_login_auth');
 
-				$result['success'] = true;
-				$result['message'] = __("The direct login link has been revoked and can not be used anymore", 'lang_login');
+				$json_output['success'] = true;
+				$done_text = __("The direct login link has been revoked and can not be used anymore", 'lang_login');
 			}
 
 			else
 			{
-				$result['error'] = __("You do not have the rights to perform this action", 'lang_login');
+				$error_text = __("You do not have the rights to perform this action", 'lang_login');
 			}
 		}
 
 		else
 		{
-			$result['error'] = __("There was no User ID attached to the request", 'lang_login');
+			$error_text = __("There was no User ID attached to the request", 'lang_login');
 		}
 
+		$json_output['html'] = get_notification();
+
 		header('Content-Type: application/json');
-		echo json_encode($result);
+		echo json_encode($json_output);
 		die();
 	}
 
-	function send_direct_link_email()
+	function api_custom_login_direct_link_email()
 	{
+		global $done_text, $error_text;
+
+		$json_output = array(
+			'success' => false,
+		);
+
 		$username = check_var('username');
 
 		$user = get_user_by('login', $username);
@@ -2289,23 +2313,25 @@ class mf_custom_login
 
 			if($sent)
 			{
-				$result['success'] = true;
-				$result['message'] = __("I successfully sent the message to your email. Follow the link in it, and you will be logged in before you know it", 'lang_login');
+				$json_output['success'] = true;
+				$done_text = __("I successfully sent the message to your email. Follow the link in it, and you will be logged in before you know it", 'lang_login');
 			}
 
 			else
 			{
-				$result['error'] = __("I could not send the email", 'lang_login');
+				$error_text = __("I could not send the email", 'lang_login');
 			}
 		}
 
 		else
 		{
-			$result['error'] = __("I could not find an email corresponding to the username you entered", 'lang_login');
+			$error_text = __("I could not find an email corresponding to the username you entered", 'lang_login');
 		}
 
+		$json_output['html'] = get_notification();
+
 		header('Content-Type: application/json');
-		echo json_encode($result);
+		echo json_encode($json_output);
 		die();
 	}
 

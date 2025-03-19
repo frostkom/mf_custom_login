@@ -15,8 +15,6 @@ jQuery(function($)
 			},
 			success: function(data)
 			{
-				obj.selector.empty();
-
 				if(obj.button.is("a"))
 				{
 					obj.button.addClass('hide');
@@ -27,15 +25,7 @@ jQuery(function($)
 					obj.button.addClass('is_disabled');
 				}
 
-				if(data.success)
-				{
-					obj.selector.html(data.message);
-				}
-
-				else
-				{
-					obj.selector.html(data.error);
-				}
+				obj.selector.html(data.html);
 			}
 		});
 
@@ -47,9 +37,9 @@ jQuery(function($)
 		run_ajax(
 		{
 			'button': $(e.currentTarget),
-			'action': 'create_direct_login',
+			'action': 'api_custom_login_direct_create',
 			'user_id': $(e.currentTarget).attr('data-user-id'),
-			'selector': $("#direct_login_debug")
+			'selector': $(".api_custom_login_direct_login")
 		});
 	});
 
@@ -58,9 +48,9 @@ jQuery(function($)
 		run_ajax(
 		{
 			'button': $(e.currentTarget),
-			'action': 'revoke_direct_login',
+			'action': 'api_custom_login_direct_revoke',
 			'user_id': $(e.currentTarget).attr('data-user-id'),
-			'selector': $("#direct_login_debug")
+			'selector': $(".api_custom_login_direct_login")
 		});
 	});
 });
