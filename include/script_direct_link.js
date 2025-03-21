@@ -36,7 +36,7 @@ jQuery(function($)
 				type: 'post',
 				dataType: 'json',
 				data: {
-					action: "api_custom_login_direct_link_email",
+					action: 'api_custom_login_direct_link_email',
 					username: dom_user
 				},
 				success: function(data)

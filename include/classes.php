@@ -1530,7 +1530,9 @@ class mf_custom_login
 					.")");
 				}
 
-				$user_data = new WP_Error('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+				$user_data = new WP_Error('invalid_check', __("I could not let you login since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login')
+					." (".$_POST['_hash_login_send']." != ".$this->login_send_hash.")"
+				);
 			}
 
 			else if(get_option('setting_custom_login_debug') == 'yes')
@@ -1549,24 +1551,24 @@ class mf_custom_login
 	{
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			if(!isset($_POST['_wpnonce_registration_send']) || wp_verify_nonce($_POST['_wpnonce_registration_send'], 'registration_send_'.get_current_visitor_ip().'_'.date("Ymd")) == false)
+			if(!isset($_POST['_hash_registration_send']) || $_POST['_hash_registration_send'] != $this->login_send_hash)
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
 				{
 					do_log("Registration FAILURE ("
 						.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
-						.$_POST['_wpnonce_registration_send']
+						.$_POST['_hash_registration_send']
 					.")");
 				}
 
-				$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+				$errors->add('invalid_check', __("I could not let you register since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login'));
 			}
 
 			else if(get_option('setting_custom_login_debug') == 'yes')
 			{
 				do_log("Registration Allowed ("
 					.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
-					.$_POST['_wpnonce_registration_send']
+					.$_POST['_hash_registration_send']
 				.")");
 			}
 		}
@@ -1580,17 +1582,17 @@ class mf_custom_login
 
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			if(!isset($_POST['_wpnonce_lost_password_send']) || wp_verify_nonce($_POST['_wpnonce_lost_password_send'], 'lost_password_send_'.get_current_visitor_ip().'_'.date("Ymd")) == false)
+			if(!isset($_POST['_hash_lost_password_send']) || $_POST['_hash_lost_password_send'] != $this->login_send_hash)
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
 				{
 					do_log("Lost Password FAILURE ("
 						.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-						.$_POST['_wpnonce_lost_password_send']
+						.$_POST['_hash_lost_password_send']
 					.")");
 				}
 
-				$errors->add('invalid_check', __("You were denied access because something about the request was suspicious. If the problem persists, contact us and let us know what happened", 'lang_login'));
+				$errors->add('invalid_check', __("I could not let you request a news password since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login'));
 
 				$has_errors = true;
 			}
@@ -1599,7 +1601,7 @@ class mf_custom_login
 			{
 				do_log("Lost Password Allowed ("
 					.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-					.$_POST['_wpnonce_lost_password_send']
+					.$_POST['_hash_lost_password_send']
 				.")");
 			}
 		}
@@ -1636,7 +1638,7 @@ class mf_custom_login
 					break;
 
 					default:
-						do_log("login_init(): Unknown action ".$setting_custom_login_wp_login_action);
+						do_log(__FUNCTION__.": Unknown action ".$setting_custom_login_wp_login_action);
 					break;
 				}
 			}
@@ -2014,7 +2016,7 @@ class mf_custom_login
 
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			echo input_hidden(array('name' => '_hash_login_send', 'value' => $this->login_send_hash));
+			echo "<div class='api_custom_login_nonce' rel='login'></div>";
 
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
@@ -2030,7 +2032,7 @@ class mf_custom_login
 	{
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			echo wp_nonce_field('registration_send_'.get_current_visitor_ip().'_'.date("Ymd"), '_wpnonce_registration_send', true, false);
+			echo "<div class='api_custom_login_nonce' rel='registration'></div>";
 		}
 	}
 
@@ -2038,7 +2040,7 @@ class mf_custom_login
 	{
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			echo wp_nonce_field('lost_password_send_'.get_current_visitor_ip().'_'.date("Ymd"), '_wpnonce_lost_password_send', true, false);
+			echo "<div class='api_custom_login_nonce' rel='lost_password'></div>";
 		}
 	}
 
@@ -2048,9 +2050,7 @@ class mf_custom_login
 
 		if(!is_user_logged_in())
 		{
-			$setting_maintenance_page = get_option('setting_maintenance_page');
-
-			if($setting_maintenance_page > 0 && get_option('setting_activate_maintenance') == 'yes')
+			if(get_option('setting_maintenance_page') > 0)
 			{
 				// Do nothing here...
 			}
@@ -2331,6 +2331,20 @@ class mf_custom_login
 		$json_output['html'] = get_notification();
 
 		header('Content-Type: application/json');
+		echo json_encode($json_output);
+		die();
+	}
+
+	function api_custom_login_nonce()
+	{
+		$type = check_var('type');
+
+		$json_output = array(
+			'success' => true,
+			'response' => input_hidden(array('name' => '_hash_'.$type."_send", 'value' => $this->login_send_hash)),
+		);
+
+		header("Content-Type: application/json");
 		echo json_encode($json_output);
 		die();
 	}
