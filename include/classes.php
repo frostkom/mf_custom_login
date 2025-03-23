@@ -1531,7 +1531,7 @@ class mf_custom_login
 				}
 
 				$user_data = new WP_Error('invalid_check', __("I could not let you login since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login')
-					." (".$_POST['_hash_login_send']." != ".$this->login_send_hash.")"
+					." (".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "")." != ".$this->login_send_hash.")"
 				);
 			}
 
