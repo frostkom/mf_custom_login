@@ -15,7 +15,7 @@ class mf_custom_login
 
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			$this->login_send_hash = md5('login_send_'.get_current_visitor_ip().'_'.date("Ymd"));
+			$this->login_send_hash = md5('login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
 		}
 	}
 
@@ -102,7 +102,7 @@ class mf_custom_login
 						$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
 						$setting_custom_login_limit_minutes = get_site_option_or_default('setting_custom_login_limit_minutes', 15);
 
-						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", get_current_visitor_ip(), 'failure'));
+						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure'));
 						$login_failed_attempts = $wpdb->num_rows;
 
 						if($login_failed_attempts < $setting_custom_login_limit_attempts)
@@ -118,7 +118,7 @@ class mf_custom_login
 							{
 								$error_text = $result['error'];
 
-								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", get_current_visitor_ip(), 'failure', $user_login));
+								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
 							}
 						}
 
@@ -1513,7 +1513,7 @@ class mf_custom_login
 	{
 		return ($data['user_login'] != '' ? $data['user_login'] : $data['user_email'])
 			.", ".$_SERVER['REQUEST_URI']
-			.", ".get_current_visitor_ip()." + ".date("Ymd")." -> ";
+			.", ".apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR'])." + ".date("Ymd")." -> ";
 	}
 
 	function wp_authenticate_user($user_data)
@@ -2022,7 +2022,7 @@ class mf_custom_login
 			{
 				do_log("Login SET ("
 					.$_SERVER['REQUEST_URI'].", "
-					.get_current_visitor_ip()." + ".date("Ymd")." -> ".$this->login_send_hash
+					.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR'])." + ".date("Ymd")." -> ".$this->login_send_hash
 				.")");
 			}
 		}
@@ -2471,7 +2471,7 @@ class widget_login_form extends WP_Widget
 						$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
 						$setting_custom_login_limit_minutes = get_site_option_or_default('setting_custom_login_limit_minutes', 15);
 
-						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", get_current_visitor_ip(), 'failure'));
+						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure'));
 						$login_failed_attempts = $wpdb->num_rows;
 
 						if($login_failed_attempts < $setting_custom_login_limit_attempts)
@@ -2487,7 +2487,7 @@ class widget_login_form extends WP_Widget
 							{
 								$error_text = $result['error'];
 
-								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", get_current_visitor_ip(), 'failure', $user_login));
+								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
 							}
 						}
 
