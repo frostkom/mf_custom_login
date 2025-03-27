@@ -254,19 +254,19 @@ if(apply_filters('get_block_search', 0, 'mf/customlost') > 0 || (int)apply_filte
 
 if(apply_filters('get_block_search', 0, 'mf/customloggedin') > 0 || (int)apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
 {
-	$out_media_all .= "header .logged_in_info
+	$out_media_all .= "header .logged_in_info > .section
 	{
 		display: flex;
 		float: right;
 	}
 
-		header .section.logged_in_info > *
+		header .logged_in_info > .section > *
 		{
 			display: block;
 			flex: 1 1 0;
 		}
 
-			header .section.logged_in_info > * + *
+			header .logged_in_info > .section > * + *
 			{
 				margin-left: 1em;
 			}

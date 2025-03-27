@@ -173,23 +173,19 @@ class mf_custom_login
 	{
 		global $error_text;
 
-		if(!isset($attributes['registration_heading'])){		$attributes['registration_heading'] = "";}
-		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = "";}
+		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = '';}
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
 		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = array();}
 
 		ob_start();
 
-		$is_allowed = (!isset($attributes['registration_who_can']) || $attributes['registration_who_can'] == '' || current_user_can($attributes['registration_who_can']));
+		$is_allowed = ((get_option('users_can_register') == 1 || is_user_logged_in()) && ($attributes['registration_who_can'] == '' || $attributes['registration_who_can'] == 0 || current_user_can($attributes['registration_who_can'])));
+
+		$user_login = "";
 
 		if(in_array('username', $attributes['registration_fields']))
 		{
 			$user_login = check_var('user_login');
-		}
-
-		else
-		{
-			$user_login = "";
 		}
 
 		$user_email = check_var('user_email', 'email');
@@ -212,16 +208,7 @@ class mf_custom_login
 			$role = check_var('role', 'char', true, $role);
 		}
 
-		echo "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
-
-			if($attributes['registration_heading'] != '')
-			{
-				$attributes['registration_heading'] = apply_filters('widget_title', $attributes['registration_heading'], $attributes, $this->id_base);
-
-				echo $before_title
-					.$attributes['registration_heading']
-				.$after_title;
-			}
+		echo "<div".parse_block_attributes(array('class' => "widget login_form registration_form", 'attributes' => $attributes)).">";
 
 			$display_form = true;
 
@@ -385,24 +372,13 @@ class mf_custom_login
 	{
 		global $done_text, $error_text;
 
-		if(!isset($attributes['lost_password_heading'])){	$attributes['lost_password_heading'] = "";}
-
 		ob_start();
 
 		$action = check_var('action');
 
-		echo "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
+		echo "<div".parse_block_attributes(array('class' => "widget login_form lost_form", 'attributes' => $attributes)).">";
 
 			//do_action('lost_password');
-
-			if($attributes['lost_password_heading'] != '')
-			{
-				$attributes['lost_password_heading'] = apply_filters('widget_title', $attributes['lost_password_heading'], $attributes, $this->id_base);
-
-				echo $before_title
-					.$attributes['lost_password_heading']
-				.$after_title;
-			}
 
 			$display_form = true;
 
@@ -550,16 +526,8 @@ class mf_custom_login
 
 		if(is_user_logged_in())
 		{
-			echo "<div".parse_block_attributes(array('class' => "widget login_form", 'attributes' => $attributes)).">";
-
-				if($attributes['logged_in_info_heading'] != '')
-				{
-					$attributes['logged_in_info_heading'] = apply_filters('widget_title', $attributes['logged_in_info_heading'], $attributes, $this->id_base);
-
-					//echo "<h3>".$attributes['logged_in_info_heading']."</h3>";
-				}
-
-				echo "<div class='logged_in_info section'>";
+			echo "<div".parse_block_attributes(array('class' => "widget login_form logged_in_info", 'attributes' => $attributes)).">
+				<div class='section'>";
 
 					if(count($attributes['logged_in_info_display']) == 0 || in_array('name', $attributes['logged_in_info_display']) || in_array('profile', $attributes['logged_in_info_display']) || in_array('logout', $attributes['logged_in_info_display']))
 					{
@@ -3213,7 +3181,6 @@ class widget_logged_in_info extends WP_Widget
 		$instance = $old_instance;
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
-		//$instance['logged_in_info_heading'] = sanitize_text_field($new_instance['logged_in_info_heading']);
 		$instance['logged_in_info_display'] = is_array($new_instance['logged_in_info_display']) ? $new_instance['logged_in_info_display'] : array();
 
 		return $instance;
@@ -3224,7 +3191,6 @@ class widget_logged_in_info extends WP_Widget
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
 		echo "<div class='mf_form'>"
-			//.show_textfield(array('name' => $this->get_field_name('logged_in_info_heading'), 'text' => __("Heading", 'lang_login'), 'value' => $instance['logged_in_info_heading'], 'xtra' => " id='".$this->widget_ops['classname']."-title'"))
 			.show_select(array('data' => $this->get_user_info_for_select(), 'name' => $this->get_field_name('logged_in_info_display')."[]", 'value' => $instance['logged_in_info_display']))
 		."</div>";
 	}

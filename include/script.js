@@ -37,4 +37,14 @@ jQuery(function($)
 			dom_obj.val(dom_obj_value + "#" + hash);
 		}
 	}
+
+	var dom_obj_registration = $(".widget.registration_form");
+
+	if(dom_obj_registration.length > 0)
+	{
+		dom_obj_registration.find("p > input").each(function()
+		{
+			$(this).addClass('mf_form_field').parent("p").addClass('form_textfield').children("br").remove();
+		});
+	}
 });
