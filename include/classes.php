@@ -15,7 +15,7 @@ class mf_custom_login
 
 		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{
-			$this->login_send_hash = md5('login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
+			$this->login_send_hash = md5((defined('NONCE_SALT') ? NONCE_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
 		}
 	}
 
@@ -2309,7 +2309,7 @@ class mf_custom_login
 
 		$json_output = array(
 			'success' => true,
-			'response' => input_hidden(array('name' => '_hash_'.$type."_send", 'value' => $this->login_send_hash)),
+			'html' => input_hidden(array('name' => '_hash_'.$type."_send", 'value' => $this->login_send_hash)),
 		);
 
 		header("Content-Type: application/json");
