@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description:
-Version: 3.6.6
+Version: 3.6.7
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -113,7 +113,7 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 		//replace_option(array('old' => 'setting_no_public_pages', 'new' => 'setting_login_no_public_pages'));
 		//replace_option(array('old' => 'setting_theme_core_login', 'new' => 'setting_login_require_for_public_pages'));
 
-		$default_charset = (DB_CHARSET != '' ? DB_CHARSET : 'utf8');
+		/*$default_charset = (DB_CHARSET != '' ? DB_CHARSET : 'utf8');
 
 		$arr_add_column = $arr_update_column = $arr_add_index = array();
 
@@ -134,13 +134,18 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 		update_columns($arr_update_column);
 		add_columns($arr_add_column);
-		add_index($arr_add_index);
+		add_index($arr_add_index);*/
+
+		mf_uninstall_plugin(array(
+			'options' => array('setting_custom_login_wp_login_action', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes'),
+			'tables' => array('custom_login'),
+		));
 	}
 
 	function uninstall_custom_login()
 	{
 		mf_uninstall_plugin(array(
-			'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_wp_login_action', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_redirect_after_login', 'setting_custom_login_prevent_direct_access', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes', 'setting_custom_login_debug'),
+			'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_page', 'setting_custom_login_register', 'setting_custom_login_lostpassword', 'setting_custom_login_recoverpassword', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_redirect_after_login', 'setting_custom_login_prevent_direct_access', 'setting_custom_login_debug'),
 			'meta' => array('meta_login_auth'),
 			'tables' => array('custom_login'),
 		));

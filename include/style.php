@@ -172,7 +172,7 @@ if($setting_custom_login_page > 0)
 ############################
 if(apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || (int)apply_filters('get_widget_search', 'login-widget') > 0)
 {
-	if(!wp_is_block_theme())
+	if(wp_is_block_theme() == false)
 	{
 		$out_media_all .= ".login_form
 		{

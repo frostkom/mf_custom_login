@@ -19,14 +19,14 @@ class mf_custom_login
 		}
 	}
 
-	function get_wp_login_action_for_select()
+	/*function get_wp_login_action_for_select()
 	{
 		return array(
 			'' => "-- ".__("Choose Here", 'lang_login')." --",
 			'301' => __("Redirect to New Page", 'lang_login'),
 			'404' => __("Return Error", 'lang_login'),
 		);
-	}
+	}*/
 
 	function cron_base()
 	{
@@ -62,7 +62,7 @@ class mf_custom_login
 				}
 			}
 
-			$wpdb->query("DELETE FROM ".$wpdb->base_prefix."custom_login WHERE loginCreated < DATE_SUB(NOW(), INTERVAL 1 MONTH)");
+			//$wpdb->query("DELETE FROM ".$wpdb->base_prefix."custom_login WHERE loginCreated < DATE_SUB(NOW(), INTERVAL 1 MONTH)");
 		}
 
 		$obj_cron->end();
@@ -99,14 +99,14 @@ class mf_custom_login
 				default:
 					if(isset($_POST['btnSendLogin']))
 					{
-						$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
+						/*$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
 						$setting_custom_login_limit_minutes = get_site_option_or_default('setting_custom_login_limit_minutes', 15);
 
 						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure'));
 						$login_failed_attempts = $wpdb->num_rows;
 
 						if($login_failed_attempts < $setting_custom_login_limit_attempts)
-						{
+						{*/
 							$result = $this->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
 
 							if($result['success'] == true)
@@ -120,12 +120,12 @@ class mf_custom_login
 
 								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
 							}
-						}
+						/*}
 
 						else
 						{
 							$error_text = sprintf(__("You have exceeded the limit of %d logins in the last %d minutes. Please try again later.", 'lang_login'), $setting_custom_login_limit_attempts, $setting_custom_login_limit_minutes);
-						}
+						}*/
 					}
 				break;
 			}
@@ -808,7 +808,7 @@ class mf_custom_login
 
 		if($has_login_widget)
 		{
-			$arr_settings['setting_custom_login_wp_login_action'] = __("Action on Old Login Page", 'lang_login');
+			//$arr_settings['setting_custom_login_wp_login_action'] = __("Action on Old Login Page", 'lang_login');
 
 			delete_option('setting_custom_login_page');
 		}
@@ -817,7 +817,7 @@ class mf_custom_login
 		{
 			$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
 
-			delete_option('setting_custom_login_wp_login_action');
+			//delete_option('setting_custom_login_wp_login_action');
 		}
 
 		if(is_plugin_active("mf_auth/index.php") == false || get_option('setting_auth_active') == 'no')
@@ -877,8 +877,8 @@ class mf_custom_login
 			delete_option('setting_custom_login_debug');
 		}
 
-		$arr_settings['setting_custom_login_limit_attempts'] = __("Limit Attempts", 'lang_login');
-		$arr_settings['setting_custom_login_limit_minutes'] = __("Limit Minutes", 'lang_login');
+		//$arr_settings['setting_custom_login_limit_attempts'] = __("Limit Attempts", 'lang_login');
+		//$arr_settings['setting_custom_login_limit_minutes'] = __("Limit Minutes", 'lang_login');
 
 		$arr_settings['setting_custom_login_redirect_after_login_page'] = __("Redirect After Login", 'lang_login');
 
@@ -1023,13 +1023,13 @@ class mf_custom_login
 			echo get_media_library(array('type' => 'image', 'name' => $setting_key, 'value' => $option));
 		}
 
-		function setting_custom_login_wp_login_action_callback()
+		/*function setting_custom_login_wp_login_action_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
 			echo show_select(array('data' => $this->get_wp_login_action_for_select(), 'name' => $setting_key, 'value' => $option));
-		}
+		}*/
 
 		function setting_custom_login_page_callback()
 		{
@@ -1117,7 +1117,7 @@ class mf_custom_login
 			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
 		}
 
-		function setting_custom_login_limit_attempts_callback()
+		/*function setting_custom_login_limit_attempts_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
 			settings_save_site_wide($setting_key);
@@ -1133,7 +1133,7 @@ class mf_custom_login
 			$option = get_site_option($setting_key, get_option($setting_key, 15));
 
 			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='2' max='60'"));
-		}
+		}*/
 
 		function setting_custom_login_redirect_after_login_page_callback()
 		{
@@ -1591,15 +1591,15 @@ class mf_custom_login
 	{
 		if(strpos($_SERVER['REQUEST_URI'], "wp-login.php"))
 		{
-			$setting_custom_login_wp_login_action = get_option('setting_custom_login_wp_login_action');
+			/*$setting_custom_login_wp_login_action = get_option('setting_custom_login_wp_login_action');
 
 			if($setting_custom_login_wp_login_action != '')
 			{
 				switch($setting_custom_login_wp_login_action)
 				{
-					case 301:
-						mf_redirect(wp_login_url());
-					break;
+					case 301:*/
+						wp_redirect(wp_login_url()."?redirect_to=".$_SERVER['REQUEST_URI']);
+					/*break;
 
 					case 404:
 						$this->get_404_page();
@@ -1609,7 +1609,7 @@ class mf_custom_login
 						do_log(__FUNCTION__.": Unknown action ".$setting_custom_login_wp_login_action);
 					break;
 				}
-			}
+			}*/
 		}
 
 		$this->combined_head();
@@ -1628,9 +1628,7 @@ class mf_custom_login
 					$redirect_to = (current_user_can('read') ? admin_url() : home_url());
 					$user_data = get_userdata(get_current_user_id());
 
-					$redirect_to = $this->get_login_redirect($redirect_to, $user_data);
-
-					wp_redirect($redirect_to, 302);
+					wp_redirect($this->get_login_redirect($redirect_to, $user_data));
 					exit;
 				}
 			break;
@@ -1866,7 +1864,7 @@ class mf_custom_login
 		// wp_new_user_notification_email
 		$exclude[] = "[blog_title]";		$include[] = $blog_title;
 		$exclude[] = "[site_url]";			$include[] = $site_url;
-		$exclude[] = "[confirm_link]";		$include[] = $lost_password_url.(preg_match("/\?/", $lost_password_url) ? "&" : "?").$confirm_link_action;
+		$exclude[] = "[confirm_link]";		$include[] = $lost_password_url.(strpos($lost_password_url, "?") ? "&" : "?").$confirm_link_action;
 		$exclude[] = "[login_link]";		$include[] = $login_url;
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && preg_match("/\[direct_link]/", $string))
@@ -1891,7 +1889,7 @@ class mf_custom_login
 					$registration_post_url = get_permalink($registration_post_id);
 					$registration_post_url = str_replace(get_site_url(), "", $registration_post_url);
 
-					$direct_registration_link = $direct_link.(preg_match("/\?/", $direct_link) ? "&" : "?")."redirect_to=".$registration_post_url;
+					$direct_registration_link = $direct_link.(strpos($direct_link, "?") ? "&" : "?")."redirect_to=".$registration_post_url;
 				}
 			}
 
@@ -1901,7 +1899,7 @@ class mf_custom_login
 		// retrieve_password_message
 		$exclude[] = "[blogname]";			$include[] = $blog_title; // Replace with blog_title
 		$exclude[] = "[siteurl]";			$include[] = $site_url; // Replace with site_url
-		$exclude[] = "[loginurl]";			$include[] = $lost_password_url.(preg_match("/\?/", $lost_password_url) ? "&" : "?").$confirm_link_action; // Replace with confirm_link
+		$exclude[] = "[loginurl]";			$include[] = $lost_password_url.(strpos($lost_password_url, "?") ? "&" : "?").$confirm_link_action; // Replace with confirm_link
 
 		return str_replace($exclude, $include, $string);
 	}
@@ -2087,7 +2085,14 @@ class mf_custom_login
 
 		if($post_id > 0)
 		{
+			@list($url_old, $query_string) = explode("?", $url);
+
 			$url = get_permalink($post_id);
+
+			if($query_string != '')
+			{
+				$url .= (strpos($query_string, "?") ? "&" : "?").$query_string;
+			}
 		}
 
 		return $url;
@@ -2379,6 +2384,8 @@ class widget_login_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
+		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
+
 		global $wpdb, $obj_custom_login, $error_text, $done_text;
 
 		extract($args);
@@ -2436,14 +2443,14 @@ class widget_login_form extends WP_Widget
 
 					if(isset($_POST['btnSendLogin']))
 					{
-						$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
+						/*$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
 						$setting_custom_login_limit_minutes = get_site_option_or_default('setting_custom_login_limit_minutes', 15);
 
 						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure'));
 						$login_failed_attempts = $wpdb->num_rows;
 
 						if($login_failed_attempts < $setting_custom_login_limit_attempts)
-						{
+						{*/
 							$result = $obj_custom_login->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
 
 							if($result['success'] == true)
@@ -2455,14 +2462,14 @@ class widget_login_form extends WP_Widget
 							{
 								$error_text = $result['error'];
 
-								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
+								//$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
 							}
-						}
+						/*}
 
 						else
 						{
 							$error_text = sprintf(__("You have exceeded the limit of %d logins in the last %d minutes. Please try again later.", 'lang_login'), $setting_custom_login_limit_attempts, $setting_custom_login_limit_minutes);
-						}
+						}*/
 					}
 
 					else if(!isset($_GET['fl_builder']))
@@ -2494,6 +2501,8 @@ class widget_login_form extends WP_Widget
 				</div>
 			</form>
 			<p id='lost_password_link'><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
+
+			echo "Test: ".$redirect_to;
 
 			if(get_option('users_can_register'))
 			{
@@ -2574,6 +2583,8 @@ class widget_registration_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
+		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
+
 		global $obj_custom_login, $error_text, $done_text;
 
 		extract($args);
@@ -2904,6 +2915,8 @@ class widget_lost_password_form extends WP_Widget
 
 	function widget($args, $instance)
 	{
+		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
+
 		global $obj_custom_login, $error_text, $done_text;
 
 		extract($args);
@@ -3120,6 +3133,8 @@ class widget_logged_in_info extends WP_Widget
 
 	function widget($args, $instance)
 	{
+		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
+
 		extract($args);
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
 
