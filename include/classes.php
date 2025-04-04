@@ -37,6 +37,11 @@ class mf_custom_login
 
 		if($obj_cron->is_running == false)
 		{
+			mf_uninstall_plugin(array(
+				'options' => array('setting_custom_login_wp_login_action', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes'),
+				'tables' => array('custom_login'),
+			));
+
 			if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 			{
 				$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
