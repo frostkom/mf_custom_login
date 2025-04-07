@@ -123,7 +123,7 @@ class mf_custom_login
 							{
 								$error_text = $result['error'];
 
-								$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
+								//$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
 							}
 						/*}
 
@@ -1594,17 +1594,17 @@ class mf_custom_login
 
 	function login_init()
 	{
-		if(strpos($_SERVER['REQUEST_URI'], "wp-login.php"))
+		/*if(strpos($_SERVER['REQUEST_URI'], "wp-login.php"))
 		{
-			/*$setting_custom_login_wp_login_action = get_option('setting_custom_login_wp_login_action');
+			$setting_custom_login_wp_login_action = get_option('setting_custom_login_wp_login_action');
 
 			if($setting_custom_login_wp_login_action != '')
 			{
 				switch($setting_custom_login_wp_login_action)
 				{
-					case 301:*/
+					case 301:
 						wp_redirect(wp_login_url()."?redirect_to=".$_SERVER['REQUEST_URI']);
-					/*break;
+					break;
 
 					case 404:
 						$this->get_404_page();
@@ -1614,15 +1614,14 @@ class mf_custom_login
 						do_log(__FUNCTION__.": Unknown action ".$setting_custom_login_wp_login_action);
 					break;
 				}
-			}*/
-		}
-
-		$this->combined_head();
+			}
+		}*/
 
 		$action = check_var('action');
 
 		switch($action)
 		{
+			case 'lostpassword':
 			case 'logout':
 				// Do nothing
 			break;
@@ -1634,10 +1633,16 @@ class mf_custom_login
 					$user_data = get_userdata(get_current_user_id());
 
 					wp_redirect($this->get_login_redirect($redirect_to, $user_data));
-					exit;
 				}
+
+				/*else if(strpos($_SERVER['REQUEST_URI'], "wp-login.php") && apply_filters('get_block_search', 0, 'mf/customlogin') > 0)
+				{
+					wp_redirect(wp_login_url()."?redirect_to=".$_SERVER['REQUEST_URI']);
+				}*/
 			break;
 		}
+
+		$this->combined_head();
 	}
 
 	function login_redirect($redirect_to, $request, $user_data)
@@ -2081,11 +2086,11 @@ class mf_custom_login
 
 	function login_url($url)
 	{
-		$post_id = (int)apply_filters('get_block_search', 0, 'mf/customlogin');
+		$post_id = apply_filters('get_block_search', 0, 'mf/customlogin');
 
 		if(!($post_id > 0))
 		{
-			$post_id = (int)(int)apply_filters('get_widget_search', 'login-widget');
+			$post_id = (int)apply_filters('get_widget_search', 'login-widget');
 		}
 
 		if($post_id > 0)
