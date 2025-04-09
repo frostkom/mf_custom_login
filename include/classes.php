@@ -13,10 +13,10 @@ class mf_custom_login
 	{
 		$this->meta_prefix = $this->post_type.'_';
 
-		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{
+		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{*/
 			$this->login_send_hash = md5((defined('NONCE_SALT') ? NONCE_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
-		}
+		//}
 	}
 
 	/*function get_wp_login_action_for_select()
@@ -38,7 +38,7 @@ class mf_custom_login
 		if($obj_cron->is_running == false)
 		{
 			mf_uninstall_plugin(array(
-				'options' => array('setting_custom_login_wp_login_action', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes'),
+				'options' => array('setting_custom_login_wp_login_action', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes', 'setting_custom_login_prevent_direct_access'),
 				'tables' => array('custom_login'),
 			));
 
@@ -112,10 +112,20 @@ class mf_custom_login
 
 						if($login_failed_attempts < $setting_custom_login_limit_attempts)
 						{*/
+							if(get_option('setting_custom_login_debug') == 'yes')
+							{
+								echo "<p>".__("I'm trying to log you in...", 'lang_login')."</p>";
+							}
+
 							$result = $this->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
 
 							if($result['success'] == true)
 							{
+								if(get_option('setting_custom_login_debug') == 'yes')
+								{
+									echo "<p>".__("I'm redirecting you...", 'lang_login')."</p>";
+								}
+
 								mf_redirect($result['redirect']);
 							}
 
@@ -135,8 +145,8 @@ class mf_custom_login
 				break;
 			}
 
-			echo get_notification(array('add_container' => true))
-			."<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
+			echo "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
+				.get_notification(array('add_container' => true))
 				.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true)) // log -> user_login
 				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)); // pwd -> user_pass
 
@@ -678,6 +688,10 @@ class mf_custom_login
 
 	function do_login($data = array())
 	{
+		$out = array(
+			'success' => false,
+		);
+
 		if(!isset($data['user_login'])){		$data['user_login'] = '';}
 		if(!isset($data['user_pass'])){			$data['user_pass'] = '';}
 		if(!isset($data['user_remember'])){		$data['user_remember'] = '';}
@@ -687,10 +701,25 @@ class mf_custom_login
 
 		$secure_cookie = '';
 
+		if(get_option('setting_custom_login_debug') == 'yes')
+		{
+			echo "<p>About to sign you in...</p>";
+		}
+
 		$user = wp_signon(array('user_login' => $data['user_login'], 'user_password' => $data['user_pass'], 'remember' => $data['user_remember']), $secure_cookie);
+
+		if(get_option('setting_custom_login_debug') == 'yes')
+		{
+			echo "<p>Signed you in...</p>";
+		}
 
 		if(!is_wp_error($user))
 		{
+			if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				echo "<p>No errors...</p>";
+			}
+
 			$requested_redirect_to = check_var('redirect_to');
 
 			$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
@@ -714,24 +743,30 @@ class mf_custom_login
 				}
 			}
 
-			return array(
-				'success' => true,
-				'redirect' => $data['redirect_to'],
-			);
+			if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				echo "<p>Redirect to ".$data['redirect_to']."...</p>";
+			}
+
+			$out['success'] = true;
+			$out['redirect'] = $data['redirect_to'];
 		}
 
 		else
 		{
+			if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				echo "<p>Errors...</p>";
+			}
+
 			foreach($user->errors as $error)
 			{
-				return array(
-					'success' => false,
-					'error' => $error[0],
-				);
-
+				$out['error'] = $error[0];
 				break;
 			}
 		}
+
+		return $out;
 	}
 
 	function check_if_logged_in($data = array())
@@ -870,17 +905,17 @@ class mf_custom_login
 			delete_option('setting_custom_login_allow_server_auth');
 		}
 
-		$arr_settings['setting_custom_login_prevent_direct_access'] = __("Prevent Direct Access to Login, Registration etc.", 'lang_login');
+		//$arr_settings['setting_custom_login_prevent_direct_access'] = __("Prevent Direct Access to Login, Registration etc.", 'lang_login');
 
-		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{
+		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{*/
 			$arr_settings['setting_custom_login_debug'] = " - ".__("Debug", 'lang_login');
-		}
+		/*}
 
 		else
 		{
 			delete_option('setting_custom_login_debug');
-		}
+		}*/
 
 		//$arr_settings['setting_custom_login_limit_attempts'] = __("Limit Attempts", 'lang_login');
 		//$arr_settings['setting_custom_login_limit_minutes'] = __("Limit Minutes", 'lang_login');
@@ -1113,14 +1148,14 @@ class mf_custom_login
 			echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
 		}
 
-		function setting_custom_login_prevent_direct_access_callback()
+		/*function setting_custom_login_prevent_direct_access_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
 			settings_save_site_wide($setting_key);
 			$option = get_site_option($setting_key, get_option($setting_key, 'yes'));
 
 			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
-		}
+		}*/
 
 		/*function setting_custom_login_limit_attempts_callback()
 		{
@@ -1467,6 +1502,7 @@ class mf_custom_login
 		if($setting_custom_login_redirect_after_login_page > 0)
 		{
 			$setting_custom_login_redirect_after_login = get_option_or_default('setting_custom_login_redirect_after_login', array());
+			$setting_fea_redirect_after_login = get_option_or_default('setting_fea_redirect_after_login', array());
 
 			if(count($setting_custom_login_redirect_after_login) == 0 || isset($user_data->roles) && is_array($user_data->roles) && count(array_intersect($setting_fea_redirect_after_login, $user_data->roles)) > 0)
 			{
@@ -1491,8 +1527,8 @@ class mf_custom_login
 
 	function wp_authenticate_user($user_data)
 	{
-		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{
+		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{*/
 			if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != $this->login_send_hash)
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
@@ -1515,15 +1551,15 @@ class mf_custom_login
 					.$_POST['_hash_login_send']
 				.")");
 			}
-		}
+		//}
 
 		return $user_data;
 	}
 
 	function registration_errors($errors, $user_login, $user_email)
 	{
-		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{
+		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{*/
 			if(!isset($_POST['_hash_registration_send']) || $_POST['_hash_registration_send'] != $this->login_send_hash)
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
@@ -1544,7 +1580,7 @@ class mf_custom_login
 					.$_POST['_hash_registration_send']
 				.")");
 			}
-		}
+		//}
 
 		return $errors;
 	}
@@ -1553,8 +1589,8 @@ class mf_custom_login
 	{
 		$has_errors = false;
 
-		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{
+		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{*/
 			if(!isset($_POST['_hash_lost_password_send']) || $_POST['_hash_lost_password_send'] != $this->login_send_hash)
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
@@ -1577,7 +1613,7 @@ class mf_custom_login
 					.$_POST['_hash_lost_password_send']
 				.")");
 			}
-		}
+		//}
 
 		return array($has_errors, $errors);
 	}
@@ -1990,8 +2026,8 @@ class mf_custom_login
 			</p>";
 		}
 
-		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{
+		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{*/
 			echo "<div class='api_custom_login_nonce' rel='login'></div>";
 
 			if(get_option('setting_custom_login_debug') == 'yes')
@@ -2001,23 +2037,23 @@ class mf_custom_login
 					.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR'])." + ".date("Ymd")." -> ".$this->login_send_hash
 				.")");
 			}
-		}
+		//}
 	}
 
 	function register_form()
 	{
-		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{
+		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{*/
 			echo "<div class='api_custom_login_nonce' rel='registration'></div>";
-		}
+		//}
 	}
 
 	function lostpassword_form()
 	{
-		if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{
+		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
+		{*/
 			echo "<div class='api_custom_login_nonce' rel='lost_password'></div>";
-		}
+		//}
 	}
 
 	function wp_head()
