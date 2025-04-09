@@ -6,7 +6,7 @@ jQuery(function($)
 
 		$.ajax(
 		{
-			url: script_form.ajax_url,
+			url: script_custom_login.ajax_url,
 			type: 'post',
 			dataType: 'json',
 			data:

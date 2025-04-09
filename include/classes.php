@@ -492,7 +492,7 @@ class mf_custom_login
 
 					if($display_form == true)
 					{
-						echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
+						echo "<form method='post' action='' class='mf_form'>"
 							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true));
 
 							do_action('lostpassword_form');
@@ -1409,7 +1409,7 @@ class mf_custom_login
 		$plugin_include_url = plugin_dir_url(__FILE__);
 
 		mf_enqueue_style('style_custom_login', $plugin_include_url."style.php");
-		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js");
+		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
@@ -2512,8 +2512,6 @@ class widget_login_form extends WP_Widget
 			</form>
 			<p id='lost_password_link'><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
 
-			echo "Test: ".$redirect_to;
-
 			if(get_option('users_can_register'))
 			{
 				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
@@ -3069,7 +3067,7 @@ class widget_lost_password_form extends WP_Widget
 
 					if($display_form == true)
 					{
-						echo "<form method='post' action='' class='mf_form'>" //".esc_url(network_site_url('wp-login.php?action=lostpassword', 'login_post'))."
+						echo "<form method='post' action='' class='mf_form'>"
 							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true));
 
 							do_action('lostpassword_form');
