@@ -15,7 +15,7 @@ class mf_custom_login
 
 		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
 		{*/
-			$this->login_send_hash = md5((defined('NONCE_SALT') ? NONCE_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
+			$this->login_send_hash = md5((defined('AUTH_SALT') ? AUTH_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
 		//}
 	}
 
@@ -1839,7 +1839,7 @@ class mf_custom_login
 	function direct_link_url($data)
 	{
 		if(!isset($data['user_meta_exists'])){		$data['user_meta_exists'] = false;}
-		if(!isset($data['key'])){					$data['key'] = md5((defined('NONCE_SALT') ? NONCE_SALT : '').$data['user_data']->user_login.$data['user_data']->user_email);}
+		if(!isset($data['key'])){					$data['key'] = md5((defined('AUTH_SALT') ? AUTH_SALT : '').$data['user_data']->user_login.$data['user_data']->user_email);}
 		if(!isset($data['type'])){					$data['type'] = '';}
 
 		if($data['user_meta_exists'] == false)
@@ -2368,10 +2368,8 @@ class mf_custom_login
 		die();
 	}
 
-	function filter_cache_ignore($array)
+	/*function filter_cache_ignore($array)
 	{
-		//$site_url = get_site_url();
-
 		$arr_widget_search = array(
 			'login-widget',
 			'registration-widget',
@@ -2390,7 +2388,7 @@ class mf_custom_login
 		}
 
 		return $array;
-	}
+	}*/
 
 	function widgets_init()
 	{
