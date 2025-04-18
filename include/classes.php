@@ -2392,15 +2392,18 @@ class mf_custom_login
 
 	function widgets_init()
 	{
-		register_widget('widget_login_form');
-
-		if(get_option('users_can_register'))
+		if(wp_is_block_theme() == false)
 		{
-			register_widget('widget_registration_form');
-		}
+			register_widget('widget_login_form');
 
-		register_widget('widget_lost_password_form');
-		register_widget('widget_logged_in_info');
+			if(get_option('users_can_register'))
+			{
+				register_widget('widget_registration_form');
+			}
+
+			register_widget('widget_lost_password_form');
+			register_widget('widget_logged_in_info');
+		}
 	}
 }
 
