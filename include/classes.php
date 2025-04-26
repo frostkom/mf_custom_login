@@ -823,41 +823,47 @@ class mf_custom_login
 			}
 		}
 
-		if($has_login_widget == false && $has_registration_widget == false && $has_lost_password_post_widget == false)
+		if(wp_is_block_theme())
 		{
-			if(is_plugin_active("mf_theme_core/index.php"))
-			{
-				$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
-			}
-
-			else
-			{
-				delete_option('setting_custom_login_display_theme_logo');
-			}
-
-			if(get_option('setting_custom_login_display_theme_logo') != 'yes')
-			{
-				$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
-			}
-
-			else
-			{
-				delete_option('setting_custom_login_custom_logo');
-			}
-		}
-
-		if($has_login_widget)
-		{
-			//$arr_settings['setting_custom_login_wp_login_action'] = __("Action on Old Login Page", 'lang_login');
-
+			delete_option('setting_custom_login_display_theme_logo');
+			delete_option('setting_custom_login_custom_logo');
 			delete_option('setting_custom_login_page');
 		}
 
 		else
 		{
-			$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
+			if($has_login_widget == false && $has_registration_widget == false && $has_lost_password_post_widget == false)
+			{
+				if(is_plugin_active("mf_theme_core/index.php"))
+				{
+					$arr_settings['setting_custom_login_display_theme_logo'] = __("Display Theme Logo", 'lang_login');
+				}
 
-			//delete_option('setting_custom_login_wp_login_action');
+				else
+				{
+					delete_option('setting_custom_login_display_theme_logo');
+				}
+
+				if(get_option('setting_custom_login_display_theme_logo') != 'yes')
+				{
+					$arr_settings['setting_custom_login_custom_logo'] = __("Custom Logo", 'lang_login');
+				}
+
+				else
+				{
+					delete_option('setting_custom_login_custom_logo');
+				}
+			}
+
+			if($has_login_widget)
+			{
+				delete_option('setting_custom_login_page');
+			}
+
+			else
+			{
+				$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
+			}
 		}
 
 		if(is_plugin_active("mf_auth/index.php") == false || get_option('setting_auth_active') == 'no')
@@ -1005,7 +1011,7 @@ class mf_custom_login
 		$arr_settings = array();
 		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
-		if($has_lost_password_post_widget == false)
+		if(wp_is_block_theme() == false && $has_lost_password_post_widget == false)
 		{
 			$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
 			$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
@@ -1062,14 +1068,6 @@ class mf_custom_login
 
 			echo get_media_library(array('type' => 'image', 'name' => $setting_key, 'value' => $option));
 		}
-
-		/*function setting_custom_login_wp_login_action_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option($setting_key);
-
-			echo show_select(array('data' => $this->get_wp_login_action_for_select(), 'name' => $setting_key, 'value' => $option));
-		}*/
 
 		function setting_custom_login_page_callback()
 		{
@@ -1630,29 +1628,6 @@ class mf_custom_login
 
 	function login_init()
 	{
-		/*if(strpos($_SERVER['REQUEST_URI'], "wp-login.php"))
-		{
-			$setting_custom_login_wp_login_action = get_option('setting_custom_login_wp_login_action');
-
-			if($setting_custom_login_wp_login_action != '')
-			{
-				switch($setting_custom_login_wp_login_action)
-				{
-					case 301:
-						wp_redirect(wp_login_url()."?redirect_to=".$_SERVER['REQUEST_URI']);
-					break;
-
-					case 404:
-						$this->get_404_page();
-					break;
-
-					default:
-						do_log(__FUNCTION__.": Unknown action ".$setting_custom_login_wp_login_action);
-					break;
-				}
-			}
-		}*/
-
 		$action = check_var('action');
 
 		switch($action)
