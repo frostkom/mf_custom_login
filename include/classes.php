@@ -73,6 +73,92 @@ class mf_custom_login
 		$obj_cron->end();
 	}
 
+	function do_login($data = array())
+	{
+		$out = array(
+			'success' => false,
+		);
+
+		if(!isset($data['user_login'])){		$data['user_login'] = '';}
+		if(!isset($data['user_pass'])){			$data['user_pass'] = '';}
+		if(!isset($data['user_remember'])){		$data['user_remember'] = '';}
+		if(!isset($data['redirect_to'])){		$data['redirect_to'] = '';}
+
+		$data['user_login'] = strtolower($data['user_login']);
+
+		$secure_cookie = '';
+
+		if(get_option('setting_custom_login_debug') == 'yes')
+		{
+			echo "<p>".__("About to sign you in...", 'lang_login')."</p>";
+		}
+
+		if(apply_filters('filter_user_allowed_to_login', true, $data['user_login']) == true)
+		{
+			$user = wp_signon(array('user_login' => $data['user_login'], 'user_password' => $data['user_pass'], 'remember' => $data['user_remember']), $secure_cookie);
+
+			if(get_option('setting_custom_login_debug') == 'yes')
+			{
+				echo "<p>".__("Signed you in...", 'lang_login')."</p>";
+			}
+
+			if(!is_wp_error($user))
+			{
+				if(get_option('setting_custom_login_debug') == 'yes')
+				{
+					echo "<p>".__("No errors...", 'lang_login')."</p>";
+				}
+
+				$requested_redirect_to = check_var('redirect_to');
+
+				$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
+
+				if(empty($data['redirect_to']) || $data['redirect_to'] == 'wp-admin/' || $data['redirect_to'] == admin_url())
+				{
+					// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
+					if(is_multisite() && !get_active_blog_for_user($user->ID) && !is_super_admin($user->ID))
+					{
+						$data['redirect_to'] = user_admin_url();
+					}
+
+					else if(is_multisite() && !$user->has_cap('read'))
+					{
+						$data['redirect_to'] = get_dashboard_url($user->ID);
+					}
+
+					else if(!$user->has_cap('edit_posts'))
+					{
+						$data['redirect_to'] = ($user->has_cap('read') ? admin_url('profile.php') : home_url());
+					}
+				}
+
+				if(get_option('setting_custom_login_debug') == 'yes')
+				{
+					echo "<p>".sprintf(__("Redirect to %s...", 'lang_login'), $data['redirect_to'])."</p>";
+				}
+
+				$out['success'] = true;
+				$out['redirect'] = $data['redirect_to'];
+			}
+
+			else
+			{
+				foreach($user->errors as $error)
+				{
+					$out['error'] = $error[0];
+					break;
+				}
+			}
+		}
+
+		else
+		{
+			$out['error'] = __("You were not allowed to login", 'lang_login');
+		}
+
+		return $out;
+	}
+
 	function block_render_login_callback($attributes)
 	{
 		global $wpdb, $done_text, $error_text;
@@ -684,89 +770,6 @@ class mf_custom_login
 			//'style' => 'style_base_block_wp',
 		));
 		#######################
-	}
-
-	function do_login($data = array())
-	{
-		$out = array(
-			'success' => false,
-		);
-
-		if(!isset($data['user_login'])){		$data['user_login'] = '';}
-		if(!isset($data['user_pass'])){			$data['user_pass'] = '';}
-		if(!isset($data['user_remember'])){		$data['user_remember'] = '';}
-		if(!isset($data['redirect_to'])){		$data['redirect_to'] = '';}
-
-		$data['user_login'] = strtolower($data['user_login']);
-
-		$secure_cookie = '';
-
-		if(get_option('setting_custom_login_debug') == 'yes')
-		{
-			echo "<p>About to sign you in...</p>";
-		}
-
-		$user = wp_signon(array('user_login' => $data['user_login'], 'user_password' => $data['user_pass'], 'remember' => $data['user_remember']), $secure_cookie);
-
-		if(get_option('setting_custom_login_debug') == 'yes')
-		{
-			echo "<p>Signed you in...</p>";
-		}
-
-		if(!is_wp_error($user))
-		{
-			if(get_option('setting_custom_login_debug') == 'yes')
-			{
-				echo "<p>No errors...</p>";
-			}
-
-			$requested_redirect_to = check_var('redirect_to');
-
-			$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
-
-			if(empty($data['redirect_to']) || $data['redirect_to'] == 'wp-admin/' || $data['redirect_to'] == admin_url())
-			{
-				// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
-				if(is_multisite() && !get_active_blog_for_user($user->ID) && !is_super_admin($user->ID))
-				{
-					$data['redirect_to'] = user_admin_url();
-				}
-
-				else if(is_multisite() && !$user->has_cap('read'))
-				{
-					$data['redirect_to'] = get_dashboard_url($user->ID);
-				}
-
-				else if(!$user->has_cap('edit_posts'))
-				{
-					$data['redirect_to'] = $user->has_cap('read') ? admin_url('profile.php') : home_url();
-				}
-			}
-
-			if(get_option('setting_custom_login_debug') == 'yes')
-			{
-				echo "<p>Redirect to ".$data['redirect_to']."...</p>";
-			}
-
-			$out['success'] = true;
-			$out['redirect'] = $data['redirect_to'];
-		}
-
-		else
-		{
-			if(get_option('setting_custom_login_debug') == 'yes')
-			{
-				echo "<p>Errors...</p>";
-			}
-
-			foreach($user->errors as $error)
-			{
-				$out['error'] = $error[0];
-				break;
-			}
-		}
-
-		return $out;
 	}
 
 	function check_if_logged_in($data = array())
@@ -2465,34 +2468,18 @@ class widget_login_form extends WP_Widget
 
 					if(isset($_POST['btnSendLogin']))
 					{
-						/*$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
-						$setting_custom_login_limit_minutes = get_site_option_or_default('setting_custom_login_limit_minutes', 15);
+						$result = $obj_custom_login->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
 
-						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure'));
-						$login_failed_attempts = $wpdb->num_rows;
-
-						if($login_failed_attempts < $setting_custom_login_limit_attempts)
-						{*/
-							$result = $obj_custom_login->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
-
-							if($result['success'] == true)
-							{
-								mf_redirect($result['redirect']);
-							}
-
-							else
-							{
-								$error_text = $result['error'];
-
-								//$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
-							}
-						/*}
+						if($result['success'] == true)
+						{
+							mf_redirect($result['redirect']);
+						}
 
 						else
 						{
-							$error_text = sprintf(__("You have exceeded the limit of %d logins in the last %d minutes. Please try again later.", 'lang_login'), $setting_custom_login_limit_attempts, $setting_custom_login_limit_minutes);
-						}*/
-					}
+							$error_text = $result['error'];
+
+						}					}
 
 					else if(!isset($_GET['fl_builder']))
 					{
