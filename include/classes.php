@@ -399,7 +399,7 @@ class mf_custom_login
 						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true));
 					}
 
-					echo show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => get_placeholder_email(), 'required' => true));
+					echo show_textfield(array('type' => 'email', 'name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
 
 					if($attributes['registration_collect_name'] == 'yes' || in_array('full_name', $attributes['registration_fields']))
 					{
@@ -2740,7 +2740,7 @@ class widget_registration_form extends WP_Widget
 						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true));
 					}
 
-					echo show_textfield(array('name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'placeholder' => get_placeholder_email(), 'required' => true));
+					echo show_textfield(array('type' => 'email', 'name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
 
 					if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
 					{
