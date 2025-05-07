@@ -209,27 +209,21 @@ if(apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || (int)apply_filt
 
 if(apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || (int)apply_filters('get_widget_search', 'registration-widget') > 0)
 {
-	$out_media_all .= ".registration_form
+	$out_media_all .= ".registration_form .small
 	{
-		margin: 0 auto;
-		max-width: 400px;
+		font-size: .8em;
 	}
 
-		.registration_form .small
-		{
-			font-size: .8em;
-		}
+	.registration_form form button
+	{
+		width: 100%;
+	}
 
-		.registration_form form button
-		{
-			width: 100%;
-		}
-
-		.registration_form form p
-		{
-			margin-top: .5em;
-			text-align: center;
-		}";
+	.registration_form form p
+	{
+		margin-top: .5em;
+		text-align: center;
+	}";
 }
 
 if(apply_filters('get_block_search', 0, 'mf/customlost') > 0 || (int)apply_filters('get_widget_search', 'lost-password-widget') > 0)

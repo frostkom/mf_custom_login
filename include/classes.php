@@ -13,10 +13,7 @@ class mf_custom_login
 	{
 		$this->meta_prefix = $this->post_type.'_';
 
-		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{*/
-			$this->login_send_hash = md5((defined('AUTH_SALT') ? AUTH_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
-		//}
+		$this->login_send_hash = md5((defined('AUTH_SALT') ? AUTH_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
 	}
 
 	/*function get_wp_login_action_for_select()
@@ -259,7 +256,7 @@ class mf_custom_login
 
 			if(get_option('users_can_register'))
 			{
-				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
+				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register here", 'lang_login')."</a></p>";
 			}
 
 		echo "</div>";
@@ -445,20 +442,19 @@ class mf_custom_login
 					}
 
 					echo "<div".get_form_button_classes().">"
-						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
-					."</div>";
+						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register here", 'lang_login')))
+					."</div>
+				</form>";
 
-					if(is_user_logged_in())
-					{
-						echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
-					}
+				if(is_user_logged_in())
+				{
+					echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
+				}
 
-					else
-					{
-						echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
-					}
-
-				echo "</form>";
+				else
+				{
+					echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
+				}
 			}
 
 		echo "</div>";
@@ -914,17 +910,7 @@ class mf_custom_login
 			delete_option('setting_custom_login_allow_server_auth');
 		}
 
-		//$arr_settings['setting_custom_login_prevent_direct_access'] = __("Prevent Direct Access to Login, Registration etc.", 'lang_login');
-
-		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{*/
-			$arr_settings['setting_custom_login_debug'] = " - ".__("Debug", 'lang_login');
-		/*}
-
-		else
-		{
-			delete_option('setting_custom_login_debug');
-		}*/
+		$arr_settings['setting_custom_login_debug'] = " - ".__("Debug", 'lang_login');
 
 		//$arr_settings['setting_custom_login_limit_attempts'] = __("Limit Attempts", 'lang_login');
 		//$arr_settings['setting_custom_login_limit_minutes'] = __("Limit Minutes", 'lang_login');
@@ -1148,15 +1134,6 @@ class mf_custom_login
 
 			echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
 		}
-
-		/*function setting_custom_login_prevent_direct_access_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			settings_save_site_wide($setting_key);
-			$option = get_site_option($setting_key, get_option($setting_key, 'yes'));
-
-			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
-		}*/
 
 		/*function setting_custom_login_limit_attempts_callback()
 		{
@@ -1528,60 +1505,54 @@ class mf_custom_login
 
 	function wp_authenticate_user($user_data)
 	{
-		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{*/
-			if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != $this->login_send_hash)
+		if(!isset($_POST['_hash_login_send']) || $_POST['_hash_login_send'] != $this->login_send_hash)
+		{
+			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				if(get_option('setting_custom_login_debug') == 'yes')
-				{
-					do_log("Login FAILURE ("
-						.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-						.$this->login_send_hash." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
-					.")");
-				}
-
-				$user_data = new WP_Error('invalid_check', __("I could not let you login since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login')
-					." (".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "")." != ".$this->login_send_hash.")"
-				);
-			}
-
-			else if(get_option('setting_custom_login_debug') == 'yes')
-			{
-				do_log("Login Allowed ("
+				do_log("Login FAILURE ("
 					.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-					.$_POST['_hash_login_send']
+					.$this->login_send_hash." != ".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "not set")
 				.")");
 			}
-		//}
+
+			$user_data = new WP_Error('invalid_check', __("I could not let you login since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login')
+				." (".(isset($_POST['_hash_login_send']) ? $_POST['_hash_login_send'] : "")." != ".$this->login_send_hash.")"
+			);
+		}
+
+		else if(get_option('setting_custom_login_debug') == 'yes')
+		{
+			do_log("Login Allowed ("
+				.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+				.$_POST['_hash_login_send']
+			.")");
+		}
 
 		return $user_data;
 	}
 
 	function registration_errors($errors, $user_login, $user_email)
 	{
-		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{*/
-			if(!isset($_POST['_hash_registration_send']) || $_POST['_hash_registration_send'] != $this->login_send_hash)
+		if(!isset($_POST['_hash_registration_send']) || $_POST['_hash_registration_send'] != $this->login_send_hash)
+		{
+			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				if(get_option('setting_custom_login_debug') == 'yes')
-				{
-					do_log("Registration FAILURE ("
-						.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
-						.$_POST['_hash_registration_send']
-					.")");
-				}
-
-				$errors->add('invalid_check', __("I could not let you register since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login'));
-			}
-
-			else if(get_option('setting_custom_login_debug') == 'yes')
-			{
-				do_log("Registration Allowed ("
+				do_log("Registration FAILURE ("
 					.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
 					.$_POST['_hash_registration_send']
 				.")");
 			}
-		//}
+
+			$errors->add('invalid_check', __("I could not let you register since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login'));
+		}
+
+		else if(get_option('setting_custom_login_debug') == 'yes')
+		{
+			do_log("Registration Allowed ("
+				.$this->get_log_message_base(array('user_login' => $user_login, 'user_email' => $user_email))
+				.$_POST['_hash_registration_send']
+			.")");
+		}
 
 		return $errors;
 	}
@@ -1590,31 +1561,28 @@ class mf_custom_login
 	{
 		$has_errors = false;
 
-		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{*/
-			if(!isset($_POST['_hash_lost_password_send']) || $_POST['_hash_lost_password_send'] != $this->login_send_hash)
+		if(!isset($_POST['_hash_lost_password_send']) || $_POST['_hash_lost_password_send'] != $this->login_send_hash)
+		{
+			if(get_option('setting_custom_login_debug') == 'yes')
 			{
-				if(get_option('setting_custom_login_debug') == 'yes')
-				{
-					do_log("Lost Password FAILURE ("
-						.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
-						.$_POST['_hash_lost_password_send']
-					.")");
-				}
-
-				$errors->add('invalid_check', __("I could not let you request a news password since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login'));
-
-				$has_errors = true;
-			}
-
-			else if(get_option('setting_custom_login_debug') == 'yes')
-			{
-				do_log("Lost Password Allowed ("
+				do_log("Lost Password FAILURE ("
 					.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
 					.$_POST['_hash_lost_password_send']
 				.")");
 			}
-		//}
+
+			$errors->add('invalid_check', __("I could not let you request a news password since the request lacks information. If the problem persists, contact us and let us know what happened", 'lang_login'));
+
+			$has_errors = true;
+		}
+
+		else if(get_option('setting_custom_login_debug') == 'yes')
+		{
+			do_log("Lost Password Allowed ("
+				.$this->get_log_message_base(array('user_login' => $user_data->data->user_login, 'user_email' => $user_data->data->user_email))
+				.$_POST['_hash_lost_password_send']
+			.")");
+		}
 
 		return array($has_errors, $errors);
 	}
@@ -2004,34 +1972,25 @@ class mf_custom_login
 			</p>";
 		}
 
-		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{*/
-			echo "<div class='api_custom_login_nonce' rel='login'></div>";
+		echo "<div class='api_custom_login_nonce' rel='login'></div>";
 
-			if(get_option('setting_custom_login_debug') == 'yes')
-			{
-				do_log("Login SET ("
-					.$_SERVER['REQUEST_URI'].", "
-					.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR'])." + ".date("Ymd")." -> ".$this->login_send_hash
-				.")");
-			}
-		//}
+		if(get_option('setting_custom_login_debug') == 'yes')
+		{
+			do_log("Login SET ("
+				.$_SERVER['REQUEST_URI'].", "
+				.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR'])." + ".date("Ymd")." -> ".$this->login_send_hash
+			.")");
+		}
 	}
 
 	function register_form()
 	{
-		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{*/
-			echo "<div class='api_custom_login_nonce' rel='registration'></div>";
-		//}
+		echo "<div class='api_custom_login_nonce' rel='registration'></div>";
 	}
 
 	function lostpassword_form()
 	{
-		/*if(get_site_option('setting_custom_login_prevent_direct_access', 'yes') == 'yes')
-		{*/
-			echo "<div class='api_custom_login_nonce' rel='lost_password'></div>";
-		//}
+		echo "<div class='api_custom_login_nonce' rel='lost_password'></div>";
 	}
 
 	function wp_head()
@@ -2513,7 +2472,7 @@ class widget_login_form extends WP_Widget
 
 			if(get_option('users_can_register'))
 			{
-				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register", 'lang_login')."</a></p>";
+				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register here", 'lang_login')."</a></p>";
 			}
 
 		echo $after_widget;
@@ -2786,15 +2745,14 @@ class widget_registration_form extends WP_Widget
 					}
 
 					echo "<div".get_form_button_classes().">"
-						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register", 'lang_login')))
-					."</div>";
+						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register here", 'lang_login')))
+					."</div>
+				</form>";
 
-					if(is_user_logged_in() == false)
-					{
-						echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
-					}
-
-				echo "</form>";
+				if(is_user_logged_in() == false)
+				{
+					echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
+				}
 			}
 
 		echo $after_widget;
