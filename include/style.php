@@ -172,14 +172,14 @@ if($setting_custom_login_page > 0)
 ############################
 if(apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || (int)apply_filters('get_widget_search', 'login-widget') > 0)
 {
-	if(wp_is_block_theme() == false)
+	/*if(wp_is_block_theme() == false)
 	{
 		$out_media_all .= ".login_form
 		{
 			margin: 0 auto;
 			max-width: 400px;
 		}";
-	}
+	}*/
 
 		$out_media_all .= ".login_form form .flex_flow .form_button, .login_form form .flex_flow .wp-block-button
 		{
@@ -189,7 +189,7 @@ if(apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || (int)apply_filt
 			.login_form form .flex_flow .form_button button:last-of-type, .login_form form .flex_flow .wp-block-button button:last-of-type
 			{
 				margin-right: 0 !important;
-			}
+			}";
 
 		/* Has to be more specific to not screw up BankID */
 		/*.login_form form p
@@ -198,13 +198,13 @@ if(apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || (int)apply_filt
 			text-align: center;
 		}*/
 
-	.login_form + .widget_text
+	$out_media_all .= ".login_form + .widget_text
 	{
 		background: #f7f7f7;
 		margin: 0 auto;
-		padding: .2em .4em 0;
-		max-width: 400px;
-	}";
+		padding: .2em .4em 0;"
+		//."max-width: 400px;"
+	."}";
 }
 
 if(apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || (int)apply_filters('get_widget_search', 'registration-widget') > 0)
@@ -228,13 +228,13 @@ if(apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || (int)app
 
 if(apply_filters('get_block_search', 0, 'mf/customlost') > 0 || (int)apply_filters('get_widget_search', 'lost-password-widget') > 0)
 {
-	$out_media_all .= ".lost_password_form
+	/*$out_media_all .= ".lost_password_form
 	{
 		margin: 0 auto;
 		max-width: 400px;
-	}
+	}";*/
 
-		.lost_password_form form button
+		$out_media_all .= ".lost_password_form form button
 		{
 			width: 100%;
 		}
