@@ -1304,7 +1304,7 @@ class mf_custom_login
 	{
 		global $pagenow;
 
-		if(in_array($pagenow, array('user-edit.php', 'profile.php')) && IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
+		if(IS_ADMINISTRATOR && in_array($pagenow, array('user-edit.php', 'profile.php')) && get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
 			$plugin_include_url = plugin_dir_url(__FILE__);
 
