@@ -170,7 +170,12 @@ if($setting_custom_login_page > 0)
 
 // Widget Styles
 ############################
-if(apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || (int)apply_filters('get_widget_search', 'login-widget') > 0)
+if(!($obj_custom_login->login_id > 0))
+{
+	$obj_custom_login->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+}
+
+if($obj_custom_login->login_id > 0)
 {
 	/*if(wp_is_block_theme() == false)
 	{
@@ -207,7 +212,12 @@ if(apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || (int)apply_filt
 	."}";
 }
 
-if(apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || (int)apply_filters('get_widget_search', 'registration-widget') > 0)
+if(!($obj_custom_login->registration_id > 0))
+{
+	$obj_custom_login->registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
+}
+
+if($obj_custom_login->registration_id > 0)
 {
 	$out_media_all .= ".registration_form .small
 	{
@@ -226,27 +236,31 @@ if(apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || (int)app
 	}";
 }
 
-if(apply_filters('get_block_search', 0, 'mf/customlost') > 0 || (int)apply_filters('get_widget_search', 'lost-password-widget') > 0)
+if(!($obj_custom_login->lost_password_id > 0))
 {
-	/*$out_media_all .= ".lost_password_form
-	{
-		margin: 0 auto;
-		max-width: 400px;
-	}";*/
-
-		$out_media_all .= ".lost_password_form form button
-		{
-			width: 100%;
-		}
-
-		.lost_password_form form p
-		{
-			margin-top: .5em;
-			text-align: center;
-		}";
+	$obj_custom_login->lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
 }
 
-if(apply_filters('get_block_search', 0, 'mf/customloggedin') > 0 || (int)apply_filters('get_widget_search', 'logged-in-info-widget') > 0)
+if($obj_custom_login->lost_password_id > 0)
+{
+	$out_media_all .= ".lost_password_form form button
+	{
+		width: 100%;
+	}
+
+	.lost_password_form form p
+	{
+		margin-top: .5em;
+		text-align: center;
+	}";
+}
+
+if(!($obj_custom_login->logged_in_id > 0))
+{
+	$obj_custom_login->logged_in_id = apply_filters('get_block_search', 0, 'mf/customloggedin');
+}
+
+if($obj_custom_login->logged_in_id > 0)
 {
 	$out_media_all .= "header .logged_in_info > .section
 	{

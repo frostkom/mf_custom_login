@@ -9,6 +9,11 @@ class mf_custom_login
 	var $username;
 	var $auth;
 
+	var $login_id;
+	var $registration_id;
+	var $lost_password_id;
+	var $logged_in_id;
+
 	function __construct()
 	{
 		$this->meta_prefix = $this->post_type.'_';
@@ -805,10 +810,23 @@ class mf_custom_login
 		############################
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
-		$has_login_widget = (apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || (int)apply_filters('get_widget_search', 'login-widget') > 0);
+		if(!($this->login_id > 0))
+		{
+			$this->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+		}
+
+		if(!($this->registration_id > 0))
+		{
+			$this->registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
+		}
+
+		if(!($this->lost_password_id > 0))
+		{
+			$this->lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
+		}
+
 		$users_can_register = get_option('users_can_register');
-		$has_registration_widget = ($users_can_register ? (apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || (int)apply_filters('get_widget_search', 'registration-widget') > 0) : false);
-		$has_lost_password_post_widget = (apply_filters('get_block_search', 0, 'mf/customlost') > 0 || (int)apply_filters('get_widget_search', 'lost-password-widget') > 0);
+		$has_registration_widget = ($users_can_register ? ($this->registration_id > 0) : false);
 
 		$arr_settings = array();
 
@@ -831,7 +849,7 @@ class mf_custom_login
 
 		else
 		{
-			if($has_login_widget == false && $has_registration_widget == false && $has_lost_password_post_widget == false)
+			if(!($this->login_id > 0) && $has_registration_widget == false && !($this->lost_password_id > 0))
 			{
 				if(is_plugin_active("mf_theme_core/index.php"))
 				{
@@ -854,7 +872,7 @@ class mf_custom_login
 				}
 			}
 
-			if($has_login_widget)
+			if($this->login_id > 0)
 			{
 				delete_option('setting_custom_login_page');
 			}
@@ -1000,7 +1018,7 @@ class mf_custom_login
 		$arr_settings = array();
 		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
-		if(wp_is_block_theme() == false && $has_lost_password_post_widget == false)
+		if(wp_is_block_theme() == false && !($this->lost_password_id > 0))
 		{
 			$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
 			$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
@@ -1126,7 +1144,7 @@ class mf_custom_login
 			{
 				$tags[] = "[direct_link]";
 
-				if(apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || (int)apply_filters('get_widget_search', 'registration-widget') > 0)
+				if(apply_filters('get_block_search', 0, 'mf/customregistration') > 0)
 				{
 					$tags[] = "[direct_registration_link]";
 				}
@@ -1206,7 +1224,7 @@ class mf_custom_login
 
 			if($option == 1)
 			{
-				if(!(apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || (int)apply_filters('get_widget_search', 'registration-widget') > 0))
+				if(!(apply_filters('get_block_search', 0, 'mf/customregistration') > 0))
 				{
 					echo "<p class='display_warning'>"
 						."<i class='fa fa-exclamation-triangle yellow'></i> "
@@ -1616,11 +1634,6 @@ class mf_custom_login
 
 					wp_redirect($this->get_login_redirect($redirect_to, $user_data));
 				}
-
-				/*else if(strpos($_SERVER['REQUEST_URI'], "wp-login.php") && apply_filters('get_block_search', 0, 'mf/customlogin') > 0)
-				{
-					wp_redirect(wp_login_url()."?redirect_to=".$_SERVER['REQUEST_URI']);
-				}*/
 			break;
 		}
 
@@ -1869,16 +1882,14 @@ class mf_custom_login
 
 			if(isset($user_data->roles) && in_array('administrator', $user_data->roles))
 			{
-				$registration_post_id = apply_filters('get_block_search', 0, 'mf/customregistration');
-
-				if(!($registration_post_id > 0))
+				if(!($this->registration_id > 0))
 				{
-					$registration_post_id = (int)apply_filters('get_widget_search', 'registration-widget');
+					$this->registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
 				}
 
-				if($registration_post_id > 0)
+				if($this->registration_id > 0)
 				{
-					$registration_post_url = get_permalink($registration_post_id);
+					$registration_post_url = get_permalink($this->registration_id);
 					$registration_post_url = str_replace(get_site_url(), "", $registration_post_url);
 
 					$direct_registration_link = $direct_link.(strpos($direct_link, "?") ? "&" : "?")."redirect_to=".$registration_post_url;
@@ -2022,7 +2033,22 @@ class mf_custom_login
 
 		if(isset($post) && isset($post->ID) && $post->ID > 0)
 		{
-			if(apply_filters('get_block_search', 0, 'mf/customlogin') > 0 || apply_filters('get_block_search', 0, 'mf/customregistration') > 0 || apply_filters('get_block_search', 0, 'mf/customlost') > 0 || (int)apply_filters('get_widget_search', 'login-widget') == $post->ID || (int)apply_filters('get_widget_search', 'registration-widget') == $post->ID || (int)apply_filters('get_widget_search', 'lost-password-widget') == $post->ID)
+			if(!($this->login_id > 0))
+			{
+				$this->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+			}
+
+			if(!($this->registration_id > 0))
+			{
+				$this->registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
+			}
+
+			if(!($this->lost_password_id > 0))
+			{
+				$this->lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
+			}
+
+			if($this->login_id == $post->ID || $this->registration_id == $post->ID || $this->lost_password_id == $post->ID)
 			{
 				$classes[] = "is_login_page";
 			}
@@ -2036,7 +2062,7 @@ class mf_custom_login
 		$site_url = get_site_url();
 		@list($request_uri, $rest) = explode("?", $_SERVER['REQUEST_URI'], 2);
 
-		$arr_widget_search = array('login-widget', 'registration-widget', 'lost-password-widget');
+		/*$arr_widget_search = array('login-widget', 'registration-widget', 'lost-password-widget');
 
 		foreach($arr_widget_search as $widget_key)
 		{
@@ -2052,6 +2078,21 @@ class mf_custom_login
 					}
 				}
 			}
+		}*/
+
+		$arr_block_search = array('mf/customlogin', 'mf/customregistration', 'mf/customlost');
+
+		foreach($arr_block_search as $block_key)
+		{
+			if($out == true)
+			{
+				$post_id = apply_filters('get_block_search', 0, $block_key);
+
+				if($post_id > 0 && str_replace($site_url, "", get_permalink($post_id)) == $request_uri)
+				{
+					$out = false;
+				}
+			}
 		}
 
 		return $out;
@@ -2059,22 +2100,23 @@ class mf_custom_login
 
 	function login_url($url)
 	{
-		$post_id = apply_filters('get_block_search', 0, 'mf/customlogin');
-
-		if(!($post_id > 0))
+		if(strpos($url, "?") !== false)
 		{
-			$post_id = (int)apply_filters('get_widget_search', 'login-widget');
-		}
-
-		if($post_id > 0)
-		{
-			@list($url_old, $query_string) = explode("?", $url);
-
-			$url = get_permalink($post_id);
-
-			if($query_string != '')
+			if(!($this->login_id > 0))
 			{
-				$url .= (strpos($query_string, "?") ? "&" : "?").$query_string;
+				$this->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+			}
+
+			if($this->login_id > 0)
+			{
+				@list($url_old, $query_string) = explode("?", $url);
+
+				$url = get_permalink($this->login_id);
+
+				if($query_string != '')
+				{
+					$url .= (strpos($query_string, "?") ? "&" : "?").$query_string;
+				}
 			}
 		}
 
@@ -2102,11 +2144,6 @@ class mf_custom_login
 		{
 			$post_id = apply_filters('get_block_search', 0, 'mf/customregistration');
 
-			if(!($post_id > 0))
-			{
-				$post_id = (int)apply_filters('get_widget_search', 'registration-widget');
-			}
-
 			if($post_id > 0)
 			{
 				$url = get_permalink($post_id);
@@ -2120,11 +2157,6 @@ class mf_custom_login
 	{
 		$post_id = apply_filters('get_block_search', 0, 'mf/customlost');
 
-		if(!($post_id > 0))
-		{
-			$post_id = (int)apply_filters('get_widget_search', 'lost-password-widget');
-		}
-
 		if($post_id > 0)
 		{
 			$url = get_permalink($post_id);
@@ -2135,16 +2167,14 @@ class mf_custom_login
 
 	function logout_url($url)
 	{
-		$post_id = apply_filters('get_block_search', 0, 'mf/customlogin');
-
-		if(!($post_id > 0))
+		if(!($this->login_id > 0))
 		{
-			$post_id = (int)apply_filters('get_widget_search', 'login-widget');
+			$this->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
 		}
 
-		if($post_id > 0)
+		if($this->login_id > 0)
 		{
-			$url = wp_nonce_url(get_permalink($post_id)."?action=logout", 'log-out');
+			$url = wp_nonce_url(get_permalink($this->login_id)."?action=logout", 'log-out');
 		}
 
 		return $url;
@@ -2304,28 +2334,6 @@ class mf_custom_login
 		echo json_encode($json_output);
 		die();
 	}
-
-	/*function filter_cache_ignore($array)
-	{
-		$arr_widget_search = array(
-			'login-widget',
-			'registration-widget',
-			'lost-password-widget',
-		);
-
-		foreach($arr_widget_search as $widget_key)
-		{
-			$post_id = (int)apply_filters('get_widget_search', $widget_key);
-
-			if($post_id > 0)
-			{
-				//$array[] = str_replace($site_url, "", rtrim(get_permalink($post_id), "/"));
-				$array[] = "/".mf_get_post_content($post_id, 'post_name')."/";
-			}
-		}
-
-		return $array;
-	}*/
 
 	function widgets_init()
 	{
