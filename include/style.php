@@ -170,6 +170,11 @@ if($setting_custom_login_page > 0)
 
 // Widget Styles
 ############################
+if(!isset($obj_custom_login))
+{
+	$obj_custom_login = new mf_custom_login();
+}
+
 if(!($obj_custom_login->login_id > 0))
 {
 	$obj_custom_login->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');

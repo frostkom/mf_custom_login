@@ -165,6 +165,8 @@ class mf_custom_login
 	{
 		global $wpdb, $done_text, $error_text;
 
+		$this->combined_head();
+
 		ob_start();
 
 		$action = check_var('action');
@@ -279,6 +281,8 @@ class mf_custom_login
 		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = '';}
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
 		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = array();}
+
+		$this->combined_head();
 
 		ob_start();
 
@@ -474,6 +478,8 @@ class mf_custom_login
 	{
 		global $done_text, $error_text;
 
+		$this->combined_head();
+
 		ob_start();
 
 		$action = check_var('action');
@@ -628,6 +634,8 @@ class mf_custom_login
 
 		if(is_user_logged_in())
 		{
+			$this->combined_head();
+
 			echo "<div".parse_block_attributes(array('class' => "widget login_form logged_in_info", 'attributes' => $attributes)).">
 				<div class='section'>";
 
@@ -2006,8 +2014,6 @@ class mf_custom_login
 
 	function wp_head()
 	{
-		$this->combined_head();
-
 		if(!is_user_logged_in())
 		{
 			if(get_option('setting_maintenance_page') > 0)
