@@ -474,6 +474,72 @@ class mf_custom_login
 		return $out;
 	}
 
+	function retrieve_password($login)
+	{
+		$errors = new WP_Error();
+
+		$user_data = get_user_by((strpos($login, '@') ? 'email' : 'login'), $login);
+
+		if(!isset($user_data->user_login))
+		{
+			$errors->add('invalidcombo', __("Invalid Username or E-mail", 'lang_login'));
+
+			return $errors;
+		}
+
+		else
+		{
+			list($has_errors, $errors) = $this->lostpassword_post($errors, $user_data);
+
+			if($has_errors)
+			{
+				return $errors;
+			}
+
+			else
+			{
+				$user_login = $user_data->user_login;
+				$user_email = $user_data->user_email;
+				$key = get_password_reset_key($user_data);
+
+				if(is_wp_error($key))
+				{
+					return $key;
+				}
+
+				else
+				{
+					$title = sprintf(__("%s Password Reset", 'lang_login'), "[site_name]");
+					$title = apply_filters('retrieve_password_title', $title, $user_login, $user_data);
+
+					$lost_password_link = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
+
+					$message = "<p>"
+						.__("Someone has requested a password reset for the following account", 'lang_login').":<br>"
+						.__("Username", 'lang_login').": ".$user_login
+					."</p>
+					<p>".__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."</p>
+					<p>"
+						.__("To reset your password, visit the following address").":<br>"
+						."<a href='".$lost_password_link."'>".$lost_password_link."</a>
+					</p>";
+
+					$message = apply_filters('retrieve_password_message', $message, $key, $user_login, $user_data);
+
+					if(send_email(array('to' => $user_email, 'subject' => wp_specialchars_decode($title), 'content' => $message)))
+					{
+						return true;
+					}
+
+					else
+					{
+						wp_die(__("The email could not be sent.", 'lang_login')."<br>\n".__("Possible reason: your host may have disabled the mail() function.", 'lang_login'));
+					}
+				}
+			}
+		}
+	}
+
 	function block_render_lost_callback($attributes)
 	{
 		global $done_text, $error_text;
@@ -2826,72 +2892,6 @@ class widget_lost_password_form extends WP_Widget
 		parent::__construct('lost-password-widget', __("Lost Password Form", 'lang_login'), $this->widget_ops);
 	}
 
-	function retrieve_password($login)
-	{
-		$errors = new WP_Error();
-
-		$user_data = get_user_by((strpos($login, '@') ? 'email' : 'login'), $login);
-
-		if(!isset($user_data->user_login))
-		{
-			$errors->add('invalidcombo', __("Invalid Username or E-mail", 'lang_login'));
-
-			return $errors;
-		}
-
-		else
-		{
-			list($has_errors, $errors) = $this->obj_custom_login->lostpassword_post($errors, $user_data);
-
-			if($has_errors)
-			{
-				return $errors;
-			}
-
-			else
-			{
-				$user_login = $user_data->user_login;
-				$user_email = $user_data->user_email;
-				$key = get_password_reset_key($user_data);
-
-				if(is_wp_error($key))
-				{
-					return $key;
-				}
-
-				else
-				{
-					$title = sprintf(__("%s Password Reset", 'lang_login'), "[site_name]");
-					$title = apply_filters('retrieve_password_title', $title, $user_login, $user_data);
-
-					$lost_password_link = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
-
-					$message = "<p>"
-						.__("Someone has requested a password reset for the following account", 'lang_login').":<br>"
-						.__("Username", 'lang_login').": ".$user_login
-					."</p>
-					<p>".__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."</p>
-					<p>"
-						.__("To reset your password, visit the following address").":<br>"
-						."<a href='".$lost_password_link."'>".$lost_password_link."</a>
-					</p>";
-
-					$message = apply_filters('retrieve_password_message', $message, $key, $user_login, $user_data);
-
-					if(send_email(array('to' => $user_email, 'subject' => wp_specialchars_decode($title), 'content' => $message)))
-					{
-						return true;
-					}
-
-					else
-					{
-						wp_die(__("The email could not be sent.", 'lang_login')."<br>\n".__("Possible reason: your host may have disabled the mail() function.", 'lang_login'));
-					}
-				}
-			}
-		}
-	}
-
 	function widget($args, $instance)
 	{
 		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
@@ -3005,7 +3005,7 @@ class widget_lost_password_form extends WP_Widget
 						{
 							$user_login = strtolower($user_login);
 
-							$errors = $this->retrieve_password($user_login);
+							$errors = $obj_custom_login->retrieve_password($user_login);
 
 							if(is_wp_error($errors))
 							{
