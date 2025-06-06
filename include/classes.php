@@ -21,15 +21,6 @@ class mf_custom_login
 		$this->login_send_hash = md5((defined('AUTH_SALT') ? AUTH_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
 	}
 
-	/*function get_wp_login_action_for_select()
-	{
-		return array(
-			'' => "-- ".__("Choose Here", 'lang_login')." --",
-			'301' => __("Redirect to New Page", 'lang_login'),
-			'404' => __("Return Error", 'lang_login'),
-		);
-	}*/
-
 	function cron_base()
 	{
 		global $wpdb;
@@ -235,7 +226,7 @@ class mf_custom_login
 				break;
 			}
 
-			echo "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
+			echo "<form method='post' action='?login' id='loginform' class='mf_form'>" //".wp_login_url()."
 				.get_notification(array('add_container' => true))
 				.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true)) // log -> user_login
 				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)); // pwd -> user_pass
@@ -867,13 +858,6 @@ class mf_custom_login
 				$done_text = sprintf(__("You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?", 'lang_login'), $user_data->user_login, "<a href='".admin_url()."'>", "</a>", "<a href='".wp_logout_url()."'>", "</a>");
 			}
 		}
-	}
-
-	function site_transient_update_plugins($arr_plugins)
-	{
-		unset($arr_plugins->response['wp-smushit/wp-smush.php']);
-
-		return $arr_plugins;
 	}
 
 	function settings_custom_login()
