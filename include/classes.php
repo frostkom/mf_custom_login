@@ -66,7 +66,7 @@ class mf_custom_login
 		$obj_cron->end();
 	}
 
-	function do_login($data = array())
+	function do_login($data = [])
 	{
 		$out = array(
 			'success' => false,
@@ -271,7 +271,7 @@ class mf_custom_login
 
 		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = '';}
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
-		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = array();}
+		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = [];}
 
 		$this->combined_head();
 
@@ -750,7 +750,7 @@ class mf_custom_login
 
 	function get_roles_for_select()
 	{
-		$arr_data = array();
+		$arr_data = [];
 		$arr_data[''] = "-- ".__("All", 'lang_login')." --";
 
 		$arr_data = get_roles_for_select(array('array' => $arr_data, 'add_choose_here' => false));
@@ -838,7 +838,7 @@ class mf_custom_login
 		#######################
 	}
 
-	function check_if_logged_in($data = array())
+	function check_if_logged_in($data = [])
 	{
 		global $error_text;
 
@@ -886,7 +886,7 @@ class mf_custom_login
 		$users_can_register = get_option('users_can_register');
 		$has_registration_widget = ($users_can_register ? ($this->registration_id > 0) : false);
 
-		$arr_settings = array();
+		$arr_settings = [];
 
 		if(get_option('blog_public') == 0 || get_option('setting_no_public_pages') == 'yes' || get_option('setting_theme_core_login') == 'yes')
 		{
@@ -1012,7 +1012,7 @@ class mf_custom_login
 
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
-		$arr_settings = array();
+		$arr_settings = [];
 
 		if(is_multisite())
 		{
@@ -1073,7 +1073,7 @@ class mf_custom_login
 
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
-		$arr_settings = array();
+		$arr_settings = [];
 		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
 		if(wp_is_block_theme() == false && !($this->lost_password_id > 0))
@@ -1139,7 +1139,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
-			$arr_data = array();
+			$arr_data = [];
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
@@ -1234,7 +1234,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
-			$arr_data = array();
+			$arr_data = [];
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option))));
@@ -1305,7 +1305,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
-			$arr_data = array();
+			$arr_data = [];
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the register screen", 'lang_login')));
@@ -1359,7 +1359,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
-			$arr_data = array();
+			$arr_data = [];
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the lost password screen", 'lang_login')));
@@ -1370,7 +1370,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
-			$arr_data = array();
+			$arr_data = [];
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
@@ -1447,7 +1447,7 @@ class mf_custom_login
 		return $post_states;
 	}
 
-	function user_row_actions($actions, $user)
+	function user_row_actions($arr_actions, $user)
 	{
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && current_user_can('edit_user') && isset($user->roles[0]) && $user->roles[0] != '')
 		{
@@ -1455,11 +1455,11 @@ class mf_custom_login
 
 			if($meta_login_auth != '')
 			{
-				$actions['direct_link'] = "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user, 'type' => 'users'))."'>".__("Direct Link", 'lang_login')."</a>";
+				$arr_actions['direct_link'] = "<a href='".$this->direct_link_url(array('key' => $meta_login_auth, 'user_meta_exists' => true, 'user_data' => $user, 'type' => 'users'))."'>".__("Direct Link", 'lang_login')."</a>";
 			}
 		}
 
-		return $actions;
+		return $arr_actions;
 	}
 
 	function edit_user_profile($user)
@@ -1555,8 +1555,8 @@ class mf_custom_login
 
 		if($setting_custom_login_redirect_after_login_page > 0)
 		{
-			$setting_custom_login_redirect_after_login = get_option_or_default('setting_custom_login_redirect_after_login', array());
-			$setting_fea_redirect_after_login = get_option_or_default('setting_fea_redirect_after_login', array());
+			$setting_custom_login_redirect_after_login = get_option_or_default('setting_custom_login_redirect_after_login', []);
+			$setting_fea_redirect_after_login = get_option_or_default('setting_fea_redirect_after_login', []);
 
 			if(count($setting_custom_login_redirect_after_login) == 0 || isset($user_data->roles) && is_array($user_data->roles) && count(array_intersect($setting_fea_redirect_after_login, $user_data->roles)) > 0)
 			{
@@ -1918,7 +1918,7 @@ class mf_custom_login
 		$lost_password_url = wp_lostpassword_url();
 		$confirm_link_action = "action=rp&key=".$this->get_registration_key($user_data)."&login=".rawurlencode($user_data->user_login);
 
-		$exclude = $include = array();
+		$exclude = $include = [];
 		$exclude[] = "[user_login]";		$include[] = $user_data->user_login;
 		$exclude[] = "[first_name]";		$include[] = $user_data->first_name;
 		$exclude[] = "[username]";			$include[] = $user_data->display_name;
@@ -2577,7 +2577,7 @@ class widget_registration_form extends WP_Widget
 		'registration_heading' => '',
 		'registration_who_can' => '',
 		'registration_collect_name' => 'no',
-		'registration_fields' => array(), //'username'
+		'registration_fields' => [], //'username'
 	);
 
 	function __construct()
@@ -2594,7 +2594,7 @@ class widget_registration_form extends WP_Widget
 
 	function get_roles_for_select()
 	{
-		$arr_data = array();
+		$arr_data = [];
 		$arr_data[''] = "-- ".__("All", 'lang_login')." --";
 
 		$arr_data = get_roles_for_select(array('array' => $arr_data, 'add_choose_here' => false));
@@ -2831,7 +2831,7 @@ class widget_registration_form extends WP_Widget
 		$instance['registration_heading'] = sanitize_text_field($new_instance['registration_heading']);
 		$instance['registration_who_can'] = sanitize_text_field($new_instance['registration_who_can']);
 		$instance['registration_collect_name'] = sanitize_text_field($new_instance['registration_collect_name']);
-		$instance['registration_fields'] = (is_array($new_instance['registration_fields']) ? $new_instance['registration_fields'] : array());
+		$instance['registration_fields'] = (is_array($new_instance['registration_fields']) ? $new_instance['registration_fields'] : []);
 
 		return $instance;
 	}
@@ -3066,7 +3066,7 @@ class widget_logged_in_info extends WP_Widget
 	var $obj_custom_login;
 	var $widget_ops;
 	var $arr_default = array(
-		'logged_in_info_display' => array(),
+		'logged_in_info_display' => [],
 	);
 
 	function __construct()
@@ -3159,7 +3159,7 @@ class widget_logged_in_info extends WP_Widget
 		$instance = $old_instance;
 		$new_instance = wp_parse_args((array)$new_instance, $this->arr_default);
 
-		$instance['logged_in_info_display'] = is_array($new_instance['logged_in_info_display']) ? $new_instance['logged_in_info_display'] : array();
+		$instance['logged_in_info_display'] = is_array($new_instance['logged_in_info_display']) ? $new_instance['logged_in_info_display'] : [];
 
 		return $instance;
 	}

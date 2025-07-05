@@ -14,7 +14,7 @@ if(!isset($obj_custom_login))
 	$obj_custom_login = new mf_custom_login();
 }
 
-$json_output = array();
+$json_output = [];
 
 $action = check_var('action', 'char');
 
