@@ -738,8 +738,8 @@ class mf_custom_login
 						</div>";
 					}
 
-				echo "</div>"
-			.$after_widget;
+				echo "</div>
+			</div>";
 		}
 
 		$out = ob_get_contents();
