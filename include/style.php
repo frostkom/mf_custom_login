@@ -305,6 +305,7 @@ if($obj_custom_login->logged_in_id > 0)
 		{
 			border: .2em solid #ccc;
 			border-radius: 50%;
+			display: block;
 			height: 6em;
 			overflow: hidden;
 			width: 6em;

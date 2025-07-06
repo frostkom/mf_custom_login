@@ -731,11 +731,9 @@ class mf_custom_login
 
 					if(count($attributes['logged_in_info_display']) == 0 || in_array('image', $attributes['logged_in_info_display']))
 					{
-						echo "<div>
-							<div class='logged_in_avatar'>"
-								.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), get_user_info()))
-							."</div>
-						</div>";
+						echo "<a href='".get_edit_profile_url()."' class='logged_in_avatar'>"
+							.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), get_user_info()))
+						."</a>";
 					}
 
 				echo "</div>
@@ -2118,24 +2116,6 @@ class mf_custom_login
 		$site_url = get_site_url();
 		@list($request_uri, $rest) = explode("?", $_SERVER['REQUEST_URI'], 2);
 
-		/*$arr_widget_search = array('login-widget', 'registration-widget', 'lost-password-widget');
-
-		foreach($arr_widget_search as $widget_key)
-		{
-			if($out == true)
-			{
-				$post_id = (int)apply_filters('get_widget_search', $widget_key);
-
-				if($post_id > 0)
-				{
-					if(str_replace($site_url, "", get_permalink($post_id)) == $request_uri)
-					{
-						$out = false;
-					}
-				}
-			}
-		}*/
-
 		$arr_block_search = array('mf/customlogin', 'mf/customregistration', 'mf/customlost');
 
 		foreach($arr_block_search as $block_key)
@@ -3097,61 +3077,6 @@ class widget_logged_in_info extends WP_Widget
 	function widget($args, $instance)
 	{
 		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
-
-		extract($args);
-		$instance = wp_parse_args((array)$instance, $this->arr_default);
-
-		if(is_user_logged_in())
-		{
-			echo apply_filters('filter_before_widget', $before_widget);
-
-				echo "<div class='logged_in_info section'>";
-
-					if(count($instance['logged_in_info_display']) == 0 || in_array('name', $instance['logged_in_info_display']) || in_array('profile', $instance['logged_in_info_display']) || in_array('logout', $instance['logged_in_info_display']))
-					{
-						echo "<ul>";
-
-							if(count($instance['logged_in_info_display']) == 0 || in_array('name', $instance['logged_in_info_display']))
-							{
-								echo "<li>"
-									.get_user_info();
-
-									if(in_array('role', $instance['logged_in_info_display']))
-									{
-										$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
-										$user_role = get_current_user_role(get_current_user_id());
-
-										echo " (".$arr_roles[$user_role].")";
-									}
-
-								echo "</li>";
-							}
-
-							if(count($instance['logged_in_info_display']) == 0 || in_array('profile', $instance['logged_in_info_display']))
-							{
-								echo "<li><a href='".get_edit_profile_url()."'>".__("Your Profile", 'lang_login')."</a></li>";
-							}
-
-							if(count($instance['logged_in_info_display']) == 0 || in_array('logout', $instance['logged_in_info_display']))
-							{
-								echo "<li><a href='".wp_logout_url()."'>".__("Log Out", 'lang_login')."</a></li>";
-							}
-
-						echo "</ul>";
-					}
-
-					if(count($instance['logged_in_info_display']) == 0 || in_array('image', $instance['logged_in_info_display']))
-					{
-						echo "<div>
-							<div class='logged_in_avatar'>"
-								.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), get_user_info()))
-							."</div>
-						</div>";
-					}
-
-				echo "</div>"
-			.$after_widget;
-		}
 	}
 
 	function update($new_instance, $old_instance)
