@@ -1382,7 +1382,10 @@ class mf_custom_login
 		{
 			$plugin_include_url = plugin_dir_url(__FILE__);
 
-			mf_enqueue_script('script_login_profile', $plugin_include_url."script_profile.js", array('ajax_url' => admin_url('admin-ajax.php')));
+			mf_enqueue_script('script_login_profile', $plugin_include_url."script_profile.js", array(
+				'ajax_url' => admin_url('admin-ajax.php'),
+				'loading_animation' => apply_filters('get_loading_animation', ''),
+			));
 		}
 	}
 
