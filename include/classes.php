@@ -778,10 +778,8 @@ class mf_custom_login
 		return $arr_data;
 	}
 
-	function init()
+	function enqueue_block_editor_assets()
 	{
-		// Blocks
-		#######################
 		$plugin_include_url = plugin_dir_url(__FILE__);
 		$plugin_version = get_plugin_version(__FILE__);
 
@@ -805,7 +803,10 @@ class mf_custom_login
 			'logged_in_info_display_label' => __("List", 'lang_login'),
 			'logged_in_info_display' => $this->get_user_info_for_select(),
 		));
+	}
 
+	function init()
+	{
 		register_block_type('mf/customlogin', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
@@ -833,7 +834,6 @@ class mf_custom_login
 			'render_callback' => array($this, 'block_render_loggedin_callback'),
 			//'style' => 'style_base_block_wp',
 		));
-		#######################
 	}
 
 	function check_if_logged_in($data = [])
