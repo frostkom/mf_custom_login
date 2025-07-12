@@ -18,7 +18,7 @@ class mf_custom_login
 	{
 		$this->meta_prefix = $this->post_type.'_';
 
-		$this->login_send_hash = md5((defined('AUTH_SALT') ? AUTH_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']).'_'.date("Ymd"));
+		$this->login_send_hash = md5((defined('AUTH_SALT') ? AUTH_SALT : '').'login_send_'.apply_filters('get_current_visitor_ip', "").'_'.date("Ymd"));
 	}
 
 	function cron_base()
@@ -188,7 +188,7 @@ class mf_custom_login
 						/*$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
 						$setting_custom_login_limit_minutes = get_site_option_or_default('setting_custom_login_limit_minutes', 15);
 
-						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure'));
+						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", apply_filters('get_current_visitor_ip', ""), 'failure'));
 						$login_failed_attempts = $wpdb->num_rows;
 
 						if($login_failed_attempts < $setting_custom_login_limit_attempts)
@@ -214,7 +214,7 @@ class mf_custom_login
 							{
 								$error_text = $result['error'];
 
-								//$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR']), 'failure', $user_login));
+								//$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', ""), 'failure', $user_login));
 							}
 						/*}
 
@@ -1577,7 +1577,7 @@ class mf_custom_login
 	{
 		return ($data['user_login'] != '' ? $data['user_login'] : $data['user_email'])
 			.", ".$_SERVER['REQUEST_URI']
-			.", ".apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR'])." + ".date("Ymd")." -> ";
+			.", ".apply_filters('get_current_visitor_ip', "")." + ".date("Ymd")." -> ";
 	}
 
 	function wp_authenticate_user($user_data)
@@ -2048,7 +2048,7 @@ class mf_custom_login
 		{
 			do_log("Login SET ("
 				.$_SERVER['REQUEST_URI'].", "
-				.apply_filters('get_current_visitor_ip', $_SERVER['REMOTE_ADDR'])." + ".date("Ymd")." -> ".$this->login_send_hash
+				.apply_filters('get_current_visitor_ip', "")." + ".date("Ymd")." -> ".$this->login_send_hash
 			.")");
 		}
 	}
