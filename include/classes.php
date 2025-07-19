@@ -886,7 +886,7 @@ class mf_custom_login
 
 		$arr_settings = [];
 
-		if(get_option('blog_public') == 0 || get_option('setting_no_public_pages') == 'yes' || get_option('setting_theme_core_login') == 'yes')
+		/*if(get_option('blog_public') == 0 || get_option('setting_no_public_pages') == 'yes' || get_option('setting_theme_core_login') == 'yes')
 		{
 			$arr_settings['setting_no_public_pages'] = __("Always redirect visitors to the login page", 'lang_login');
 
@@ -894,7 +894,7 @@ class mf_custom_login
 			{
 				$arr_settings['setting_theme_core_login'] = __("Require login for public site", 'lang_login');
 			}
-		}
+		}*/
 
 		if(wp_is_block_theme())
 		{
@@ -1062,7 +1062,10 @@ class mf_custom_login
 			delete_option('setting_custom_login_email_registration');
 		}
 
-		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
+		if(count($arr_settings) > 0)
+		{
+			show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
+		}
 		############################
 
 		// Password
@@ -1100,7 +1103,7 @@ class mf_custom_login
 		echo settings_header($setting_key, __("Login", 'lang_login'));
 	}
 
-		function setting_no_public_pages_callback()
+		/*function setting_no_public_pages_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option_or_default($setting_key, 'no');
@@ -1114,7 +1117,7 @@ class mf_custom_login
 			$option = get_option_or_default($setting_key, 'no');
 
 			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
-		}
+		}*/
 
 		function setting_custom_login_display_theme_logo_callback()
 		{
@@ -1391,7 +1394,7 @@ class mf_custom_login
 
 	function filter_sites_table_settings($arr_settings)
 	{
-		$arr_settings['settings_theme_core'] = array(
+		/*$arr_settings['settings_theme_core'] = array(
 			'setting_no_public_pages' => array(
 				'type' => 'bool',
 				'global' => false,
@@ -1404,7 +1407,7 @@ class mf_custom_login
 				'icon' => "fas fa-user-lock",
 				'name' => __("Require login for public site", 'lang_login'),
 			),
-		);
+		);*/
 
 		$arr_settings['settings_custom_login'] = array(
 			'setting_custom_login_allow_direct_link' => array(
@@ -1681,6 +1684,7 @@ class mf_custom_login
 		switch($action)
 		{
 			case 'lostpassword':
+			case 'resetpass':
 			case 'logout':
 				// Do nothing
 			break;
@@ -1692,6 +1696,16 @@ class mf_custom_login
 					$user_data = get_userdata(get_current_user_id());
 
 					wp_redirect($this->get_login_redirect($redirect_to, $user_data));
+				}
+
+				else
+				{
+					$request_uri = $_SERVER['REQUEST_URI'];
+
+					if(strpos($request_uri, 'wp-login.php') !== false)
+					{
+						wp_redirect(wp_login_url());
+					}
 				}
 			break;
 		}
@@ -2063,7 +2077,7 @@ class mf_custom_login
 		echo "<div class='api_custom_login_nonce' rel='lost_password'></div>";
 	}
 
-	function wp_head()
+	/*function wp_head()
 	{
 		if(!is_user_logged_in())
 		{
@@ -2082,7 +2096,7 @@ class mf_custom_login
 				mf_redirect(wp_login_url()."?redirect_to=".$_SERVER['REQUEST_URI']);
 			}
 		}
-	}
+	}*/
 
 	function body_class($classes)
 	{
@@ -2139,8 +2153,8 @@ class mf_custom_login
 
 	function login_url($url)
 	{
-		if(strpos($url, "?") !== false)
-		{
+		/*if(strpos($url, "?") !== false)
+		{*/
 			if(!($this->login_id > 0))
 			{
 				$this->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
@@ -2157,7 +2171,7 @@ class mf_custom_login
 					$url .= (strpos($query_string, "?") ? "&" : "?").$query_string;
 				}
 			}
-		}
+		//}
 
 		return $url;
 	}
