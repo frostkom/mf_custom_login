@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description:
-Version: 3.7.3
+Version: 3.7.4
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -44,9 +44,8 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	else
 	{
-		add_action('signup_header', array($obj_custom_login, 'signup_header'));
-
-		add_filter('login_headertext', array($obj_custom_login, 'login_headertext'));
+		//add_action('signup_header', array($obj_custom_login, 'signup_header'));
+		//add_filter('login_headertext', array($obj_custom_login, 'login_headertext'));
 
 		/* Validate fields on login, registration and lost password forms */
 		add_action('wp_authenticate_user', array($obj_custom_login, 'wp_authenticate_user'), 10);
@@ -68,7 +67,7 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 		add_action('lostpassword_form', array($obj_custom_login, 'lostpassword_form'));
 
 		//add_action('wp_head', array($obj_custom_login, 'wp_head'), 0);
-		add_filter('body_class', array($obj_custom_login, 'body_class'));
+		//add_filter('body_class', array($obj_custom_login, 'body_class'));
 	}
 
 	add_filter('is_public_page', array($obj_custom_login, 'is_public_page'), 10, 2);

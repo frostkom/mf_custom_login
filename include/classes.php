@@ -811,28 +811,24 @@ class mf_custom_login
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_login_callback'),
-			//'style' => 'style_base_block_wp',
 		));
 
 		register_block_type('mf/customregistration', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_registration_callback'),
-			//'style' => 'style_base_block_wp',
 		));
 
 		register_block_type('mf/customlost', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_lost_callback'),
-			//'style' => 'style_base_block_wp',
 		));
 
 		register_block_type('mf/customloggedin', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_loggedin_callback'),
-			//'style' => 'style_base_block_wp',
 		));
 	}
 
@@ -1542,7 +1538,7 @@ class mf_custom_login
 		}
 	}
 
-	function signup_header()
+	/*function signup_header()
 	{
 		wp_redirect(wp_registration_url());
 		die;
@@ -1551,7 +1547,7 @@ class mf_custom_login
 	function login_headertext()
 	{
 		return get_bloginfo('name');
-	}
+	}*/
 
 	function get_login_redirect($redirect_to, $user_data)
 	{
@@ -1701,10 +1697,11 @@ class mf_custom_login
 				else
 				{
 					$request_uri = $_SERVER['REQUEST_URI'];
+					$redirect_url = wp_login_url();
 
-					if(strpos($request_uri, 'wp-login.php') !== false)
+					if(strpos($request_uri, 'wp-login.php') !== false && strpos($redirect_url, 'wp-login.php') === false)
 					{
-						wp_redirect(wp_login_url());
+						wp_redirect($redirect_url);
 					}
 				}
 			break;
@@ -2098,7 +2095,7 @@ class mf_custom_login
 		}
 	}*/
 
-	function body_class($classes)
+	/*function body_class($classes)
 	{
 		global $post;
 
@@ -2126,7 +2123,7 @@ class mf_custom_login
 		}
 
 		return $classes;
-	}
+	}*/
 
 	function is_public_page($out)
 	{
