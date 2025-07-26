@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description:
-Version: 3.7.4
+Version: 3.7.5
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -17,7 +17,7 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	$obj_custom_login = new mf_custom_login();
 
-	add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
+	//add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
 	add_action('cron_base', array($obj_custom_login, 'cron_base'), mt_rand(1, 10));
 
 	add_action('enqueue_block_editor_assets', array($obj_custom_login, 'enqueue_block_editor_assets'));
@@ -25,7 +25,7 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	if(is_admin())
 	{
-		register_activation_hook(__FILE__, 'activate_custom_login');
+		//register_activation_hook(__FILE__, 'activate_custom_login');
 		register_uninstall_hook(__FILE__, 'uninstall_custom_login');
 
 		add_action('admin_init', array($obj_custom_login, 'settings_custom_login'));
@@ -96,14 +96,14 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
 
-	function activate_custom_login()
+	/*function activate_custom_login()
 	{
 		global $wpdb;
 
 		//replace_option(array('old' => 'setting_no_public_pages', 'new' => 'setting_login_no_public_pages'));
 		//replace_option(array('old' => 'setting_theme_core_login', 'new' => 'setting_login_require_for_public_pages'));
 
-		/*$default_charset = (DB_CHARSET != '' ? DB_CHARSET : 'utf8');
+		$default_charset = (DB_CHARSET != '' ? DB_CHARSET : 'utf8');
 
 		$arr_add_column = $arr_update_column = $arr_add_index = [];
 
@@ -124,8 +124,8 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 		update_columns($arr_update_column);
 		add_columns($arr_add_column);
-		add_index($arr_add_index);*/
-	}
+		add_index($arr_add_index);
+	}*/
 
 	function uninstall_custom_login()
 	{
