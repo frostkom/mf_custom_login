@@ -13,7 +13,7 @@ $out_media_all = $out_media_mobile = "";
 
 // Default WP Login
 ############################
-$setting_custom_login_page = get_option('setting_custom_login_page');
+//$setting_custom_login_page = get_option('setting_custom_login_page');
 
 $login_logo_css = $login_mobile_logo_css = "";
 
@@ -89,7 +89,7 @@ if($login_mobile_logo_css != '')
 	."}";
 }
 
-if($setting_custom_login_page > 0)
+/*if($setting_custom_login_page > 0)
 {
 	$out_media_all .= "#mf_custom_login
 	{
@@ -113,7 +113,7 @@ if($setting_custom_login_page > 0)
 		{
 			max-width: 100%;
 		}";
-}
+}*/
 
 if($login_logo_css != '')
 {
@@ -123,7 +123,7 @@ if($login_logo_css != '')
 	."}";
 }
 
-if($setting_custom_login_page > 0)
+/*if($setting_custom_login_page > 0)
 {
 	$out_media_mobile .= ".login #login
 	{
@@ -165,7 +165,7 @@ if($setting_custom_login_page > 0)
 		float: left;
 		width: 48%;
 	}";
-}
+}*/
 ############################
 
 // Widget Styles
@@ -182,24 +182,12 @@ if(!($obj_custom_login->login_id > 0))
 
 if($obj_custom_login->login_id > 0)
 {
-	/*if(wp_is_block_theme() == false)
+	$out_media_all .= ".login_form .login_actions
 	{
-		$out_media_all .= ".login_form
-		{
-			margin: 0 auto;
-			max-width: 400px;
-		}";
-	}*/
-
-		$out_media_all .= ".login_form form .flex_flow .form_button, .login_form form .flex_flow .wp-block-button
-		{
-			text-align: right;
-		}
-
-			.login_form form .flex_flow .form_button button:last-of-type, .login_form form .flex_flow .wp-block-button button:last-of-type
-			{
-				margin-right: 0 !important;
-			}";
+		align-items: baseline;
+		display: flex;
+		gap: 1em;
+	}";
 
 		/* Has to be more specific to not screw up BankID */
 		/*.login_form form p
@@ -208,13 +196,12 @@ if($obj_custom_login->login_id > 0)
 			text-align: center;
 		}*/
 
-	$out_media_all .= ".login_form + .widget_text
+	/*$out_media_all .= ".login_form + .widget_text
 	{
 		background: #f7f7f7;
 		margin: 0 auto;
-		padding: .2em .4em 0;"
-		//."max-width: 400px;"
-	."}";
+		padding: .2em .4em 0;
+	}";*/
 }
 
 if(!($obj_custom_login->registration_id > 0))

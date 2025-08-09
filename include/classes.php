@@ -31,7 +31,7 @@ class mf_custom_login
 		if($obj_cron->is_running == false)
 		{
 			mf_uninstall_plugin(array(
-				'options' => array('setting_custom_login_wp_login_action', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes', 'setting_custom_login_prevent_direct_access'),
+				'options' => array('setting_custom_login_wp_login_action', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes', 'setting_custom_login_prevent_direct_access', 'setting_custom_login_page'),
 				'tables' => array('custom_login'),
 			));
 
@@ -228,28 +228,23 @@ class mf_custom_login
 
 			echo "<form method='post' action='?login' id='loginform' class='mf_form'>" //".wp_login_url()."
 				.get_notification(array('add_container' => true))
-				.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true)) // log -> user_login
-				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)); // pwd -> user_pass
+				.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true)) // log -> user_login //, 'placeholder' => "abc123 / ".get_placeholder_email()
+				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true, 'description' => "<a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a>")); // pwd -> user_pass
 
 				do_action('login_form');
 
 				echo "<div class='login_actions'>"
-					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
 					."<div".get_form_button_classes().">"
 						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
 						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
-					."</div>
-				</div>
+					."</div>"
+					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
+				."</div>
 			</form>";
 
 			if(is_user_logged_in())
 			{
 				echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
-			}
-
-			else
-			{
-				echo "<p>".__("Have you forgotten your login credentials?", 'lang_login')." <a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Click here", 'lang_login')."</a></p>";
 			}
 
 			if(get_option('users_can_register'))
@@ -393,7 +388,7 @@ class mf_custom_login
 
 					if(in_array('username', $attributes['registration_fields']))
 					{
-						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true));
+						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'required' => true)); //, 'placeholder' => "abc123"
 					}
 
 					echo show_textfield(array('type' => 'email', 'name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
@@ -653,7 +648,7 @@ class mf_custom_login
 					if($display_form == true)
 					{
 						echo "<form method='post' action='' class='mf_form'>"
-							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true));
+							.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true)); //, 'placeholder' => "abc123 / ".get_placeholder_email()
 
 							do_action('lostpassword_form');
 
@@ -929,10 +924,10 @@ class mf_custom_login
 				delete_option('setting_custom_login_page');
 			}
 
-			else
+			/*else
 			{
 				$arr_settings['setting_custom_login_page'] = __("Login", 'lang_login');
-			}
+			}*/
 		}
 
 		if(is_plugin_active("mf_auth/index.php") == false || get_option('setting_auth_active') == 'no')
@@ -1131,7 +1126,7 @@ class mf_custom_login
 			echo get_media_library(array('type' => 'image', 'name' => $setting_key, 'value' => $option));
 		}
 
-		function setting_custom_login_page_callback()
+		/*function setting_custom_login_page_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
@@ -1140,7 +1135,7 @@ class mf_custom_login
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the login screen", 'lang_login')));
-		}
+		}*/
 
 		function setting_custom_login_allow_direct_link_callback()
 		{
@@ -1747,10 +1742,10 @@ class mf_custom_login
 			break;
 		}
 
-		if(!($post_id > 0))
+		/*if(!($post_id > 0))
 		{
 			$post_id = get_option('setting_custom_login_page');
-		}
+		}*/
 
 		if($post_id > 0)
 		{
@@ -2428,7 +2423,7 @@ class widget_login_form extends WP_Widget
 	{
 		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
 
-		global $wpdb, $obj_custom_login, $error_text, $done_text;
+		/*global $wpdb, $obj_custom_login, $error_text, $done_text;
 
 		extract($args);
 		$instance = wp_parse_args((array)$instance, $this->arr_default);
@@ -2513,29 +2508,27 @@ class widget_login_form extends WP_Widget
 			}
 
 			echo "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
-				.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true)) // log -> user_login
-				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)); // pwd -> user_pass
+				.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true)) // log -> user_login //, 'placeholder' => "abc123 / ".get_placeholder_email()
+				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)) // pwd -> user_pass
+				."<p id='lost_password_link'><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
 
 				do_action('login_form');
 
-				echo "<div class='login_actions flex_flow'>"
-					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
+				echo "<div class='login_actions'>"
 					."<div".get_form_button_classes().">"
 						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
 						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
-					."</div>
-				</div>
-			</form>
-			<p id='lost_password_link'><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
+					."</div>"
+					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
+				."</div>
+			</form>";
 
 			if(get_option('users_can_register'))
 			{
 				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register here", 'lang_login')."</a></p>";
 			}
 
-		echo $after_widget;
-
-		//do_action('login_footer');
+		echo $after_widget;*/
 	}
 
 	function update($new_instance, $old_instance)
@@ -2754,7 +2747,7 @@ class widget_registration_form extends WP_Widget
 
 					if(in_array('username', $instance['registration_fields']))
 					{
-						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123", 'required' => true));
+						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'required' => true)); //, 'placeholder' => "abc123"
 					}
 
 					echo show_textfield(array('type' => 'email', 'name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
@@ -3017,7 +3010,7 @@ class widget_lost_password_form extends WP_Widget
 					if($display_form == true)
 					{
 						echo "<form method='post' action='' class='mf_form'>"
-							.show_textfield(array('name' => 'user_login', 'text' => __("Username or E-mail", 'lang_login'), 'value' => $user_login, 'placeholder' => "abc123 / ".get_placeholder_email(), 'required' => true));
+							.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true)); //, 'placeholder' => "abc123 / ".get_placeholder_email()
 
 							do_action('lostpassword_form');
 
