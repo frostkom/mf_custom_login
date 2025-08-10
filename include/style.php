@@ -13,159 +13,90 @@ $out_media_all = $out_media_mobile = "";
 
 // Default WP Login
 ############################
-//$setting_custom_login_page = get_option('setting_custom_login_page');
-
-$login_logo_css = $login_mobile_logo_css = "";
-
-if(class_exists('mf_theme_core') && get_option('setting_custom_login_display_theme_logo') == 'yes')
+if(wp_is_block_theme() == false)
 {
-	if(!isset($obj_theme_core))
+	$login_logo_css = $login_mobile_logo_css = "";
+
+	if(class_exists('mf_theme_core') && get_option('setting_custom_login_display_theme_logo') == 'yes')
 	{
-		$obj_theme_core = new mf_theme_core();
-	}
-
-	$obj_theme_core->get_params();
-
-	if($obj_theme_core->options['header_logo'] != '')
-	{
-		$login_mobile_logo_css = $login_logo_css = "background-image: url(".$obj_theme_core->options['header_logo'].");
-		background-size: contain;
-		width: auto;";
-
-		if($obj_theme_core->options['header_mobile_logo'] != '')
+		if(!isset($obj_theme_core))
 		{
-			$login_mobile_logo_css = "background-image: url(".$obj_theme_core->options['header_mobile_logo'].");
+			$obj_theme_core = new mf_theme_core();
+		}
+
+		$obj_theme_core->get_params();
+
+		if($obj_theme_core->options['header_logo'] != '')
+		{
+			$login_mobile_logo_css = $login_logo_css = "background-image: url(".$obj_theme_core->options['header_logo'].");
 			background-size: contain;
+			width: auto;";
+
+			if($obj_theme_core->options['header_mobile_logo'] != '')
+			{
+				$login_mobile_logo_css = "background-image: url(".$obj_theme_core->options['header_mobile_logo'].");
+				background-size: contain;
+				width: auto;";
+			}
+		}
+
+		else
+		{
+			echo $obj_theme_core->show_font_face();
+
+			$login_mobile_logo_css = "background: none;"
+			.$obj_theme_core->render_css(array('property' => 'font-family', 'value' => 'logo_font'))
+			."font-size: 40px;
+			font-weight: bold;"
+			.$obj_theme_core->render_css(array('property' => 'color', 'value' => 'logo_color'))
+			."height: auto;
+			text-indent: unset;
 			width: auto;";
 		}
 	}
 
 	else
 	{
-		echo $obj_theme_core->show_font_face();
+		$setting_custom_login_custom_logo = get_option('setting_custom_login_custom_logo');
 
-		$login_mobile_logo_css = "background: none;"
-		.$obj_theme_core->render_css(array('property' => 'font-family', 'value' => 'logo_font'))
-		."font-size: 40px;
-		font-weight: bold;"
-		.$obj_theme_core->render_css(array('property' => 'color', 'value' => 'logo_color'))
-		."height: auto;
-		text-indent: unset;
-		width: auto;";
-	}
-}
-
-else
-{
-	$setting_custom_login_custom_logo = get_option('setting_custom_login_custom_logo');
-
-	if($setting_custom_login_custom_logo != '')
-	{
-		$login_logo_css = "background-image: url(".$setting_custom_login_custom_logo.");
-		background-size: contain;
-		width: 100%;";
-	}
-}
-
-if(!is_plugin_active("mf_form/index.php")) // We don't need duplicates of this code
-{
-	$out_media_all .= ".form_textfield.form_check
-	{
-        height: 0;
-        left: 0;
-		opacity: 0;
-		position: absolute;
-		top: 0;
-        width: 0;
-		z-index: -1;
-	}";
-}
-
-if($login_mobile_logo_css != '')
-{
-	$out_media_all .= ".login #login h1 a
-	{"
-		.$login_mobile_logo_css
-	."}";
-}
-
-/*if($setting_custom_login_page > 0)
-{
-	$out_media_all .= "#mf_custom_login
-	{
-		background: #fff;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, .13);
-		margin-bottom: 20px;
-		padding: 26px 24px;
-	}
-
-		#mf_custom_login > h2
+		if($setting_custom_login_custom_logo != '')
 		{
-			line-height: 1.3em;
+			$login_logo_css = "background-image: url(".$setting_custom_login_custom_logo.");
+			background-size: contain;
+			width: 100%;";
 		}
+	}
 
-		#mf_custom_login > p
+	if(!is_plugin_active("mf_form/index.php")) // We don't need duplicates of this code
+	{
+		$out_media_all .= ".form_textfield.form_check
 		{
-			margin-top: 1em;
-		}
-
-		#mf_custom_login img
-		{
-			max-width: 100%;
+			height: 0;
+			left: 0;
+			opacity: 0;
+			position: absolute;
+			top: 0;
+			width: 0;
+			z-index: -1;
 		}";
-}*/
+	}
 
-if($login_logo_css != '')
-{
-	$out_media_mobile .= ".login #login h1 a
-	{"
-		.$login_logo_css
-	."}";
+	if($login_mobile_logo_css != '')
+	{
+		$out_media_all .= ".login #login h1 a
+		{"
+			.$login_mobile_logo_css
+		."}";
+	}
+
+	if($login_logo_css != '')
+	{
+		$out_media_mobile .= ".login #login h1 a
+		{"
+			.$login_logo_css
+		."}";
+	}
 }
-
-/*if($setting_custom_login_page > 0)
-{
-	$out_media_mobile .= ".login #login
-	{
-		position: relative;
-		width: 740px !important;
-	}
-
-		#mf_custom_login, .message, #loginform, #nav, #backtoblog
-		{
-			box-sizing: border-box;
-		}
-
-		#mf_custom_login
-		{
-			float: right;
-			margin-left: 4%;
-			width: 48%;
-		}
-
-		.message
-		{
-			margin-bottom: 20px;
-		}
-
-	#mf_custom_login + #login_error
-	{
-		box-sizing: border-box;
-		width: 48%;
-	}
-
-	#loginform
-	{
-		margin-top: 0;
-	}
-
-	.message, #loginform, #nav, #backtoblog
-	{
-		clear: left;
-		float: left;
-		width: 48%;
-	}";
-}*/
 ############################
 
 // Widget Styles
@@ -188,20 +119,6 @@ if($obj_custom_login->login_id > 0)
 		display: flex;
 		gap: 1em;
 	}";
-
-		/* Has to be more specific to not screw up BankID */
-		/*.login_form form p
-		{
-			margin-top: .5em;
-			text-align: center;
-		}*/
-
-	/*$out_media_all .= ".login_form + .widget_text
-	{
-		background: #f7f7f7;
-		margin: 0 auto;
-		padding: .2em .4em 0;
-	}";*/
 }
 
 if(!($obj_custom_login->registration_id > 0))
