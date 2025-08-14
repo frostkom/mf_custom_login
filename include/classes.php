@@ -1676,6 +1676,7 @@ class mf_custom_login
 		{
 			case 'lostpassword':
 			case 'resetpass':
+			case 'rp':
 			case 'logout':
 				// Do nothing
 			break;
