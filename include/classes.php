@@ -688,51 +688,49 @@ class mf_custom_login
 		{
 			$this->combined_head();
 
-			echo "<div".parse_block_attributes(array('class' => "widget login_form logged_in_info", 'attributes' => $attributes)).">
-				<div class='section'>";
+			echo "<div".parse_block_attributes(array('class' => "widget login_form logged_in_info", 'attributes' => $attributes)).">";
 
-					if(count($attributes['logged_in_info_display']) == 0 || in_array('name', $attributes['logged_in_info_display']) || in_array('profile', $attributes['logged_in_info_display']) || in_array('logout', $attributes['logged_in_info_display']))
-					{
-						echo "<ul>";
+				if(count($attributes['logged_in_info_display']) == 0 || in_array('name', $attributes['logged_in_info_display']) || in_array('profile', $attributes['logged_in_info_display']) || in_array('logout', $attributes['logged_in_info_display']))
+				{
+					echo "<ul>";
 
-							if(count($attributes['logged_in_info_display']) == 0 || in_array('name', $attributes['logged_in_info_display']))
-							{
-								echo "<li>"
-									.get_user_info();
+						if(count($attributes['logged_in_info_display']) == 0 || in_array('name', $attributes['logged_in_info_display']))
+						{
+							echo "<li>"
+								.get_user_info();
 
-									if(in_array('role', $attributes['logged_in_info_display']))
-									{
-										$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
-										$user_role = get_current_user_role(get_current_user_id());
+								if(in_array('role', $attributes['logged_in_info_display']))
+								{
+									$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
+									$user_role = get_current_user_role(get_current_user_id());
 
-										echo " (".$arr_roles[$user_role].")";
-									}
+									echo " (".$arr_roles[$user_role].")";
+								}
 
-								echo "</li>";
-							}
+							echo "</li>";
+						}
 
-							if(count($attributes['logged_in_info_display']) == 0 || in_array('profile', $attributes['logged_in_info_display']))
-							{
-								echo "<li><a href='".get_edit_profile_url()."'>".__("Your Profile", 'lang_login')."</a></li>";
-							}
+						if(count($attributes['logged_in_info_display']) == 0 || in_array('profile', $attributes['logged_in_info_display']))
+						{
+							echo "<li><a href='".get_edit_profile_url()."'>".__("Your Profile", 'lang_login')."</a></li>";
+						}
 
-							if(count($attributes['logged_in_info_display']) == 0 || in_array('logout', $attributes['logged_in_info_display']))
-							{
-								echo "<li><a href='".wp_logout_url()."'>".__("Log Out", 'lang_login')."</a></li>";
-							}
+						if(count($attributes['logged_in_info_display']) == 0 || in_array('logout', $attributes['logged_in_info_display']))
+						{
+							echo "<li><a href='".wp_logout_url()."'>".__("Log Out", 'lang_login')."</a></li>";
+						}
 
-						echo "</ul>";
-					}
+					echo "</ul>";
+				}
 
-					if(count($attributes['logged_in_info_display']) == 0 || in_array('image', $attributes['logged_in_info_display']))
-					{
-						echo "<a href='".get_edit_profile_url()."' class='logged_in_avatar'>"
-							.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), get_user_info()))
-						."</a>";
-					}
+				if(count($attributes['logged_in_info_display']) == 0 || in_array('image', $attributes['logged_in_info_display']))
+				{
+					echo "<a href='".get_edit_profile_url()."' class='logged_in_avatar'>"
+						.get_avatar(get_current_user_id(), 60, '', sprintf(__("Profile Image for %s", 'lang_login'), get_user_info()))
+					."</a>";
+				}
 
-				echo "</div>
-			</div>";
+			echo "</div>";
 		}
 
 		$out = ob_get_contents();

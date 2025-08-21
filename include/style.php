@@ -171,19 +171,19 @@ if(!($obj_custom_login->logged_in_id > 0))
 
 if($obj_custom_login->logged_in_id > 0)
 {
-	$out_media_all .= "header .logged_in_info > .section
+	$out_media_all .= "header .logged_in_info
 	{
 		display: flex;
 		float: right;
 	}
 
-		header .logged_in_info > .section > *
+		header .logged_in_info > *
 		{
 			display: block;
 			flex: 1 1 0;
 		}
 
-			header .logged_in_info > .section > * + *
+			header .logged_in_info > * + *
 			{
 				margin-left: 1em;
 			}
