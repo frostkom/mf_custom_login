@@ -185,43 +185,27 @@ class mf_custom_login
 				default:
 					if(isset($_POST['btnSendLogin']))
 					{
-						/*$setting_custom_login_limit_attempts = get_site_option_or_default('setting_custom_login_limit_attempts', 20);
-						$setting_custom_login_limit_minutes = get_site_option_or_default('setting_custom_login_limit_minutes', 15);
+						if(get_option('setting_custom_login_debug') == 'yes')
+						{
+							echo "<p>".__("I'm trying to log you in...", 'lang_login')."</p>";
+						}
 
-						$wpdb->get_results($wpdb->prepare("SELECT loginID FROM ".$wpdb->base_prefix."custom_login WHERE loginIP = %s AND loginStatus = %s AND loginCreated > DATE_SUB(NOW(), INTERVAL ".$setting_custom_login_limit_minutes." MINUTE)", apply_filters('get_current_visitor_ip', ""), 'failure'));
-						$login_failed_attempts = $wpdb->num_rows;
+						$result = $this->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
 
-						if($login_failed_attempts < $setting_custom_login_limit_attempts)
-						{*/
+						if($result['success'] == true)
+						{
 							if(get_option('setting_custom_login_debug') == 'yes')
 							{
-								echo "<p>".__("I'm trying to log you in...", 'lang_login')."</p>";
+								echo "<p>".__("I'm redirecting you...", 'lang_login')."</p>";
 							}
 
-							$result = $this->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
-
-							if($result['success'] == true)
-							{
-								if(get_option('setting_custom_login_debug') == 'yes')
-								{
-									echo "<p>".__("I'm redirecting you...", 'lang_login')."</p>";
-								}
-
-								mf_redirect($result['redirect']);
-							}
-
-							else
-							{
-								$error_text = $result['error'];
-
-								//$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."custom_login SET loginIP = %s, loginStatus = %s, loginUsername = %s, loginCreated = NOW()", apply_filters('get_current_visitor_ip', ""), 'failure', $user_login));
-							}
-						/*}
+							mf_redirect($result['redirect']);
+						}
 
 						else
 						{
-							$error_text = sprintf(__("You have exceeded the limit of %d logins in the last %d minutes. Please try again later.", 'lang_login'), $setting_custom_login_limit_attempts, $setting_custom_login_limit_minutes);
-						}*/
+							$error_text = $result['error'];
+						}
 					}
 				break;
 			}
@@ -974,10 +958,6 @@ class mf_custom_login
 		}
 
 		$arr_settings['setting_custom_login_debug'] = " - ".__("Debug", 'lang_login');
-
-		//$arr_settings['setting_custom_login_limit_attempts'] = __("Limit Attempts", 'lang_login');
-		//$arr_settings['setting_custom_login_limit_minutes'] = __("Limit Minutes", 'lang_login');
-
 		$arr_settings['setting_custom_login_redirect_after_login_page'] = __("Redirect After Login", 'lang_login');
 
 		if(get_option('setting_custom_login_redirect_after_login_page') > 0)
@@ -1200,24 +1180,6 @@ class mf_custom_login
 
 			echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
 		}
-
-		/*function setting_custom_login_limit_attempts_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			settings_save_site_wide($setting_key);
-			$option = get_site_option($setting_key, get_option($setting_key, 20));
-
-			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='5' max='100'"));
-		}
-
-		function setting_custom_login_limit_minutes_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			settings_save_site_wide($setting_key);
-			$option = get_site_option($setting_key, get_option($setting_key, 15));
-
-			echo show_textfield(array('type' => 'number', 'name' => $setting_key, 'value' => $option, 'xtra' => "min='2' max='60'"));
-		}*/
 
 		function setting_custom_login_redirect_after_login_page_callback()
 		{
@@ -1530,17 +1492,6 @@ class mf_custom_login
 			}
 		}
 	}
-
-	/*function signup_header()
-	{
-		wp_redirect(wp_registration_url());
-		die;
-	}
-
-	function login_headertext()
-	{
-		return get_bloginfo('name');
-	}*/
 
 	function get_login_redirect($redirect_to, $user_data)
 	{
@@ -2068,57 +2019,6 @@ class mf_custom_login
 		echo "<div class='api_custom_login_nonce' rel='lost_password'></div>";
 	}
 
-	/*function wp_head()
-	{
-		if(!is_user_logged_in())
-		{
-			if(get_option('setting_maintenance_page') > 0)
-			{
-				// Do nothing here...
-			}
-
-			else if(get_option('setting_no_public_pages') == 'yes')
-			{
-				mf_redirect(get_site_url()."/wp-admin/");
-			}
-
-			else if(get_option('setting_theme_core_login') == 'yes' && apply_filters('is_public_page', true))
-			{
-				mf_redirect(wp_login_url()."?redirect_to=".$_SERVER['REQUEST_URI']);
-			}
-		}
-	}*/
-
-	/*function body_class($classes)
-	{
-		global $post;
-
-		if(isset($post) && isset($post->ID) && $post->ID > 0)
-		{
-			if(!($this->login_id > 0))
-			{
-				$this->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
-			}
-
-			if(!($this->registration_id > 0))
-			{
-				$this->registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
-			}
-
-			if(!($this->lost_password_id > 0))
-			{
-				$this->lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
-			}
-
-			if($this->login_id == $post->ID || $this->registration_id == $post->ID || $this->lost_password_id == $post->ID)
-			{
-				$classes[] = "is_login_page";
-			}
-		}
-
-		return $classes;
-	}*/
-
 	function is_public_page($out)
 	{
 		$site_url = get_site_url();
@@ -2421,113 +2321,6 @@ class widget_login_form extends WP_Widget
 	function widget($args, $instance)
 	{
 		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
-
-		/*global $wpdb, $obj_custom_login, $error_text, $done_text;
-
-		extract($args);
-		$instance = wp_parse_args((array)$instance, $this->arr_default);
-
-		$action = check_var('action');
-		$redirect_to = check_var('redirect_to', 'char', true, admin_url());
-
-		$user_login = check_var('user_login'); // log -> user_login
-		$user_pass = check_var('user_pass'); // pwd -> user_pass
-		$user_remember = check_var('rememberme', 'char', true, 'forever');
-
-		if(!isset($_GET['fl_builder']))
-		{
-			do_action('login_init');
-		}
-
-		//do_action('login_head');
-		//do_action('login_header');
-
-		echo apply_filters('filter_before_widget', $before_widget);
-
-			if($instance['login_image'] != '')
-			{
-				echo "<p><img src='".$instance['login_image']."'></p>";
-			}
-
-			if($instance['login_heading'] != '')
-			{
-				$instance['login_heading'] = apply_filters('widget_title', $instance['login_heading'], $instance, $this->id_base);
-
-				echo $before_title
-					.$instance['login_heading']
-				.$after_title;
-			}
-
-			switch($action)
-			{
-				case 'logout':
-					if(is_user_logged_in())
-					{
-						check_admin_referer('log-out');
-
-						wp_logout();
-
-						$done_text = __("You have been successfully logged out", 'lang_login');
-					}
-				break;
-
-				default:
-					if(!isset($obj_custom_login))
-					{
-						$obj_custom_login = new mf_custom_login();
-					}
-
-					if(isset($_POST['btnSendLogin']))
-					{
-						$result = $obj_custom_login->do_login(array('user_login' => $user_login, 'user_pass' => $user_pass, 'user_remember' => $user_remember, 'redirect_to' => $redirect_to));
-
-						if($result['success'] == true)
-						{
-							mf_redirect($result['redirect']);
-						}
-
-						else
-						{
-							$error_text = $result['error'];
-
-						}					}
-
-					else if(!isset($_GET['fl_builder']))
-					{
-						$obj_custom_login->check_if_logged_in(array('redirect' => true));
-					}
-				break;
-			}
-
-			echo get_notification();
-
-			if($instance['login_above_form'] != '')
-			{
-				echo apply_filters('the_content', $instance['login_above_form']);
-			}
-
-			echo "<form method='post' action='".wp_login_url()."' id='loginform' class='mf_form'>"
-				.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true)) // log -> user_login //, 'placeholder' => "abc123 / ".get_placeholder_email()
-				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true)) // pwd -> user_pass
-				."<p id='lost_password_link'><a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a></p>";
-
-				do_action('login_form');
-
-				echo "<div class='login_actions'>"
-					."<div".get_form_button_classes().">"
-						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
-						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
-					."</div>"
-					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
-				."</div>
-			</form>";
-
-			if(get_option('users_can_register'))
-			{
-				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register here", 'lang_login')."</a></p>";
-			}
-
-		echo $after_widget;*/
 	}
 
 	function update($new_instance, $old_instance)
@@ -2600,212 +2393,6 @@ class widget_registration_form extends WP_Widget
 	function widget($args, $instance)
 	{
 		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
-
-		global $obj_custom_login, $error_text, $done_text;
-
-		extract($args);
-		$instance = wp_parse_args((array)$instance, $this->arr_default);
-
-		if(!isset($obj_custom_login))
-		{
-			$obj_custom_login = new mf_custom_login();
-		}
-
-		$obj_custom_login->check_if_logged_in();
-
-		$is_allowed = (!isset($instance['registration_who_can']) || $instance['registration_who_can'] == '' || current_user_can($instance['registration_who_can']));
-
-		if(in_array('username', $instance['registration_fields']))
-		{
-			$user_login = check_var('user_login');
-		}
-
-		else
-		{
-			$user_login = "";
-		}
-
-		$user_email = check_var('user_email', 'email');
-
-		if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
-		{
-			$first_name = check_var('first_name');
-			$last_name = check_var('last_name');
-		}
-
-		if(in_array('company', $instance['registration_fields']))
-		{
-			$profile_company = check_var('profile_company');
-		}
-
-		$role = get_option('default_role');
-
-		if(is_user_logged_in() && IS_ADMINISTRATOR)
-		{
-			$role = check_var('role', 'char', true, $role);
-		}
-
-		echo apply_filters('filter_before_widget', $before_widget);
-
-			if($instance['registration_image'] != '')
-			{
-				echo "<p><img src='".$instance['registration_image']."'></p>";
-			}
-
-			if($instance['registration_heading'] != '')
-			{
-				$instance['registration_heading'] = apply_filters('widget_title', $instance['registration_heading'], $instance, $this->id_base);
-
-				echo $before_title
-					.$instance['registration_heading']
-				.$after_title;
-			}
-
-			$display_form = true;
-
-			if($is_allowed)
-			{
-				if(isset($_POST['btnSendRegistration']))
-				{
-					if($user_login == '')
-					{
-						if(in_array('full_name', $instance['registration_fields']))
-						{
-							$user_login .= ($user_login != '' ? "_" : "").$first_name."_".$last_name;
-						}
-
-						if(in_array('company', $instance['registration_fields']))
-						{
-							$user_login .= ($user_login != '' ? "_" : "").$profile_company;
-						}
-
-						if($user_login == '')
-						{
-							$user_login = $user_email;
-						}
-
-						$user_login = sanitize_title_with_dashes(sanitize_title($user_login));
-					}
-
-					if($user_login == '' || $user_email == '')
-					{
-						$error_text = __("You have to enter both Username and E-mail, then I can process the registration for you", 'lang_login');
-					}
-
-					else
-					{
-						$user_login = strtolower($user_login);
-						$user_email = strtolower($user_email);
-
-						$errors = register_new_user($user_login, $user_email);
-
-						if(is_wp_error($errors))
-						{
-							foreach($errors->errors as $error)
-							{
-								$error_text = $error[0];
-							}
-						}
-
-						else
-						{
-							$user_id = $errors;
-
-							$user = new WP_User($user_id);
-							$user->set_role($role);
-
-							if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
-							{
-								update_user_meta($user_id, 'first_name', $first_name);
-								update_user_meta($user_id, 'last_name', $last_name);
-							}
-
-							if(in_array('company', $instance['registration_fields']))
-							{
-								update_user_meta($user_id, 'profile_company', $profile_company);
-							}
-
-							$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with login information.", 'lang_login');
-							$display_form = false;
-						}
-					}
-				}
-			}
-
-			else
-			{
-				$error_text = __("You do not have the rights to view this form", 'lang_login');
-				$display_form = false;
-			}
-
-			echo get_notification();
-
-			if($display_form == true)
-			{
-				echo "<form method='post' action='' class='mf_form'>";
-
-					if(in_array('username', $instance['registration_fields']))
-					{
-						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'required' => true)); //, 'placeholder' => "abc123"
-					}
-
-					echo show_textfield(array('type' => 'email', 'name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
-
-					if($instance['registration_collect_name'] == 'yes' || in_array('full_name', $instance['registration_fields']))
-					{
-						echo "<div class='flex_flow'>"
-							.show_textfield(array('name' => 'first_name', 'text' => __("First Name", 'lang_login'), 'value' => $first_name, 'placeholder' => "Jane", 'required' => true))
-							.show_textfield(array('name' => 'last_name', 'text' => __("Last Name", 'lang_login'), 'value' => $last_name, 'placeholder' => "Doe", 'required' => true))
-						."</div>";
-					}
-
-					if(in_array('company', $instance['registration_fields']))
-					{
-						echo "<div class='flex_flow'>"
-							.show_textfield(array('name' => 'profile_company', 'text' => __("Company", 'lang_login'), 'value' => $profile_company, 'required' => true))
-						."</div>";
-					}
-
-					do_action('register_form');
-
-					if(is_user_logged_in())
-					{
-						if(IS_ADMINISTRATOR)
-						{
-							$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false, 'exclude' => array('administrator')));
-
-							if(count($arr_data) > 1)
-							{
-								echo show_select(array('data' => $arr_data, 'name' => 'role', 'text' => __("Role", 'lang_login'), 'value' => $role));
-							}
-
-							else
-							{
-								foreach($arr_data as $key => $value)
-								{
-									echo input_hidden(array('name' => 'role', 'value' => $key));
-								}
-							}
-						}
-					}
-
-					else
-					{
-						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
-					}
-
-					echo "<div".get_form_button_classes().">"
-						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register here", 'lang_login')))
-					."</div>
-				</form>";
-
-				if(is_user_logged_in() == false)
-				{
-					echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
-				}
-			}
-
-		echo $after_widget;
 	}
 
 	function update($new_instance, $old_instance)
@@ -2865,164 +2452,6 @@ class widget_lost_password_form extends WP_Widget
 	function widget($args, $instance)
 	{
 		do_log(__CLASS__."->".__FUNCTION__."(): Add a block instead", 'publish', false);
-
-		global $obj_custom_login, $error_text, $done_text;
-
-		extract($args);
-		$instance = wp_parse_args((array)$instance, $this->arr_default);
-
-		$action = check_var('action');
-
-		echo apply_filters('filter_before_widget', $before_widget);
-
-			//do_action('lost_password');
-
-			if($instance['lost_password_image'] != '')
-			{
-				echo "<p><img src='".$instance['lost_password_image']."'></p>";
-			}
-
-			if($instance['lost_password_heading'] != '')
-			{
-				$instance['lost_password_heading'] = apply_filters('widget_title', $instance['lost_password_heading'], $instance, $this->id_base);
-
-				echo $before_title
-					.$instance['lost_password_heading']
-				.$after_title;
-			}
-
-			$display_form = true;
-
-			switch($action)
-			{
-				case 'rp':
-					$user_login = check_var('login');
-					$user_key = check_var('key');
-					$user_pass = check_var('user_pass');
-
-					$user = '';
-
-					if(isset($_POST['btnSendResetPassword']))
-					{
-						$user = check_password_reset_key($user_key, $user_login);
-
-						if(isset($_POST['user_pass']) && !hash_equals($user_key, $_POST['key']))
-						{
-							$user = false;
-						}
-
-						if(!$user || is_wp_error($user))
-						{
-							if($user && $user->get_error_code() === 'expired_key')
-							{
-								$error_text = sprintf(__("The key that you used has expired. Please, %srequest a new key here%s", 'lang_login'), "<a href='".wp_lostpassword_url()."'>", "</a>");
-							}
-
-							else
-							{
-								$error_text = sprintf(__("The key that you used was invalid. Please, %srequest a new key here%s", 'lang_login'), "<a href='".wp_lostpassword_url()."'>", "</a>");
-							}
-						}
-
-						$errors = new WP_Error();
-
-						do_action('validate_password_reset', $errors, $user);
-
-						if($error_text != '')
-						{
-							// Do nothing
-						}
-
-						else if(!$errors->get_error_code() && $user_pass != '')
-						{
-							reset_password($user, $user_pass);
-
-							$done_text = __("Your password has been reset", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a>";
-
-							$display_form = false;
-						}
-					}
-
-					echo get_notification();
-
-					if($display_form == true)
-					{
-						echo "<form method='post' action='".wp_lostpassword_url()."?action=rp' class='mf_form'>"
-							.show_password_field(array('name' => 'user_pass', 'text' => __("New Password", 'lang_login'), 'value' => $user_pass, 'xtra' => " autocomplete='new-password'", 'description' => wp_get_password_hint()));
-
-							do_action('resetpass_form', $user);
-
-							echo "<div".get_form_button_classes().">"
-								.show_button(array('name' => 'btnSendResetPassword', 'text' => __("Reset Password", 'lang_login')))
-								.input_hidden(array('name' => 'login', 'value' => $user_login, 'xtra' => " id='user_login'"))
-								.input_hidden(array('name' => 'key', 'value' => $user_key))
-							."</div>
-						</form>";
-					}
-				break;
-
-				default:
-					$user_login = check_var('user_login');
-
-					if(isset($_POST['btnSendLostPassword']))
-					{
-						if($user_login == '')
-						{
-							$error_text = __("You have to enter the e-mail address, then I can process the request for you", 'lang_login');
-						}
-
-						else
-						{
-							$user_login = strtolower($user_login);
-
-							$errors = $obj_custom_login->retrieve_password($user_login);
-
-							if(is_wp_error($errors))
-							{
-								foreach($errors->errors as $error)
-								{
-									$error_text = $error[0];
-								}
-							}
-
-							else
-							{
-								$done_text = __("I found the account that you were looking for. Please, check your inbox for the confirmation link.", 'lang_login');
-
-								$display_form = false;
-							}
-						}
-					}
-
-					else
-					{
-						if(!isset($obj_custom_login))
-						{
-							$obj_custom_login = new mf_custom_login();
-						}
-
-						$obj_custom_login->check_if_logged_in();
-					}
-
-					echo get_notification();
-
-					if($display_form == true)
-					{
-						echo "<form method='post' action='' class='mf_form'>"
-							.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true)); //, 'placeholder' => "abc123 / ".get_placeholder_email()
-
-							do_action('lostpassword_form');
-
-							echo "<div".get_form_button_classes().">"
-								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
-							."</div>
-						</form>
-						<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
-					}
-				break;
-			}
-
-		echo $after_widget;
 	}
 
 	function update($new_instance, $old_instance)

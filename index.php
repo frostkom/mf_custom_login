@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description:
-Version: 3.7.9
+Version: 3.8.0
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -17,7 +17,6 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	$obj_custom_login = new mf_custom_login();
 
-	//add_action('cron_base', 'activate_custom_login', mt_rand(1, 10));
 	add_action('cron_base', array($obj_custom_login, 'cron_base'), mt_rand(1, 10));
 
 	add_action('enqueue_block_editor_assets', array($obj_custom_login, 'enqueue_block_editor_assets'));
@@ -25,7 +24,6 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	if(is_admin())
 	{
-		//register_activation_hook(__FILE__, 'activate_custom_login');
 		register_uninstall_hook(__FILE__, 'uninstall_custom_login');
 
 		add_action('admin_init', array($obj_custom_login, 'settings_custom_login'));
@@ -44,9 +42,6 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	else
 	{
-		//add_action('signup_header', array($obj_custom_login, 'signup_header'));
-		//add_filter('login_headertext', array($obj_custom_login, 'login_headertext'));
-
 		/* Validate fields on login, registration and lost password forms */
 		add_action('wp_authenticate_user', array($obj_custom_login, 'wp_authenticate_user'), 10);
 		add_filter('registration_errors', array($obj_custom_login, 'registration_errors'), 10, 3);
@@ -65,9 +60,6 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 		add_action('login_form', array($obj_custom_login, 'login_form'));
 		add_action('register_form', array($obj_custom_login, 'register_form'));
 		add_action('lostpassword_form', array($obj_custom_login, 'lostpassword_form'));
-
-		//add_action('wp_head', array($obj_custom_login, 'wp_head'), 0);
-		//add_filter('body_class', array($obj_custom_login, 'body_class'));
 	}
 
 	add_filter('is_public_page', array($obj_custom_login, 'is_public_page'), 10, 2);
@@ -95,37 +87,6 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 	add_action('widgets_init', array($obj_custom_login, 'widgets_init'));
 
 	load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
-
-	/*function activate_custom_login()
-	{
-		global $wpdb;
-
-		//replace_option(array('old' => 'setting_no_public_pages', 'new' => 'setting_login_no_public_pages'));
-		//replace_option(array('old' => 'setting_theme_core_login', 'new' => 'setting_login_require_for_public_pages'));
-
-		$default_charset = (DB_CHARSET != '' ? DB_CHARSET : 'utf8');
-
-		$arr_add_column = $arr_update_column = $arr_add_index = [];
-
-		$wpdb->query("CREATE TABLE IF NOT EXISTS ".$wpdb->base_prefix."custom_login (
-			loginID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			loginIP VARCHAR(15) DEFAULT NULL,
-			loginStatus ENUM('failure', 'success') NOT NULL DEFAULT 'failure',
-			loginUsername VARCHAR(40) DEFAULT NULL,
-			loginCreated DATETIME DEFAULT NULL,
-			PRIMARY KEY (loginID),
-			KEY logIP (loginIP),
-			KEY loginStatus (loginStatus)
-		) DEFAULT CHARSET=".$default_charset);
-
-		$arr_add_column[$wpdb->base_prefix."custom_login"] = array(
-			//'loginUsername' => "ALTER TABLE [table] ADD [column] VARCHAR(40) DEFAULT NULL AFTER loginStatus",
-		);
-
-		update_columns($arr_update_column);
-		add_columns($arr_add_column);
-		add_index($arr_add_index);
-	}*/
 
 	function uninstall_custom_login()
 	{

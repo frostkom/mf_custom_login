@@ -1,6 +1,6 @@
 jQuery(function($)
 {
-	$("#loginform .api_custom_login_nonce").each(function()
+	$("#loginform .api_custom_login_nonce, .widget.login_form .api_custom_login_nonce").each(function()
 	{
 		var dom_obj = $(this);
 
