@@ -152,6 +152,51 @@ class mf_custom_login
 		return $out;
 	}
 
+	function combined_head()
+	{
+		$plugin_include_url = plugin_dir_url(__FILE__);
+
+		mf_enqueue_style('style_custom_login', $plugin_include_url."style.php");
+		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js", array('ajax_url' => admin_url('admin-ajax.php')));
+
+		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		{
+			mf_enqueue_script('script_custom_login_direct_link', $plugin_include_url."script_direct_link.js", array('ajax_url' => admin_url('admin-ajax.php')));
+
+			switch(check_var('type'))
+			{
+				case 'link':
+					$this->username = check_var('username');
+					$this->auth = check_var('auth');
+
+					if($this->username != '' && $this->auth != '' && $this->check_auth())
+					{
+						if($this->direct_link_login($this->username))
+						{
+							$redirect_to = admin_url();
+
+							$user = get_user_by('login', $this->username);
+
+							$redirect_to = apply_filters('login_redirect', $redirect_to, $redirect_to, $user);
+
+							mf_redirect($redirect_to);
+						}
+
+						else
+						{
+							$this->error = sprintf(__("I could not log in %s for you. If the problem persists, please contact an admin", 'lang_login'), $this->username);
+						}
+					}
+
+					else
+					{
+						$this->error = sprintf(__("It looks like the authorization key for %s has expired so I can not let you in", 'lang_login'), $this->username);
+					}
+				break;
+			}
+		}
+	}
+
 	function block_render_login_callback($attributes)
 	{
 		global $wpdb, $done_text, $error_text;
@@ -219,7 +264,7 @@ class mf_custom_login
 
 				echo "<div class='login_actions'>"
 					."<div".get_form_button_classes().">"
-						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login')))
+						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login'), 'xtra' => "disabled"))
 						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
 					."</div>"
 					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
@@ -421,7 +466,7 @@ class mf_custom_login
 					}
 
 					echo "<div".get_form_button_classes().">"
-						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register here", 'lang_login')))
+						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register here", 'lang_login'), 'xtra' => "disabled"))
 					."</div>
 				</form>";
 
@@ -586,7 +631,7 @@ class mf_custom_login
 							do_action('resetpass_form', $user);
 
 							echo "<div".get_form_button_classes().">"
-								.show_button(array('name' => 'btnSendResetPassword', 'text' => __("Reset Password", 'lang_login')))
+								.show_button(array('name' => 'btnSendResetPassword', 'text' => __("Reset Password", 'lang_login'), 'xtra' => "disabled"))
 								.input_hidden(array('name' => 'login', 'value' => $user_login, 'xtra' => " id='user_login'"))
 								.input_hidden(array('name' => 'key', 'value' => $user_key))
 							."</div>
@@ -637,7 +682,7 @@ class mf_custom_login
 							do_action('lostpassword_form');
 
 							echo "<div".get_form_button_classes().">"
-								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login')))
+								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login'), 'xtra' => "disabled"))
 							."</div>
 						</form>";
 
@@ -1448,51 +1493,6 @@ class mf_custom_login
 		}
 	}
 
-	function combined_head()
-	{
-		$plugin_include_url = plugin_dir_url(__FILE__);
-
-		mf_enqueue_style('style_custom_login', $plugin_include_url."style.php");
-		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js", array('ajax_url' => admin_url('admin-ajax.php')));
-
-		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
-		{
-			mf_enqueue_script('script_custom_login_direct_link', $plugin_include_url."script_direct_link.js", array('ajax_url' => admin_url('admin-ajax.php')));
-
-			switch(check_var('type'))
-			{
-				case 'link':
-					$this->username = check_var('username');
-					$this->auth = check_var('auth');
-
-					if($this->username != '' && $this->auth != '' && $this->check_auth())
-					{
-						if($this->direct_link_login($this->username))
-						{
-							$redirect_to = admin_url();
-
-							$user = get_user_by('login', $this->username);
-
-							$redirect_to = apply_filters('login_redirect', $redirect_to, $redirect_to, $user);
-
-							mf_redirect($redirect_to);
-						}
-
-						else
-						{
-							$this->error = sprintf(__("I could not log in %s for you. If the problem persists, please contact an admin", 'lang_login'), $this->username);
-						}
-					}
-
-					else
-					{
-						$this->error = sprintf(__("It looks like the authorization key for %s has expired so I can not let you in", 'lang_login'), $this->username);
-					}
-				break;
-			}
-		}
-	}
-
 	function get_login_redirect($redirect_to, $user_data)
 	{
 		$setting_custom_login_redirect_after_login_page = get_option('setting_custom_login_redirect_after_login_page');
@@ -2017,6 +2017,11 @@ class mf_custom_login
 	function lostpassword_form()
 	{
 		echo "<div class='api_custom_login_nonce' rel='lost_password'></div>";
+	}
+
+	function resetpass_form()
+	{
+		echo "<div class='api_custom_login_nonce' rel='reset_password'></div>";
 	}
 
 	function is_public_page($out)

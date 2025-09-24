@@ -16,12 +16,15 @@ jQuery(function($)
 			},
 			success: function(data)
 			{
-				dom_obj.html(data.html);
+				if(data.success)
+				{
+					dom_obj.html(data.html).parents("#loginform, .widget.login_form").find("button").removeAttr('disabled');
+				}
 			}
 		});
 	});
 
-	var dom_obj = $("#loginform .submit input[name='redirect_to'], .widget.login_form .form_button input[name='redirect_to'], .widget.login_form .wp-block-button input[name='redirect_to']");
+	var dom_obj = $("#loginform .submit input[name='redirect_to'], .widget.login_form input[name='redirect_to']");
 
 	if(dom_obj.length > 0)
 	{
