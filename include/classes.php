@@ -876,6 +876,11 @@ class mf_custom_login
 		}
 	}
 
+	function init()
+	{
+		load_plugin_textdomain('lang_login', false, str_replace("/include", "", dirname(plugin_basename(__FILE__)))."/lang/");
+	}
+
 	function settings_custom_login()
 	{
 		$options_area_orig = $options_area = __FUNCTION__;

@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description:
-Version: 3.8.3
+Version: 3.8.4
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -84,8 +84,6 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	add_action('wp_ajax_api_custom_login_nonce', array($obj_custom_login, 'api_custom_login_nonce'));
 	add_action('wp_ajax_nopriv_api_custom_login_nonce', array($obj_custom_login, 'api_custom_login_nonce'));
-
-	load_plugin_textdomain('lang_login', false, dirname(plugin_basename(__FILE__))."/lang/");
 
 	function uninstall_custom_login()
 	{
