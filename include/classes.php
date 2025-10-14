@@ -829,6 +829,8 @@ class mf_custom_login
 
 	function init()
 	{
+		load_plugin_textdomain('lang_login', false, str_replace("/include", "", dirname(plugin_basename(__FILE__)))."/lang/");
+
 		register_block_type('mf/customlogin', array(
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
@@ -874,11 +876,6 @@ class mf_custom_login
 				$done_text = sprintf(__("You are already logged in as %s. Would you like to go to %sadmin%s or %slog out %s?", 'lang_login'), $user_data->user_login, "<a href='".admin_url()."'>", "</a>", "<a href='".wp_logout_url()."'>", "</a>");
 			}
 		}
-	}
-
-	function init()
-	{
-		load_plugin_textdomain('lang_login', false, str_replace("/include", "", dirname(plugin_basename(__FILE__)))."/lang/");
 	}
 
 	function settings_custom_login()
