@@ -224,11 +224,7 @@ if($obj_custom_login->logged_in_id > 0)
 }
 ############################
 
-// Always make sure that something is echoed so that the cache does not notify
-/*if($out_media_all != '')
-{*/
-	echo "@media all{".$out_media_all."}";
-//}
+echo $out_media_all;
 
 if($out_media_mobile != '')
 {
