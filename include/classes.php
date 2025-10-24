@@ -255,7 +255,7 @@ class mf_custom_login
 				break;
 			}
 
-			echo "<form method='post' action='?login' id='loginform' class='mf_form'>" //".wp_login_url()."
+			echo "<form".apply_filters('get_form_attr', " action='?login' id='loginform'").">"
 				.get_notification(array('add_container' => true))
 				.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true)) // log -> user_login //, 'placeholder' => "abc123 / ".get_placeholder_email()
 				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true, 'description' => "<a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a>")); // pwd -> user_pass
@@ -413,7 +413,7 @@ class mf_custom_login
 
 			if($display_form == true)
 			{
-				echo "<form method='post' action='' class='mf_form'>";
+				echo "<form".apply_filters('get_form_attr', "").">";
 
 					if(in_array('username', $attributes['registration_fields']))
 					{
@@ -625,7 +625,7 @@ class mf_custom_login
 
 					if($display_form == true)
 					{
-						echo "<form method='post' action='".wp_lostpassword_url()."?action=rp' class='mf_form'>"
+						echo "<form".apply_filters('get_form_attr', " action='".wp_lostpassword_url()."?action=rp'").">"
 							.show_password_field(array('name' => 'user_pass', 'text' => __("New Password", 'lang_login'), 'value' => $user_pass, 'xtra' => " autocomplete='new-password'", 'description' => wp_get_password_hint()));
 
 							do_action('resetpass_form', $user);
@@ -676,7 +676,7 @@ class mf_custom_login
 
 					if($display_form == true)
 					{
-						echo "<form method='post' action='' class='mf_form'>"
+						echo "<form".apply_filters('get_form_attr', "").">"
 							.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true)); //, 'placeholder' => "abc123 / ".get_placeholder_email()
 
 							do_action('lostpassword_form');
