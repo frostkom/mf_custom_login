@@ -424,7 +424,7 @@ class mf_custom_login
 
 					if($attributes['registration_collect_name'] == 'yes' || in_array('full_name', $attributes['registration_fields']))
 					{
-						echo "<div class='flex_flow'>"
+						echo "<div".apply_filters('get_flex_flow', "").">"
 							.show_textfield(array('name' => 'first_name', 'text' => __("First Name", 'lang_login'), 'value' => $first_name, 'placeholder' => "Jane", 'required' => true))
 							.show_textfield(array('name' => 'last_name', 'text' => __("Last Name", 'lang_login'), 'value' => $last_name, 'placeholder' => "Doe", 'required' => true))
 						."</div>";
@@ -432,7 +432,7 @@ class mf_custom_login
 
 					if(in_array('company', $attributes['registration_fields']))
 					{
-						echo "<div class='flex_flow'>"
+						echo "<div".apply_filters('get_flex_flow', "").">"
 							.show_textfield(array('name' => 'profile_company', 'text' => __("Company", 'lang_login'), 'value' => $profile_company, 'required' => true))
 						."</div>";
 					}
