@@ -1283,6 +1283,8 @@ class mf_custom_login
 			{
 				if(!(apply_filters('get_block_search', 0, 'mf/customregistration') > 0))
 				{
+					do_action('load_font_awesome');
+
 					echo "<p class='display_warning'>"
 						."<i class='fa fa-exclamation-triangle yellow'></i> "
 						.sprintf(__("You have not created a %spage for registration%s. Please do so and add the %sregistration widget%s to the page", 'lang_login'), "<a href='".admin_url("post-new.php?post_type=page")."'>", "</a>", "<a href='".admin_url("widgets.php")."'>", "</a>")
