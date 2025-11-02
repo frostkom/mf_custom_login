@@ -2,9 +2,9 @@ jQuery(function($)
 {
 	function check_credentials()
 	{
-		var has_username = $("#user_login").val() != '',
-			has_password = $("#user_pass").val() != '',
-			has_error = $("#login_error:visible").length > 0;
+		var has_username = ($("#user_login").val() != ''),
+			has_password = ($("#user_pass").val() != ''),
+			has_error = ($("#login_error:visible").length > 0);
 
 		if(has_username && (!has_password || has_error))
 		{
@@ -32,7 +32,7 @@ jQuery(function($)
 		{
 			$.ajax(
 			{
-				url: script_custom_login.ajax_url,
+				url: script_custom_login_direct_link.ajax_url,
 				type: 'post',
 				dataType: 'json',
 				data: {
@@ -42,16 +42,6 @@ jQuery(function($)
 				success: function(data)
 				{
 					$("#login > .message, #login_error, #direct_login_link").remove();
-
-					/*if(data.success)
-					{
-						$("#loginform").before("<p class='message updated'>" + data.html + "</p>");
-					}
-
-					else
-					{
-						$("#loginform").before("<div id='login_error' class='error'>" + data.html + "</div>");
-					}*/
 
 					$("#loginform").before(data.html);
 				}

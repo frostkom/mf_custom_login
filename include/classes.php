@@ -152,12 +152,14 @@ class mf_custom_login
 		return $out;
 	}
 
-	function combined_head()
+	function block_render_login_callback($attributes)
 	{
+		global $wpdb, $done_text, $error_text;
+
 		$plugin_include_url = plugin_dir_url(__FILE__);
 
-		mf_enqueue_style('style_custom_login', $plugin_include_url."style.php");
-		mf_enqueue_script('script_custom_login', $plugin_include_url."script.js", array('ajax_url' => admin_url('admin-ajax.php')));
+		mf_enqueue_style('style_custom_login_login', $plugin_include_url."style_login.php");
+		mf_enqueue_script('script_custom_login_login', $plugin_include_url."script_login.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
@@ -195,13 +197,6 @@ class mf_custom_login
 				break;
 			}
 		}
-	}
-
-	function block_render_login_callback($attributes)
-	{
-		global $wpdb, $done_text, $error_text;
-
-		$this->combined_head();
 
 		ob_start();
 
@@ -297,7 +292,10 @@ class mf_custom_login
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
 		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = [];}
 
-		$this->combined_head();
+		$plugin_include_url = plugin_dir_url(__FILE__);
+
+		mf_enqueue_style('style_custom_login_registration', $plugin_include_url."style_registration.css");
+		mf_enqueue_script('script_custom_login_registration', $plugin_include_url."script_registration.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
 		ob_start();
 
@@ -559,7 +557,10 @@ class mf_custom_login
 	{
 		global $done_text, $error_text;
 
-		$this->combined_head();
+		$plugin_include_url = plugin_dir_url(__FILE__);
+
+		mf_enqueue_style('style_custom_login_lost', $plugin_include_url."style_lost.css");
+		mf_enqueue_script('script_custom_login_lost', $plugin_include_url."script_lost.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
 		ob_start();
 
@@ -715,7 +716,9 @@ class mf_custom_login
 
 		if(is_user_logged_in())
 		{
-			$this->combined_head();
+			$plugin_include_url = plugin_dir_url(__FILE__);
+
+			mf_enqueue_style('style_custom_login_loggedin', $plugin_include_url."style_loggedin.css");
 
 			echo "<div".parse_block_attributes(array('class' => "widget login_form logged_in_info", 'attributes' => $attributes)).">";
 
@@ -1656,7 +1659,10 @@ class mf_custom_login
 			break;
 		}
 
-		$this->combined_head();
+		$plugin_include_url = plugin_dir_url(__FILE__);
+
+		mf_enqueue_style('style_custom_login_login', $plugin_include_url."style_login.php");
+		mf_enqueue_script('script_custom_login_login', $plugin_include_url."script_login.js", array('ajax_url' => admin_url('admin-ajax.php')));
 	}
 
 	function login_redirect($redirect_to, $request, $user_data)

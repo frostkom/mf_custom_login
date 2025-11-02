@@ -1,0 +1,10 @@
+.lost_password_form form button
+{
+	width: 100%;
+}
+
+.lost_password_form form p
+{
+	margin-top: .5em;
+	text-align: center;
+}

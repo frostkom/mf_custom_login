@@ -1,0 +1,15 @@
+.registration_form .small
+{
+	font-size: .8em;
+}
+
+.registration_form form button
+{
+	width: 100%;
+}
+
+.registration_form form p
+{
+	margin-top: .5em;
+	text-align: center;
+}

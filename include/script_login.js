@@ -6,7 +6,7 @@ jQuery(function($)
 
 		$.ajax(
 		{
-			url: script_custom_login.ajax_url,
+			url: script_custom_login_login.ajax_url,
 			type: 'post',
 			dataType: 'json',
 			data:
@@ -36,15 +36,5 @@ jQuery(function($)
 
 			dom_obj.val(dom_obj_value + "#" + hash);
 		}
-	}
-
-	var dom_obj_registration = $(".widget.registration_form");
-
-	if(dom_obj_registration.length > 0)
-	{
-		dom_obj_registration.find("p > input").each(function()
-		{
-			$(this).addClass('mf_form_field').parent("p").addClass('form_textfield').children("br").remove();
-		});
 	}
 });

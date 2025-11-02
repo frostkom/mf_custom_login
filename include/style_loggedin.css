@@ -1,0 +1,50 @@
+header .logged_in_info
+{
+	display: flex;
+	float: right;
+}
+
+	header .logged_in_info > *
+	{
+		display: block;
+		flex: 1 1 0;
+	}
+
+		header .logged_in_info > * + *
+		{
+			margin-left: 1em;
+		}
+
+	.logged_in_info ul
+	{
+		align-self: center;
+		font-size: 1.4em;
+		list-style: none;
+	}
+
+		.logged_in_info ul li
+		{
+			white-space: nowrap;
+		}
+
+			.logged_in_info ul li + li
+			{
+				margin-top: .3em;
+			}
+
+	.logged_in_info .logged_in_avatar
+	{
+		border: .2em solid #ccc;
+		border-radius: 50%;
+		display: block;
+		height: 6em;
+		overflow: hidden;
+		width: 6em;
+	}
+
+		.logged_in_info .logged_in_avatar img
+		{
+			object-fit: cover;
+			height: 100%;
+			width: 100%;
+		}
