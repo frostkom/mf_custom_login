@@ -5,7 +5,7 @@
 		SelectControl = wp.components.SelectControl,
 		TextControl = wp.components.TextControl,
 		MediaUpload = wp.blockEditor.MediaUpload,
-	    Button = wp.components.Button,
+		Button = wp.components.Button,
 		MediaUploadCheck = wp.blockEditor.MediaUploadCheck,
 		InspectorControls = wp.blockEditor.InspectorControls;
 
@@ -86,19 +86,19 @@
 			},
 			'registration_who_can':
 			{
-                'type': 'string',
-                'default': ''
-            },
+				'type': 'string',
+				'default': ''
+			},
 			'registration_collect_name':
 			{
-                'type': 'string',
-                'default': ''
-            },
+				'type': 'string',
+				'default': ''
+			},
 			'registration_fields':
 			{
-                'type': 'array',
-                'default': ''
-            }
+				'type': 'array',
+				'default': ''
+			}
 		},
 		'supports':
 		{
@@ -266,9 +266,9 @@
 			},
 			'logged_in_info_display':
 			{
-                'type': 'array',
-                'default': ''
-            }
+				'type': 'array',
+				'default': ''
+			}
 		},
 		'supports':
 		{
