@@ -107,6 +107,40 @@ $out_media_all .= ".login_form .login_actions
 	display: flex;
 	gap: 1em;
 }";
+
+if(is_plugin_active("secure-passkeys/secure-passkeys.php"))
+{
+	$out_media_all .= ".widget.login_form .notice
+	{
+		border-width: .1em;
+		border-style: solid;
+		border-radius: .5em;
+		margin-bottom: 1em;
+		padding: 1em 1.5em;
+	}
+
+		.widget.login_form .notice.notice-error
+		{
+			background: #ecc8c5;
+			border-color: #b32f2d;
+			color: #b32f2d;
+		}
+
+		.widget.login_form .notice.notice-success
+		{
+			background: #def2d6;
+			border-color: #5a7052;
+			color: #5a7052;
+		}
+	
+	.widget.login_form .secure-passkey-login-wrapper
+	{
+		border-top: 0;
+		margin-top: 0;
+		padding-top: 0;
+		text-align: left;
+	}";
+}
 ############################
 
 echo $out_media_all;

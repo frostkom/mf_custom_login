@@ -244,7 +244,7 @@ class mf_custom_login
 
 						else
 						{
-							$error_text = $result['error'];
+							$error_text = "Login Error: ".$result['error'];
 						}
 					}
 				break;
@@ -372,7 +372,7 @@ class mf_custom_login
 						{
 							foreach($errors->errors as $error)
 							{
-								$error_text = $error[0];
+								$error_text = "WP Error: ".$error[0];
 							}
 						}
 
@@ -660,7 +660,7 @@ class mf_custom_login
 							{
 								foreach($errors->errors as $error)
 								{
-									$error_text = $error[0];
+									$error_text = "WP Error: ".$error[0];
 								}
 							}
 
