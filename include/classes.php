@@ -909,16 +909,6 @@ class mf_custom_login
 
 		$arr_settings = [];
 
-		/*if(get_option('blog_public') == 0 || get_option('setting_no_public_pages') == 'yes' || get_option('setting_theme_core_login') == 'yes')
-		{
-			$arr_settings['setting_no_public_pages'] = __("Always redirect visitors to the login page", 'lang_login');
-
-			if(get_option('setting_no_public_pages') != 'yes')
-			{
-				$arr_settings['setting_theme_core_login'] = __("Require login for public site", 'lang_login');
-			}
-		}*/
-
 		if(wp_is_block_theme())
 		{
 			delete_option('setting_custom_login_display_theme_logo');
@@ -1121,22 +1111,6 @@ class mf_custom_login
 
 		echo settings_header($setting_key, __("Login", 'lang_login'));
 	}
-
-		/*function setting_no_public_pages_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option_or_default($setting_key, 'no');
-
-			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
-		}
-
-		function setting_theme_core_login_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option_or_default($setting_key, 'no');
-
-			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
-		}*/
 
 		function setting_custom_login_display_theme_logo_callback()
 		{
@@ -1395,23 +1369,31 @@ class mf_custom_login
 		}
 	}
 
+	/*function secure_passkeys_web_authn_relying_party_id($domain)
+	{
+		$allowed_domains = [];
+
+		$result = get_sites();
+
+		foreach($result as $r)
+		{
+			$allowed_domains[] = $r->domain;
+		}
+
+		$host = ($_SERVER['HTTP_HOST'] ?? '');
+
+		do_log(__FUNCTION__.": ".$host." in ".var_export($allowed_domains, true));
+
+		if(in_array($host, $allowed_domains, true))
+		{
+			return $host;
+		}
+
+		return $domain;
+	}*/
+
 	function filter_sites_table_settings($arr_settings)
 	{
-		/*$arr_settings['settings_theme_core'] = array(
-			'setting_no_public_pages' => array(
-				'type' => 'bool',
-				'global' => false,
-				'icon' => "fas fa-lock",
-				'name' => __("Always redirect visitors to the login page", 'lang_login'),
-			),
-			'setting_theme_core_login' => array(
-				'type' => 'bool',
-				'global' => false,
-				'icon' => "fas fa-user-lock",
-				'name' => __("Require login for public site", 'lang_login'),
-			),
-		);*/
-
 		$arr_settings['settings_custom_login'] = array(
 			'setting_custom_login_allow_direct_link' => array(
 				'type' => 'bool',
@@ -2059,25 +2041,27 @@ class mf_custom_login
 
 	function login_url($url)
 	{
-		/*if(strpos($url, "?") !== false)
-		{*/
-			if(!($this->login_id > 0))
+		if(!($this->login_id > 0))
+		{
+			$this->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+		}
+
+		if($this->login_id > 0)
+		{
+			$has_questionmark = (strpos($url, "?") !== false);
+
+			if($has_questionmark)
 			{
-				$this->login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+				list($url_old, $query_string) = explode("?", $url);
 			}
 
-			if($this->login_id > 0)
+			$url = get_permalink($this->login_id);
+
+			if($has_questionmark && $query_string != '')
 			{
-				@list($url_old, $query_string) = explode("?", $url);
-
-				$url = get_permalink($this->login_id);
-
-				if($query_string != '')
-				{
-					$url .= (strpos($query_string, "?") ? "&" : "?").$query_string;
-				}
+				$url .= (strpos($query_string, "?") ? "&" : "?").$query_string;
 			}
-		//}
+		}
 
 		return $url;
 	}
