@@ -132,7 +132,7 @@ if(is_plugin_active("secure-passkeys/secure-passkeys.php"))
 			border-color: #5a7052;
 			color: #5a7052;
 		}
-	
+
 	.widget.login_form .secure-passkey-login-wrapper
 	{
 		border-top: 0;

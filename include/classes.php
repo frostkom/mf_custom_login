@@ -2019,7 +2019,12 @@ class mf_custom_login
 	function is_public_page($out)
 	{
 		$site_url = get_site_url();
-		@list($request_uri, $rest) = explode("?", $_SERVER['REQUEST_URI'], 2);
+		$request_uri = $_SERVER['REQUEST_URI'];
+
+		if(strpos($request_uri, "?") !== false)
+		{
+			list($request_uri, $rest) = explode("?", $request_uri, 2);
+		}
 
 		$arr_block_search = array('mf/customlogin', 'mf/customregistration', 'mf/customlost');
 
