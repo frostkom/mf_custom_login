@@ -132,6 +132,7 @@ class mf_custom_login
 
 				$out['success'] = true;
 				$out['redirect'] = $data['redirect_to'];
+				$out['user_id'] = $user->ID;
 			}
 
 			else
@@ -239,7 +240,7 @@ class mf_custom_login
 								echo "<p>".__("I'm redirecting you...", 'lang_login')."</p>";
 							}
 
-							mf_redirect($result['redirect']);
+							mf_redirect(apply_filters('filter_login_admin_url_before_redirect', $result['redirect'], $result));
 						}
 
 						else
@@ -1015,10 +1016,6 @@ class mf_custom_login
 
 		// Registration
 		############################
-		$options_area = $options_area_orig."_registration";
-
-		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
-
 		$arr_settings = [];
 
 		if(is_multisite())
@@ -1073,6 +1070,10 @@ class mf_custom_login
 
 		if(count($arr_settings) > 0)
 		{
+			$options_area = $options_area_orig."_registration";
+
+			add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
+
 			show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 		}
 		############################
