@@ -86,7 +86,7 @@ class mf_custom_login
 
 		if(apply_filters('filter_user_allowed_to_login', true, $data['user_login']) == true)
 		{
-			$user = wp_signon(array(
+			$user_data = wp_signon(array(
 				'user_login' => $data['user_login'],
 				'user_password' => $data['user_pass'],
 				'remember' => $data['user_remember']
@@ -97,33 +97,33 @@ class mf_custom_login
 				echo "<p>".__("Signed you in...", 'lang_login')."</p>";
 			}
 
-			if(!is_wp_error($user))
+			if(!is_wp_error($user_data))
 			{
 				if(get_option('setting_custom_login_debug') == 'yes')
 				{
 					echo "<p>".__("No errors...", 'lang_login')."</p>";
 				}
 
-				$requested_redirect_to = check_var('redirect_to');
+				//$requested_redirect_to = check_var('redirect_to');
 
-				$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $requested_redirect_to, $user);
+				$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $user_data);
 
 				if(empty($data['redirect_to']) || $data['redirect_to'] == 'wp-admin/' || $data['redirect_to'] == admin_url())
 				{
 					// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
-					if(is_multisite() && !get_active_blog_for_user($user->ID) && !is_super_admin($user->ID))
+					if(is_multisite() && !get_active_blog_for_user($user_data->ID) && !is_super_admin($user_data->ID))
 					{
 						$data['redirect_to'] = user_admin_url();
 					}
 
-					else if(is_multisite() && !$user->has_cap('read'))
+					else if(is_multisite() && !$user_data->has_cap('read'))
 					{
-						$data['redirect_to'] = get_dashboard_url($user->ID);
+						$data['redirect_to'] = get_dashboard_url($user_data->ID);
 					}
 
-					else if(!$user->has_cap('edit_posts'))
+					else if(!$user_data->has_cap('edit_posts'))
 					{
-						$data['redirect_to'] = ($user->has_cap('read') ? admin_url('profile.php') : home_url());
+						$data['redirect_to'] = ($user_data->has_cap('read') ? admin_url('profile.php') : home_url());
 					}
 				}
 
@@ -134,12 +134,13 @@ class mf_custom_login
 
 				$out['success'] = true;
 				$out['redirect'] = $data['redirect_to'];
-				$out['user_id'] = $user->ID;
+				$out['user_data'] = $user_data;
+				$out['user_id'] = $user_data->ID;
 			}
 
 			else
 			{
-				foreach($user->errors as $error)
+				foreach($user_data->errors as $error)
 				{
 					$out['error'] = $error[0];
 					break;
@@ -180,9 +181,8 @@ class mf_custom_login
 						{
 							$redirect_to = admin_url();
 
-							$user = get_user_by('login', $this->username);
-
-							$redirect_to = apply_filters('login_redirect', $redirect_to, $redirect_to, $user);
+							$user_data = get_user_by('login', $this->username);
+							$redirect_to = apply_filters('login_redirect', $redirect_to, $user_data);
 
 							mf_redirect($redirect_to);
 						}
@@ -242,7 +242,10 @@ class mf_custom_login
 								echo "<p>".__("I'm redirecting you...", 'lang_login')."</p>";
 							}
 
-							mf_redirect(apply_filters('filter_login_admin_url_before_redirect', $result['redirect'], $result));
+							$redirect_to = $result['redirect'];
+							$redirect_to = apply_filters('login_redirect', $redirect_to, $result['user_data']);
+
+							mf_redirect($redirect_to);
 						}
 
 						else
@@ -872,7 +875,12 @@ class mf_custom_login
 		{
 			if($data['redirect'] == true)
 			{
-				mf_redirect(admin_url());
+				$redirect_to = admin_url();
+
+				$user_data = get_userdata(get_current_user_id());
+				$redirect_to = apply_filters('login_redirect', $redirect_to, $user_data);
+
+				mf_redirect($redirect_to);
 			}
 
 			else
@@ -1627,7 +1635,7 @@ class mf_custom_login
 		mf_enqueue_script('script_custom_login_login', $plugin_include_url."script_login.js", array('ajax_url' => admin_url('admin-ajax.php')));
 	}
 
-	function login_redirect($redirect_to, $request, $user_data)
+	function login_redirect($redirect_to, $user_data)
 	{
 		// Just in case we have sent this variable along with the URL
 		$redirect_to = check_var('redirect_to', 'char', true, $redirect_to);
