@@ -79,8 +79,6 @@ class mf_custom_login
 
 		$data['user_login'] = strtolower($data['user_login']);
 
-		$secure_cookie = '';
-
 		if(get_option('setting_custom_login_debug') == 'yes')
 		{
 			echo "<p>".__("About to sign you in...", 'lang_login')."</p>";
@@ -88,7 +86,11 @@ class mf_custom_login
 
 		if(apply_filters('filter_user_allowed_to_login', true, $data['user_login']) == true)
 		{
-			$user = wp_signon(array('user_login' => $data['user_login'], 'user_password' => $data['user_pass'], 'remember' => $data['user_remember']), $secure_cookie);
+			$user = wp_signon(array(
+				'user_login' => $data['user_login'],
+				'user_password' => $data['user_pass'],
+				'remember' => $data['user_remember']
+			), is_ssl());
 
 			if(get_option('setting_custom_login_debug') == 'yes')
 			{
@@ -492,11 +494,11 @@ class mf_custom_login
 	{
 		$errors = new WP_Error();
 
-		$user_data = get_user_by((strpos($login, '@') ? 'email' : 'login'), $login);
+		$user_data = get_user_by('email', $login);
 
 		if(!isset($user_data->user_login))
 		{
-			$errors->add('invalidcombo', __("Invalid Username or E-mail", 'lang_login'));
+			$errors->add('invalidcombo', __("Invalid E-mail", 'lang_login'));
 
 			return $errors;
 		}
@@ -1764,7 +1766,12 @@ class mf_custom_login
 		}
 
 		add_filter('authenticate', array($this, 'allow_programmatic_login'), 10, 3); // hook in earlier than other callbacks to short-circuit them
-		$user = wp_signon(array('user_login' => $username, 'remember' => true));
+
+		$user = wp_signon(array(
+			'user_login' => $username,
+			'remember' => false
+		), is_ssl());
+
 		remove_filter('authenticate', array($this, 'allow_programmatic_login'), 10);
 
 		if(is_a($user, 'WP_User'))
@@ -2070,6 +2077,37 @@ class mf_custom_login
 		}
 
 		return $url;
+	}
+
+	function authenticate($user, $username, $password)
+	{
+		if(is_a($user, 'WP_User'))
+		{
+			return $user;
+		}
+
+		if(is_wp_error($user))
+		{
+			return $user;
+		}
+
+		if(filter_var($username, FILTER_VALIDATE_EMAIL))
+		{
+			$user = get_user_by('email', $username);
+
+			if($user)
+			{
+				$remember = (isset($_POST['rememberme']) && $_POST['rememberme']);
+
+				return wp_signon(array(
+					'user_login' => $user->user_login, 
+					'user_password' => $password, 
+					'remember' => $remember
+				), is_ssl());
+			}
+		}
+
+		return new WP_Error('invalid_email', __("Invalid e-mail or password", 'lang_login'));
 	}
 
 	function register_url($url)
