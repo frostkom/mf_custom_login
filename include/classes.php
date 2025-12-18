@@ -1372,29 +1372,6 @@ class mf_custom_login
 		}
 	}
 
-	/*function secure_passkeys_web_authn_relying_party_id($domain)
-	{
-		$allowed_domains = [];
-
-		$result = get_sites();
-
-		foreach($result as $r)
-		{
-			$allowed_domains[] = $r->domain;
-		}
-
-		$host = ($_SERVER['HTTP_HOST'] ?? '');
-
-		do_log(__FUNCTION__.": ".$host." in ".var_export($allowed_domains, true));
-
-		if(in_array($host, $allowed_domains, true))
-		{
-			return $host;
-		}
-
-		return $domain;
-	}*/
-
 	function filter_sites_table_settings($arr_settings)
 	{
 		$arr_settings['settings_custom_login'] = array(
