@@ -106,7 +106,7 @@ class mf_custom_login
 
 				//$requested_redirect_to = check_var('redirect_to');
 
-				$data['redirect_to'] = apply_filters('login_redirect', $data['redirect_to'], $user_data);
+				$data['redirect_to'] = apply_filters('filter_login_redirect', $data['redirect_to'], $user_data);
 
 				if(empty($data['redirect_to']) || $data['redirect_to'] == 'wp-admin/' || $data['redirect_to'] == admin_url())
 				{
@@ -182,7 +182,7 @@ class mf_custom_login
 							$redirect_to = admin_url();
 
 							$user_data = get_user_by('login', $this->username);
-							$redirect_to = apply_filters('login_redirect', $redirect_to, $user_data);
+							$redirect_to = apply_filters('filter_login_redirect', $redirect_to, $user_data);
 
 							mf_redirect($redirect_to);
 						}
@@ -243,7 +243,7 @@ class mf_custom_login
 							}
 
 							$redirect_to = $result['redirect'];
-							$redirect_to = apply_filters('login_redirect', $redirect_to, $result['user_data']);
+							$redirect_to = apply_filters('filter_login_redirect', $redirect_to, $result['user_data']);
 
 							mf_redirect($redirect_to);
 						}
@@ -878,7 +878,7 @@ class mf_custom_login
 				$redirect_to = admin_url();
 
 				$user_data = get_userdata(get_current_user_id());
-				$redirect_to = apply_filters('login_redirect', $redirect_to, $user_data);
+				$redirect_to = apply_filters('filter_login_redirect', $redirect_to, $user_data);
 
 				mf_redirect($redirect_to);
 			}
@@ -1635,7 +1635,7 @@ class mf_custom_login
 		mf_enqueue_script('script_custom_login_login', $plugin_include_url."script_login.js", array('ajax_url' => admin_url('admin-ajax.php')));
 	}
 
-	function login_redirect($redirect_to, $user_data)
+	function filter_login_redirect($redirect_to, $user_data)
 	{
 		// Just in case we have sent this variable along with the URL
 		$redirect_to = check_var('redirect_to', 'char', true, $redirect_to);

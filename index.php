@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description:
-Version: 3.8.19
+Version: 3.8.20
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -48,7 +48,7 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 		//add_action('lostpassword_post', array($obj_custom_login, 'lostpassword_post'), 10, 3); // This does not validate and return errors
 
 		add_action('login_init', array($obj_custom_login, 'login_init'), 0);
-		add_filter('login_redirect', array($obj_custom_login, 'login_redirect'), 10, 2);
+		add_filter('filter_login_redirect', array($obj_custom_login, 'filter_login_redirect'), 10, 2);
 		add_filter('login_message', array($obj_custom_login, 'login_message'));
 
 		/* Direct Link Login */
@@ -78,14 +78,17 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	add_filter('determine_current_user', array($obj_custom_login, 'determine_current_user'), 21);
 
-	add_action('wp_ajax_api_custom_login_direct_create', array($obj_custom_login, 'api_custom_login_direct_create'));
-	add_action('wp_ajax_api_custom_login_direct_revoke', array($obj_custom_login, 'api_custom_login_direct_revoke'));
+	if(wp_doing_ajax())
+	{
+		add_action('wp_ajax_api_custom_login_direct_create', array($obj_custom_login, 'api_custom_login_direct_create'));
+		add_action('wp_ajax_api_custom_login_direct_revoke', array($obj_custom_login, 'api_custom_login_direct_revoke'));
 
-	add_action('wp_ajax_api_custom_login_direct_link_email', array($obj_custom_login, 'api_custom_login_direct_link_email'));
-	add_action('wp_ajax_nopriv_api_custom_login_direct_link_email', array($obj_custom_login, 'api_custom_login_direct_link_email'));
+		add_action('wp_ajax_api_custom_login_direct_link_email', array($obj_custom_login, 'api_custom_login_direct_link_email'));
+		add_action('wp_ajax_nopriv_api_custom_login_direct_link_email', array($obj_custom_login, 'api_custom_login_direct_link_email'));
 
-	add_action('wp_ajax_api_custom_login_nonce', array($obj_custom_login, 'api_custom_login_nonce'));
-	add_action('wp_ajax_nopriv_api_custom_login_nonce', array($obj_custom_login, 'api_custom_login_nonce'));
+		add_action('wp_ajax_api_custom_login_nonce', array($obj_custom_login, 'api_custom_login_nonce'));
+		add_action('wp_ajax_nopriv_api_custom_login_nonce', array($obj_custom_login, 'api_custom_login_nonce'));
+	}
 
 	function uninstall_custom_login()
 	{
