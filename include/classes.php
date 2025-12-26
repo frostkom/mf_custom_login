@@ -31,7 +31,7 @@ class mf_custom_login
 		if($obj_cron->is_running == false)
 		{
 			mf_uninstall_plugin(array(
-				'options' => array('setting_custom_login_wp_login_action', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes', 'setting_custom_login_prevent_direct_access', 'setting_custom_login_page'),
+				'options' => array('setting_custom_login_wp_login_action', 'setting_custom_login_limit_attempts', 'setting_custom_login_limit_minutes', 'setting_custom_login_prevent_direct_access', 'setting_custom_login_page', 'setting_custom_login_recoverpassword', 'setting_custom_login_lostpassword', 'setting_custom_login_register'),
 				'tables' => array('custom_login'),
 			));
 
@@ -277,7 +277,7 @@ class mf_custom_login
 				echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
 			}
 
-			if(get_option('users_can_register'))
+			if(get_option('users_can_register') && (is_multisite() == false || get_option('setting_custom_login_allow_registration') == 'yes'))
 			{
 				echo "<p>".__("Do not have an account?", 'lang_login')." <a href='".wp_registration_url()."'>".__("Register here", 'lang_login')."</a></p>";
 			}
@@ -304,8 +304,6 @@ class mf_custom_login
 		mf_enqueue_script('script_custom_login_registration', $plugin_include_url."script_registration.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
 		ob_start();
-
-		$is_allowed = ((get_option('users_can_register') == 1 || is_user_logged_in()) && ($attributes['registration_who_can'] == '' || $attributes['registration_who_can'] == 0 || current_user_can($attributes['registration_who_can'])));
 
 		$user_login = "";
 
@@ -338,7 +336,7 @@ class mf_custom_login
 
 			$display_form = true;
 
-			if($is_allowed)
+			if(((get_option('users_can_register') == 1 && get_option('setting_custom_login_allow_registration') == 'yes' || is_user_logged_in()) && ($attributes['registration_who_can'] == '' || $attributes['registration_who_can'] == 0 || current_user_can($attributes['registration_who_can']))))
 			{
 				if(isset($_POST['btnSendRegistration']))
 				{
@@ -409,7 +407,7 @@ class mf_custom_login
 
 			else
 			{
-				$error_text = __("You do not have the rights to view this form", 'lang_login');
+				$error_text = __("This site does not allow registration", 'lang_login');
 				$display_form = false;
 			}
 
@@ -466,7 +464,7 @@ class mf_custom_login
 
 					else
 					{
-						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
+						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small nowrap"));
 					}
 
 					echo "<div".get_form_button_classes().">"
@@ -1034,9 +1032,10 @@ class mf_custom_login
 
 			if($users_can_register)
 			{
+				$arr_settings['setting_custom_login_allow_registration'] = __("Allow Registration on This Site", 'lang_login');
 				$arr_settings['default_role'] = __("Default Role", 'lang_login');
 
-				if($has_registration_widget == false)
+				/*if($has_registration_widget == false)
 				{
 					$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 				}
@@ -1044,16 +1043,16 @@ class mf_custom_login
 				else
 				{
 					delete_option('setting_custom_login_register');
-				}
+				}*/
 			}
 
 			else
 			{
-				delete_option('setting_custom_login_register');
+				//delete_option('setting_custom_login_register');
 			}
 		}
 
-		else if($users_can_register && $has_registration_widget == false)
+		/*else if($users_can_register && $has_registration_widget == false)
 		{
 			$arr_settings['setting_custom_login_register'] = __("Register", 'lang_login');
 		}
@@ -1061,7 +1060,7 @@ class mf_custom_login
 		else
 		{
 			delete_option('setting_custom_login_register');
-		}
+		}*/
 
 		if($users_can_register)
 		{
@@ -1097,7 +1096,7 @@ class mf_custom_login
 		$arr_settings = [];
 		$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
-		if(wp_is_block_theme() == false && !($this->lost_password_id > 0))
+		/*if(wp_is_block_theme() == false && !($this->lost_password_id > 0))
 		{
 			$arr_settings['setting_custom_login_lostpassword'] = __("Lost Password", 'lang_login');
 			$arr_settings['setting_custom_login_recoverpassword'] = __("Recover Password", 'lang_login');
@@ -1107,7 +1106,7 @@ class mf_custom_login
 		{
 			delete_option('setting_custom_login_lostpassword');
 			delete_option('setting_custom_login_recoverpassword');
-		}
+		}*/
 
 		$arr_settings['setting_custom_login_email_lost_password_subject'] = __("Lost Password Email Subject", 'lang_login');
 		$arr_settings['setting_custom_login_email_lost_password'] = __("Lost Password Email Content", 'lang_login');
@@ -1281,6 +1280,14 @@ class mf_custom_login
 			}
 		}
 
+		function setting_custom_login_allow_registration_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key, 'no');
+
+			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+		}
+
 		function default_role_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
@@ -1289,7 +1296,7 @@ class mf_custom_login
 			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false)), 'name' => $setting_key, 'value' => $option));
 		}
 
-		function setting_custom_login_register_callback()
+		/*function setting_custom_login_register_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
@@ -1298,7 +1305,7 @@ class mf_custom_login
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the register screen", 'lang_login')));
-		}
+		}*/
 
 		function setting_custom_login_email_admin_registration_callback()
 		{
@@ -1343,7 +1350,7 @@ class mf_custom_login
 			echo show_wp_editor(array('name' => $setting_key, 'value' => $option, 'editor_height' => 200));
 		}
 
-		function setting_custom_login_lostpassword_callback()
+		/*function setting_custom_login_lostpassword_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
@@ -1363,7 +1370,7 @@ class mf_custom_login
 			get_post_children(array('add_choose_here' => true), $arr_data);
 
 			echo show_select(array('data' => $arr_data, 'name' => $setting_key, 'value' => $option, 'suffix' => get_option_page_suffix(array('value' => $option)), 'description' => __("The content from this page is displayed next to the recover password screen", 'lang_login')));
-		}
+		}*/
 
 	function admin_init()
 	{
@@ -1648,7 +1655,7 @@ class mf_custom_login
 		return $redirect_to;
 	}
 
-	function login_message($message)
+	/*function login_message($message)
 	{
 		global $wpdb;
 
@@ -1672,11 +1679,6 @@ class mf_custom_login
 			break;
 		}
 
-		/*if(!($post_id > 0))
-		{
-			$post_id = get_option('setting_custom_login_page');
-		}*/
-
 		if($post_id > 0)
 		{
 			$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, post_content FROM ".$wpdb->posts." WHERE ID = '%d' AND post_type = %s AND post_status = %s", $post_id, 'page', 'publish'));
@@ -1697,7 +1699,7 @@ class mf_custom_login
 		}
 
 		return $message;
-	}
+	}*/
 
 	function wp_login_errors($errors)
 	{
