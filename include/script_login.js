@@ -37,9 +37,4 @@ jQuery(function($)
 			dom_obj.val(dom_obj_value + "#" + hash);
 		}
 	}
-
-	$(".widget.login_form .secure-passkey-login-wrapper").each(function()
-	{
-		$(this).addClass('wp-block-button').children("button").addClass('wp-block-button__link');
-	});
 });
