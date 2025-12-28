@@ -325,11 +325,11 @@ class mf_custom_login
 			$profile_company = check_var('profile_company');
 		}
 
-		$role = get_option('default_role');
+		$default_role = get_option('default_role');
 
 		if(is_user_logged_in() && IS_ADMINISTRATOR)
 		{
-			$role = check_var('role', 'char', true, $role);
+			$default_role = check_var('default_role', 'char', true, $default_role);
 		}
 
 		echo "<div".parse_block_attributes(array('class' => "widget login_form registration_form", 'attributes' => $attributes)).">";
@@ -385,7 +385,7 @@ class mf_custom_login
 							$user_id = $errors;
 
 							$user = new WP_User($user_id);
-							$user->set_role($role);
+							$user->set_role($default_role);
 
 							if($attributes['registration_collect_name'] == 'yes' || in_array('full_name', $attributes['registration_fields']))
 							{
@@ -449,14 +449,14 @@ class mf_custom_login
 
 							if(count($arr_data) > 1)
 							{
-								echo show_select(array('data' => $arr_data, 'name' => 'role', 'text' => __("Role", 'lang_login'), 'value' => $role));
+								echo show_select(array('data' => $arr_data, 'name' => 'default_role', 'text' => __("Role", 'lang_login'), 'value' => $default_role));
 							}
 
 							else
 							{
 								foreach($arr_data as $key => $value)
 								{
-									echo input_hidden(array('name' => 'role', 'value' => $key));
+									echo input_hidden(array('name' => 'default_role', 'value' => $key));
 								}
 							}
 						}
@@ -1293,7 +1293,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
-			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false)), 'name' => $setting_key, 'value' => $option));
+			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false, 'exclude' => array('administrator', 'editor'))), 'name' => $setting_key, 'value' => $option));
 		}
 
 		/*function setting_custom_login_register_callback()
