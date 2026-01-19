@@ -464,7 +464,7 @@ class mf_custom_login
 
 					else
 					{
-						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small nowrap"));
+						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
 					}
 
 					echo "<div".get_form_button_classes().">"
