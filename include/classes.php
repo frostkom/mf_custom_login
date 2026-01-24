@@ -41,11 +41,11 @@ class mf_custom_login
 
 				if($setting_custom_login_direct_link_expire > 0)
 				{
-					$users = get_users(array('fields' => array('ID')));
+					$arr_users = get_users(array('fields' => 'ID'));
 
-					foreach($users as $user)
+					foreach($arr_users as $user_id)
 					{
-						$meta_login_auth = get_user_meta($user->ID, 'meta_login_auth', true);
+						$meta_login_auth = get_user_meta($user_id, 'meta_login_auth', true);
 
 						if($meta_login_auth != '')
 						{
@@ -53,7 +53,7 @@ class mf_custom_login
 
 							if($meta_date < date("YmdHis", strtotime("-".$setting_custom_login_direct_link_expire." minute")))
 							{
-								delete_user_meta($user->ID, 'meta_login_auth');
+								delete_user_meta($user_id, 'meta_login_auth');
 							}
 						}
 					}
