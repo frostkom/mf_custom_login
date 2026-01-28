@@ -775,6 +775,15 @@ class mf_custom_login
 		return $out;
 	}
 
+	function block_render_redirect_callback($attributes)
+	{
+		if(is_user_logged_in() == false)
+		{
+			wp_redirect(wp_login_url());
+			exit;
+		}
+	}
+
 	function get_roles_for_select()
 	{
 		$arr_data = [];
@@ -831,6 +840,8 @@ class mf_custom_login
 			'block_description4' => __("Display Information About the Logged in User", 'lang_login'),
 			'logged_in_info_display_label' => __("List", 'lang_login'),
 			'logged_in_info_display' => $this->get_user_info_for_select(),
+			'block_title5' => __("Redirect to Login", 'lang_login'),
+			'block_description5' => __("Redirect to Login if not logged in", 'lang_login'),
 		));
 	}
 
@@ -860,6 +871,12 @@ class mf_custom_login
 			'editor_script' => 'script_custom_login_block_wp',
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_loggedin_callback'),
+		));
+
+		register_block_type('mf/customredirect', array(
+			'editor_script' => 'script_custom_login_block_wp',
+			'editor_style' => 'style_base_block_wp',
+			'render_callback' => array($this, 'block_render_redirect_callback'),
 		));
 	}
 

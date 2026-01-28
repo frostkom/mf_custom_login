@@ -333,4 +333,44 @@
 			return null;
 		}
 	});
+
+	registerBlockType('mf/customredirect',
+	{
+		title: script_custom_login_block_wp.block_title5,
+		description: script_custom_login_block_wp.block_description5,
+		icon: 'lock',
+		category: 'widgets',
+		'attributes':
+		{
+			'align':
+			{
+				'type': 'string',
+				'default': ''
+			}
+		},
+		'supports':
+		{
+			'html': false,
+			'multiple': false,
+			'align': true
+		},
+		edit: function(props)
+		{
+			return el(
+				'div',
+				{className: 'wp_mf_block_container'},
+				[
+					el(
+						'strong',
+						{className: props.className},
+						script_custom_login_block_wp.block_title5
+					)
+				]
+			);
+		},
+		save: function()
+		{
+			return null;
+		}
+	});
 })();
