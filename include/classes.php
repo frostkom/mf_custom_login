@@ -790,7 +790,7 @@ class mf_custom_login
 			$post_registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
 			$post_lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
 
-			if(in_array($post->ID, [$post_login_id, $post_registration_id, $post_lost_password_id]))
+			if(isset($post->ID) && in_array($post->ID, [$post_login_id, $post_registration_id, $post_lost_password_id]))
 			{
 				$is_login_page = true;
 			}
