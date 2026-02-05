@@ -1417,8 +1417,6 @@ class mf_custom_login
 
 	function display_post_states($post_states, $post)
 	{
-		global $wpdb;
-
 		$arr_page_types = array(
 			'mf/customlogin' => __("Custom Login", 'lang_login'),
 			'mf/customregistration' => __("Custom Registration", 'lang_login'),
@@ -1437,6 +1435,18 @@ class mf_custom_login
 		}
 
 		return $post_states;
+	}
+
+	function filter_base_page_index($seo_type)
+	{
+		global $post;
+
+		if($seo_type == '' && has_block('mf/customredirect', $post))
+		{
+			$seo_type = 'password_protected';
+		}
+
+		return $seo_type;
 	}
 
 	function user_row_actions($arr_actions, $user)
