@@ -145,7 +145,7 @@ class mf_custom_login
 
 		else
 		{
-			if(strpos($user_login, "@") !== true)
+			if(strpos($data['user_login'], "@") !== true)
 			{
 				$out['error'] = __("Your credentials were not correct. If the problem persists, please contact an administrator.", 'lang_login');
 			}
