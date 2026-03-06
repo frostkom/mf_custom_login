@@ -339,7 +339,7 @@ class mf_custom_login
 
 			$display_form = true;
 
-			if(((get_option('users_can_register') == 1 && get_option('setting_custom_login_allow_registration') == 'yes' || is_user_logged_in()) && ($attributes['registration_who_can'] == '' || $attributes['registration_who_can'] == 0 || current_user_can($attributes['registration_who_can']))))
+			if(((get_option('users_can_register') == 1 && (!is_multisite() || get_option('setting_custom_login_allow_registration') == 'yes') || is_user_logged_in()) && ($attributes['registration_who_can'] == '' || $attributes['registration_who_can'] == 0 || current_user_can($attributes['registration_who_can']))))
 			{
 				if(isset($_POST['btnSendRegistration']))
 				{
@@ -412,6 +412,8 @@ class mf_custom_login
 			{
 				$error_text = __("This site does not allow registration", 'lang_login');
 				$display_form = false;
+
+				do_log(__FUNCTION__.": ".$error_text);
 			}
 
 			echo get_notification(array('add_container' => true));
