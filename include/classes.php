@@ -780,30 +780,9 @@ class mf_custom_login
 		return $out;
 	}
 
-	function is_login_page()
-	{
-		global $post;
-
-		$is_login_page = in_array($GLOBALS['pagenow'], ['wp-login.php', 'wp-register.php'], true);
-
-		if($is_login_page == false)
-		{
-			$post_login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
-			$post_registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
-			$post_lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
-
-			if(isset($post->ID) && in_array($post->ID, [$post_login_id, $post_registration_id, $post_lost_password_id]))
-			{
-				$is_login_page = true;
-			}
-		}
-
-		return $is_login_page;
-	}
-
 	function block_render_redirect_callback($attributes)
 	{
-		if(is_user_logged_in() == false && $this->is_login_page() == false)
+		if(is_user_logged_in() == false && apply_filters('is_login_page', false) == false) //$this->is_login_page()
 		{
 			wp_redirect(wp_login_url());
 			exit;
@@ -1275,8 +1254,16 @@ class mf_custom_login
 			}
 
 			echo show_select(array('data' => get_yes_no_for_select(array('return_integer' => true)), 'name' => $setting_key, 'value' => $option, 'xtra' => $xtra, 'description' => $description));
+		}
 
-			if($option == 1)
+		function setting_custom_login_allow_registration_callback()
+		{
+			$setting_key = get_setting_key(__FUNCTION__);
+			$option = get_option($setting_key, 'no');
+
+			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+
+			if($option == 'yes')
 			{
 				if(!(apply_filters('get_block_search', 0, 'mf/customregistration') > 0))
 				{
@@ -1288,14 +1275,6 @@ class mf_custom_login
 					."</p>";
 				}
 			}
-		}
-
-		function setting_custom_login_allow_registration_callback()
-		{
-			$setting_key = get_setting_key(__FUNCTION__);
-			$option = get_option($setting_key, 'no');
-
-			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
 		}
 
 		function default_role_callback()
@@ -2028,7 +2007,7 @@ class mf_custom_login
 		echo "<div class='api_custom_login_nonce' rel='reset_password'></div>";
 	}
 
-	function is_public_page($out)
+	function is_public_page($bool)
 	{
 		$site_url = get_site_url();
 		$request_uri = $_SERVER['REQUEST_URI'];
@@ -2042,18 +2021,39 @@ class mf_custom_login
 
 		foreach($arr_block_search as $block_key)
 		{
-			if($out == true)
+			if($bool == true)
 			{
 				$post_id = apply_filters('get_block_search', 0, $block_key);
 
 				if($post_id > 0 && str_replace($site_url, "", get_permalink($post_id)) == $request_uri)
 				{
-					$out = false;
+					$bool = false;
 				}
 			}
 		}
 
-		return $out;
+		return $bool;
+	}
+
+	function is_login_page($bool)
+	{
+		global $post;
+
+		//$bool = in_array($GLOBALS['pagenow'], ['wp-login.php', 'wp-register.php'], true);
+
+		if($bool == false && isset($post->ID))
+		{
+			$post_login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+			$post_registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
+			$post_lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
+
+			if(in_array($post->ID, [$post_login_id, $post_registration_id, $post_lost_password_id]))
+			{
+				$bool = true;
+			}
+		}
+
+		return $bool;
 	}
 
 	function login_url($url)
