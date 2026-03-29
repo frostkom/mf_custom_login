@@ -165,7 +165,7 @@ class mf_custom_login
 
 		$plugin_include_url = plugin_dir_url(__FILE__);
 
-		mf_enqueue_style('style_custom_login_login', $plugin_include_url."style_login.php");
+		mf_enqueue_style('style_custom_login_login', $plugin_include_url."style_login.css");
 		mf_enqueue_script('script_custom_login_login', $plugin_include_url."script_login.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
@@ -1637,7 +1637,7 @@ class mf_custom_login
 
 		$plugin_include_url = plugin_dir_url(__FILE__);
 
-		mf_enqueue_style('style_custom_login_login', $plugin_include_url."style_login.php");
+		mf_enqueue_style('style_custom_login_login', $plugin_include_url."style_login.css");
 		mf_enqueue_script('script_custom_login_login', $plugin_include_url."script_login.js", array('ajax_url' => admin_url('admin-ajax.php')));
 	}
 
