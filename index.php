@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: Add support for handling login, lost password, registration etc.
-Version: 3.8.35
+Version: 3.8.36
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -50,7 +50,6 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 		add_action('login_init', array($obj_custom_login, 'login_init'), 0);
 		add_filter('filter_login_redirect', array($obj_custom_login, 'filter_login_redirect'), 10, 2);
-		//add_filter('login_message', array($obj_custom_login, 'login_message'));
 
 		/* Direct Link Login */
 		add_action('wp_login_errors', array($obj_custom_login, 'wp_login_errors'));
@@ -99,7 +98,7 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 	function uninstall_custom_login()
 	{
 		mf_uninstall_plugin(array(
-			'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_redirect_after_login', 'setting_custom_login_debug', 'setting_custom_login_allow_registration'),
+			'options' => array('setting_custom_login_display_theme_logo', 'setting_custom_login_custom_logo', 'setting_custom_login_allow_direct_link', 'setting_custom_login_allow_api', 'setting_custom_login_allow_server_auth', 'setting_custom_login_direct_link_expire', 'setting_custom_login_info', 'setting_custom_login_email_admin_registration', 'setting_custom_login_email_registration', 'setting_custom_login_email_lost_password', 'setting_custom_login_redirect_after_login_page', 'setting_custom_login_debug', 'setting_custom_login_allow_registration'),
 			'user_meta' => array('meta_login_auth'),
 			'tables' => array('custom_login'),
 		));
