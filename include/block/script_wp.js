@@ -98,6 +98,11 @@
 			{
 				'type': 'array',
 				'default': ''
+			},
+			'registration_button_text':
+			{
+				'type': 'string',
+				'default': ''
 			}
 		},
 		'supports':
@@ -171,6 +176,18 @@
 								{
 									props.setAttributes({registration_fields: value});
 								}
+							}
+						),
+						el(
+							TextControl,
+							{
+								label: script_custom_login_block_wp.registration_button_text_label,
+								type: 'text',
+								value: props.attributes.registration_button_text,
+								onChange: function(value)
+								{
+									props.setAttributes({registration_button_text: value});
+								},
 							}
 						)
 					),

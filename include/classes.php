@@ -298,6 +298,7 @@ class mf_custom_login
 		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = '';}
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
 		if(!isset($attributes['registration_fields'])){			$attributes['registration_fields'] = [];}
+		if(!isset($attributes['registration_button_text'])){	$attributes['registration_button_text'] = __("Register here", 'lang_login');}
 
 		$plugin_include_url = plugin_dir_url(__FILE__);
 
@@ -430,8 +431,8 @@ class mf_custom_login
 					if($attributes['registration_collect_name'] == 'yes' || in_array('full_name', $attributes['registration_fields']))
 					{
 						echo "<div".apply_filters('get_flex_flow', "").">"
-							.show_textfield(array('name' => 'first_name', 'text' => __("First Name", 'lang_login'), 'value' => $first_name, 'placeholder' => "Jane", 'required' => true))
-							.show_textfield(array('name' => 'last_name', 'text' => __("Last Name", 'lang_login'), 'value' => $last_name, 'placeholder' => "Doe", 'required' => true))
+							.show_textfield(array('name' => 'first_name', 'text' => __("First Name", 'lang_login'), 'value' => $first_name, 'required' => true))
+							.show_textfield(array('name' => 'last_name', 'text' => __("Last Name", 'lang_login'), 'value' => $last_name, 'required' => true))
 						."</div>";
 					}
 
@@ -448,12 +449,12 @@ class mf_custom_login
 					{
 						if(IS_ADMINISTRATOR)
 						{
-							$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false, 'exclude' => array('administrator')));
+							$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false)); //, 'exclude' => array('administrator')
 
-							if(count($arr_data) > 1)
-							{
+							/*if(count($arr_data) > 1)
+							{*/
 								echo show_select(array('data' => $arr_data, 'name' => 'default_role', 'text' => __("Role", 'lang_login'), 'value' => $default_role));
-							}
+							/*}
 
 							else
 							{
@@ -461,7 +462,7 @@ class mf_custom_login
 								{
 									echo input_hidden(array('name' => 'default_role', 'value' => $key));
 								}
-							}
+							}*/
 						}
 					}
 
@@ -471,13 +472,13 @@ class mf_custom_login
 					}
 
 					echo "<div".get_form_button_classes().">"
-						.show_button(array('name' => 'btnSendRegistration', 'text' => __("Register here", 'lang_login'), 'xtra' => "disabled"))
+						.show_button(array('name' => 'btnSendRegistration', 'text' => $attributes['registration_button_text'], 'xtra' => "disabled"))
 					."</div>
 				</form>";
 
 				if(is_user_logged_in())
 				{
-					echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
+					//echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
 				}
 
 				else
@@ -574,8 +575,6 @@ class mf_custom_login
 		$action = check_var('action');
 
 		echo "<div".parse_block_attributes(array('class' => "widget login_form lost_form", 'attributes' => $attributes)).">";
-
-			//do_action('lost_password');
 
 			$display_form = true;
 
@@ -837,6 +836,7 @@ class mf_custom_login
 			'yes_no_for_select' => get_yes_no_for_select(),
 			'registration_fields_label' => __("Fields to Display", 'lang_login'),
 			'registration_fields' => $this->get_fields_for_select(),
+			'registration_button_text_label' => __("Button Text", 'lang_login'),
 			'block_title3' => __("Custom Lost Password", 'lang_login'),
 			'block_description3' => __("Display a Custom Lost Password", 'lang_login'),
 			'block_title4' => __("Logged in Information", 'lang_login'),
@@ -1237,7 +1237,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
-			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false, 'exclude' => array('administrator', 'editor'))), 'name' => $setting_key, 'value' => $option));
+			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false, 'exclude' => array('administrator', 'editor'))), 'name' => $setting_key, 'value' => $option, 'allow_hidden_field' => false));
 		}
 
 		function setting_custom_login_email_admin_registration_callback()
@@ -1287,14 +1287,29 @@ class mf_custom_login
 	{
 		global $pagenow;
 
-		if(IS_ADMINISTRATOR && in_array($pagenow, array('user-edit.php', 'profile.php')) && get_option('setting_custom_login_allow_direct_link') == 'yes')
+		switch($pagenow)
 		{
-			$plugin_include_url = plugin_dir_url(__FILE__);
+			case 'profile.php':
+			case 'user-edit.php':
+				if(IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
+				{
+					$plugin_include_url = plugin_dir_url(__FILE__);
 
-			mf_enqueue_script('script_login_profile', $plugin_include_url."script_profile.js", array(
-				'ajax_url' => admin_url('admin-ajax.php'),
-				'loading_animation' => apply_filters('get_loading_animation', ''),
-			));
+					mf_enqueue_script('script_login_profile', $plugin_include_url."script_profile.js", array(
+						'ajax_url' => admin_url('admin-ajax.php'),
+						'loading_animation' => apply_filters('get_loading_animation', ''),
+					));
+				}
+			break;
+
+			case 'user-new.php':
+				$post_registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
+
+				if($post_registration_id > 0)
+				{
+					mf_redirect(get_permalink($post_registration_id));
+				}
+			break;
 		}
 	}
 
