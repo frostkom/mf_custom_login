@@ -293,7 +293,7 @@ class mf_custom_login
 
 	function block_render_registration_callback($attributes)
 	{
-		global $error_text;
+		global $done_text, $error_text;
 
 		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = '';}
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
@@ -306,13 +306,6 @@ class mf_custom_login
 		mf_enqueue_script('script_custom_login_registration', $plugin_include_url."script_registration.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
 		ob_start();
-
-		$user_login = "";
-
-		if(in_array('username', $attributes['registration_fields']))
-		{
-			$user_login = check_var('user_login');
-		}
 
 		$user_email = check_var('user_email', 'email');
 
@@ -342,35 +335,14 @@ class mf_custom_login
 			{
 				if(isset($_POST['btnSendRegistration']))
 				{
-					if($user_login == '')
+					if($user_email == '')
 					{
-						if(in_array('full_name', $attributes['registration_fields']))
-						{
-							$user_login .= ($user_login != '' ? "_" : "").$first_name."_".$last_name;
-						}
-
-						if(in_array('company', $attributes['registration_fields']))
-						{
-							$user_login .= ($user_login != '' ? "_" : "").$profile_company;
-						}
-
-						if($user_login == '')
-						{
-							$user_login = $user_email;
-						}
-
-						$user_login = sanitize_title_with_dashes(sanitize_title($user_login));
-					}
-
-					if($user_login == '' || $user_email == '')
-					{
-						$error_text = __("You have to enter both Username and E-mail, then I can process the registration for you", 'lang_login');
+						$error_text = __("You have to enter E-mail, then I can process the registration for you", 'lang_login');
 					}
 
 					else
 					{
-						$user_login = strtolower($user_login);
-						$user_email = strtolower($user_email);
+						$user_login = $user_email = strtolower($user_email);
 
 						$errors = register_new_user($user_login, $user_email);
 
@@ -400,7 +372,7 @@ class mf_custom_login
 								update_user_meta($user_id, 'profile_company', $profile_company);
 							}
 
-							$done_text = __("I processed the registration for you. You should have a message in your inbox shortly, with login information.", 'lang_login');
+							$done_text = __("I processed the registration for you and I sent a message with login information.", 'lang_login');
 							$display_form = false;
 						}
 					}
@@ -419,14 +391,8 @@ class mf_custom_login
 
 			if($display_form == true)
 			{
-				echo "<form".apply_filters('get_form_attr', "").">";
-
-					if(in_array('username', $attributes['registration_fields']))
-					{
-						echo show_textfield(array('name' => 'user_login', 'text' => __("Username", 'lang_login'), 'value' => $user_login, 'required' => true));
-					}
-
-					echo show_textfield(array('type' => 'email', 'name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
+				echo "<form".apply_filters('get_form_attr', "").">"
+					.show_textfield(array('type' => 'email', 'name' => 'user_email', 'text' => __("E-mail", 'lang_login'), 'value' => $user_email, 'required' => true));
 
 					if($attributes['registration_collect_name'] == 'yes' || in_array('full_name', $attributes['registration_fields']))
 					{
@@ -449,20 +415,7 @@ class mf_custom_login
 					{
 						if(IS_ADMINISTRATOR)
 						{
-							$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false)); //, 'exclude' => array('administrator')
-
-							/*if(count($arr_data) > 1)
-							{*/
-								echo show_select(array('data' => $arr_data, 'name' => 'default_role', 'text' => __("Role", 'lang_login'), 'value' => $default_role));
-							/*}
-
-							else
-							{
-								foreach($arr_data as $key => $value)
-								{
-									echo input_hidden(array('name' => 'default_role', 'value' => $key));
-								}
-							}*/
+							echo show_select(array('data' => get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false)), 'name' => 'default_role', 'text' => __("Role", 'lang_login'), 'value' => $default_role));
 						}
 					}
 
@@ -536,8 +489,8 @@ class mf_custom_login
 					$lost_password_link = network_site_url("wp-login.php?action=rp&key=".$key."&login=".rawurlencode($user_login), 'login');
 
 					$message = "<p>"
-						.__("Someone has requested a password reset for the following account", 'lang_login').":<br>"
-						.__("Username", 'lang_login').": ".$user_login
+						.__("Someone has requested a password reset for your account.", 'lang_login')
+						//.":<br>".__("Username", 'lang_login').": ".$user_login
 					."</p>
 					<p>".__("If this was a mistake, just ignore this email and nothing will happen.", 'lang_login')."</p>
 					<p>"
@@ -799,7 +752,6 @@ class mf_custom_login
 	function get_fields_for_select()
 	{
 		return array(
-			'username' => __("Username", 'lang_login'),
 			'full_name' => __("Full Name", 'lang_login'),
 			'company' => __("Company", 'lang_login'),
 		);
