@@ -293,7 +293,7 @@ class mf_custom_login
 
 	function block_render_registration_callback($attributes)
 	{
-		global $done_text, $error_text;
+		global $post, $done_text, $error_text;
 
 		if(!isset($attributes['registration_who_can'])){		$attributes['registration_who_can'] = '';}
 		if(!isset($attributes['registration_collect_name'])){	$attributes['registration_collect_name'] = 'no';}
@@ -384,7 +384,7 @@ class mf_custom_login
 				$error_text = __("This site does not allow registration", 'lang_login');
 				$display_form = false;
 
-				do_log(__FUNCTION__.": ".$error_text);
+				do_log(__FUNCTION__.": ".$error_text." (".get_permalink($post->ID).")");
 			}
 
 			echo get_notification(array('add_container' => true));
