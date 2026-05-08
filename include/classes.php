@@ -409,17 +409,14 @@ class mf_custom_login
 						."</div>";
 					}
 
-					do_action('register_form');
-
-					if(is_user_logged_in())
+					if(IS_ADMINISTRATOR && is_user_logged_in())
 					{
-						if(IS_ADMINISTRATOR)
-						{
-							echo show_select(array('data' => get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false)), 'name' => 'default_role', 'text' => __("Role", 'lang_login'), 'value' => $default_role));
-						}
+						echo show_select(array('data' => get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false)), 'name' => 'default_role', 'text' => __("Role", 'lang_login'), 'value' => $default_role));
 					}
 
-					else
+					do_action('register_form');
+
+					if(is_user_logged_in() == false)
 					{
 						echo show_checkbox(array('text' => __("I consent to having this website store my submitted information, so that they can contact me if necessary", 'lang_login'), 'value' => 1, 'required' => true, 'xtra_class' => "small"));
 					}
