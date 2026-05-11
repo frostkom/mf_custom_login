@@ -372,6 +372,8 @@ class mf_custom_login
 								update_user_meta($user_id, 'profile_company', $profile_company);
 							}
 
+							wp_new_user_notification($user_id, null, 'user'); // 'both' for also sending to admin
+
 							$done_text = __("I processed the registration for you and I sent a message with login information.", 'lang_login');
 							$display_form = false;
 						}
@@ -812,6 +814,9 @@ class mf_custom_login
 			'editor_style' => 'style_base_block_wp',
 			'render_callback' => array($this, 'block_render_registration_callback'),
 		));
+
+		remove_action('register_new_user', 'wp_send_new_user_notifications');
+		remove_action('edit_user_created_user', 'wp_send_new_user_notifications', 10, 2);
 
 		register_block_type('mf/customlost', array(
 			'editor_script' => 'script_custom_login_block_wp',
