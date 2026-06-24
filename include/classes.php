@@ -872,12 +872,12 @@ class mf_custom_login
 		############################
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
-		$post_login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
-		$post_registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
-		$post_lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
+		$post_id_login = apply_filters('get_block_search', 0, 'mf/customlogin');
+		$post_id_registration = apply_filters('get_block_search', 0, 'mf/customregistration');
+		$post_id_lost = apply_filters('get_block_search', 0, 'mf/customlost');
 
 		$users_can_register = get_option('users_can_register');
-		$has_registration_widget = ($users_can_register ? ($post_registration_id > 0) : false);
+		$has_registration_widget = ($users_can_register ? ($post_id_registration > 0) : false);
 
 		$arr_settings = [];
 
@@ -889,7 +889,7 @@ class mf_custom_login
 
 		else
 		{
-			if(!($post_login_id > 0) && $has_registration_widget == false && !($post_lost_password_id > 0))
+			if(!($post_id_login > 0) && $has_registration_widget == false && !($post_id_lost > 0))
 			{
 				if(is_plugin_active("mf_theme_core/index.php"))
 				{
@@ -1257,11 +1257,11 @@ class mf_custom_login
 			break;
 
 			case 'user-new.php':
-				$post_registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
+				$post_id_registration = apply_filters('get_block_search', 0, 'mf/customregistration');
 
-				if($post_registration_id > 0)
+				if($post_id_registration > 0)
 				{
-					mf_redirect(get_permalink($post_registration_id));
+					mf_redirect(get_permalink($post_id_registration));
 				}
 			break;
 		}
@@ -1728,11 +1728,11 @@ class mf_custom_login
 
 			if(isset($user_data->roles) && in_array('administrator', $user_data->roles))
 			{
-				$post_registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
+				$post_id_registration = apply_filters('get_block_search', 0, 'mf/customregistration');
 
-				if($post_registration_id > 0)
+				if($post_id_registration > 0)
 				{
-					$registration_post_url = get_permalink($post_registration_id);
+					$registration_post_url = get_permalink($post_id_registration);
 					$registration_post_url = str_replace(get_site_url(), "", $registration_post_url);
 
 					$direct_registration_link = $direct_link.(strpos($direct_link, "?") ? "&" : "?")."redirect_to=".$registration_post_url;
@@ -1888,11 +1888,11 @@ class mf_custom_login
 
 		if($bool == false && isset($post->ID))
 		{
-			$post_login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
-			$post_registration_id = apply_filters('get_block_search', 0, 'mf/customregistration');
-			$post_lost_password_id = apply_filters('get_block_search', 0, 'mf/customlost');
+			$post_id_login = apply_filters('get_block_search', 0, 'mf/customlogin');
+			$post_id_registration = apply_filters('get_block_search', 0, 'mf/customregistration');
+			$post_id_lost = apply_filters('get_block_search', 0, 'mf/customlost');
 
-			if(in_array($post->ID, [$post_login_id, $post_registration_id, $post_lost_password_id]))
+			if(in_array($post->ID, [$post_id_login, $post_id_registration, $post_id_lost]))
 			{
 				$bool = true;
 			}
@@ -1903,9 +1903,9 @@ class mf_custom_login
 
 	function login_url($url)
 	{
-		$post_login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+		$post_id = apply_filters('get_block_search', 0, 'mf/customlogin');
 
-		if($post_login_id > 0)
+		if($post_id > 0)
 		{
 			$has_questionmark = (strpos($url, "?") !== false);
 
@@ -1914,7 +1914,7 @@ class mf_custom_login
 				list($url_old, $query_string) = explode("?", $url);
 			}
 
-			$url = get_permalink($post_login_id);
+			$url = get_permalink($post_id);
 
 			if($has_questionmark && $query_string != '')
 			{
@@ -2000,11 +2000,11 @@ class mf_custom_login
 
 	function logout_url($url)
 	{
-		$post_login_id = apply_filters('get_block_search', 0, 'mf/customlogin');
+		$post_id = apply_filters('get_block_search', 0, 'mf/customlogin');
 
-		if($post_login_id > 0)
+		if($post_id > 0)
 		{
-			$url = wp_nonce_url(get_permalink($post_login_id)."?action=logout", 'log-out');
+			$url = wp_nonce_url(get_permalink($post_id)."?action=logout", 'log-out');
 		}
 
 		return $url;
