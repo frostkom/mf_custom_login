@@ -980,11 +980,15 @@ class mf_custom_login
 			if($users_can_register)
 			{
 				$arr_settings['setting_custom_login_allow_registration'] = __("Allow Registration on This Site", 'lang_login');
-				$arr_settings['default_role'] = __("Default Role", 'lang_login');
+
+				if(get_option('setting_custom_login_allow_registration') == 'yes')
+				{
+					$arr_settings['default_role'] = __("Default Role", 'lang_login');
+				}
 			}
 		}
 
-		if($users_can_register)
+		if($users_can_register && get_option('setting_custom_login_allow_registration') == 'yes')
 		{
 			$arr_settings['setting_custom_login_info'] = __("Information", 'lang_login');
 
