@@ -738,16 +738,6 @@ class mf_custom_login
 		}
 	}
 
-	function get_roles_for_select()
-	{
-		$arr_data = [];
-		$arr_data[''] = "-- ".__("All", 'lang_login')." --";
-
-		$arr_data = get_roles_for_select(array('array' => $arr_data, 'add_choose_here' => false));
-
-		return $arr_data;
-	}
-
 	function get_fields_for_select()
 	{
 		return array(
@@ -782,7 +772,7 @@ class mf_custom_login
 			'block_title2' => __("Custom Registration", 'lang_login'),
 			'block_description2' => __("Display a Custom Registration", 'lang_login'),
 			'registration_who_can_label' => __("Who Can Register?", 'lang_login'),
-			'registration_who_can' => $this->get_roles_for_select(),
+			'registration_who_can' => get_roles_for_select(array('choose_here_text' => __("All", 'lang_login'))),
 			'registration_collect_name_label' => __("Collect full name from user", 'lang_login'),
 			'yes_no_for_select' => get_yes_no_for_select(),
 			'registration_fields_label' => __("Fields to Display", 'lang_login'),
@@ -1195,7 +1185,7 @@ class mf_custom_login
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key);
 
-			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false, 'exclude' => array('administrator', 'editor'))), 'name' => $setting_key, 'value' => $option, 'allow_hidden_field' => false));
+			echo show_select(array('data' => get_roles_for_select(array('use_capability' => false, 'exclude' => ['administrator', 'editor'])), 'name' => $setting_key, 'value' => $option, 'allow_hidden_field' => false));
 		}
 
 		function setting_custom_login_email_admin_registration_callback()

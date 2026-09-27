@@ -146,7 +146,7 @@
 							{
 								label: script_custom_login_block_wp.registration_who_can_label,
 								value: props.attributes.registration_who_can,
-								options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_who_can),
+								options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_who_can, false),
 								onChange: function(value)
 								{
 									props.setAttributes({registration_who_can: value});
