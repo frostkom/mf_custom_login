@@ -7,6 +7,7 @@
 		MediaUpload = wp.blockEditor.MediaUpload,
 		Button = wp.components.Button,
 		MediaUploadCheck = wp.blockEditor.MediaUploadCheck,
+		PanelBody = wp.components.PanelBody,
 		InspectorControls = wp.blockEditor.InspectorControls;
 
 	registerBlockType('mf/customlogin',
@@ -140,55 +141,59 @@
 				[
 					el(
 						InspectorControls,
-						'div',
+						{key: 'inspector'},
 						el(
-							SelectControl,
-							{
-								label: script_custom_login_block_wp.registration_who_can_label,
-								value: props.attributes.registration_who_can,
-								options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_who_can, false),
-								onChange: function(value)
+							PanelBody,
+							{title: script_custom_login_block_wp.block_title2, initialOpen: true},
+							el(
+								SelectControl,
 								{
-									props.setAttributes({registration_who_can: value});
+									label: script_custom_login_block_wp.registration_who_can_label,
+									value: props.attributes.registration_who_can,
+									options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_who_can, false),
+									onChange: function(value)
+									{
+										props.setAttributes({registration_who_can: value});
+									}
 								}
-							}
-						),
-						el(
-							SelectControl,
-							{
-								label: script_custom_login_block_wp.registration_collect_name_label,
-								value: props.attributes.registration_collect_name,
-								options: convert_php_array_to_block_js(script_custom_login_block_wp.yes_no_for_select),
-								onChange: function(value)
+							),
+							el(
+								SelectControl,
 								{
-									props.setAttributes({registration_collect_name: value});
+									label: script_custom_login_block_wp.registration_collect_name_label,
+									value: props.attributes.registration_collect_name,
+									options: convert_php_array_to_block_js(script_custom_login_block_wp.yes_no_for_select),
+									onChange: function(value)
+									{
+										props.setAttributes({registration_collect_name: value});
+									}
 								}
-							}
-						),
-						el(
-							SelectControl,
-							{
-								label: script_custom_login_block_wp.registration_fields_label,
-								value: props.attributes.registration_fields,
-								options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_fields),
-								multiple: true,
-								onChange: function(value)
+							),
+							el(
+								SelectControl,
 								{
-									props.setAttributes({registration_fields: value});
+									label: script_custom_login_block_wp.registration_fields_label,
+									value: props.attributes.registration_fields,
+									options: convert_php_array_to_block_js(script_custom_login_block_wp.registration_fields),
+									multiple: true,
+									onChange: function(value)
+									{
+										props.setAttributes({registration_fields: value});
+									}
 								}
-							}
-						),
-						el(
-							TextControl,
-							{
-								label: script_custom_login_block_wp.registration_button_text_label,
-								type: 'text',
-								value: props.attributes.registration_button_text,
-								onChange: function(value)
+							),
+							el(
+								TextControl,
 								{
-									props.setAttributes({registration_button_text: value});
-								},
-							}
+									label: script_custom_login_block_wp.registration_button_text_label,
+									type: 'text',
+									value: props.attributes.registration_button_text,
+									onChange: function(value)
+									{
+										props.setAttributes({registration_button_text: value});
+									},
+								}
+							)
 						)
 					),
 					el(
@@ -322,19 +327,23 @@
 				[
 					el(
 						InspectorControls,
-						'div',
+						{key: 'inspector'},
 						el(
-							SelectControl,
-							{
-								label: script_custom_login_block_wp.logged_in_info_display_label,
-								value: props.attributes.logged_in_info_display,
-								options: convert_php_array_to_block_js(script_custom_login_block_wp.logged_in_info_display),
-								multiple: true,
-								onChange: function(value)
+							PanelBody,
+							{title: script_custom_login_block_wp.block_title4, initialOpen: true},
+							el(
+								SelectControl,
 								{
-									props.setAttributes({logged_in_info_display: value});
+									label: script_custom_login_block_wp.logged_in_info_display_label,
+									value: props.attributes.logged_in_info_display,
+									options: convert_php_array_to_block_js(script_custom_login_block_wp.logged_in_info_display),
+									multiple: true,
+									onChange: function(value)
+									{
+										props.setAttributes({logged_in_info_display: value});
+									}
 								}
-							}
+							)
 						)
 					),
 					el(
