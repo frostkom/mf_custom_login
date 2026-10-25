@@ -257,25 +257,28 @@ class mf_custom_login
 				break;
 			}
 
-			echo "<form".apply_filters('get_form_attr', " action='?login' id='loginform'").">"
-				.get_notification(array('add_container' => true))
-				.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true))
-				.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true, 'description' => "<a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a>"));
-
-				do_action('login_form');
-
-				echo "<div class='login_actions'>"
-					."<div".get_form_button_classes().">"
-						.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login'), 'xtra' => "disabled"))
-						.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
-					."</div>"
-					.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
-				."</div>
-			</form>";
-
 			if(is_user_logged_in())
 			{
-				echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
+				echo "<p>".__("You are already logged in.", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
+			}
+
+			else
+			{
+				echo "<form".apply_filters('get_form_attr', " action='?login' id='loginform'").">"
+					.get_notification(array('add_container' => true))
+					.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true))
+					.show_password_field(array('name' => 'user_pass', 'text' => __("Password"), 'value' => $user_pass, 'required' => true, 'description' => "<a href='".wp_lostpassword_url().($user_login != '' ? "?user_login=".$user_login : '')."'>".__("Have you forgotten your login credentials?", 'lang_login')."</a>"));
+
+					do_action('login_form');
+
+					echo "<div class='login_actions'>"
+						."<div".get_form_button_classes().">"
+							.show_button(array('name' => 'btnSendLogin', 'text' => __("Log In", 'lang_login'), 'xtra' => "disabled"))
+							.input_hidden(array('name' => 'redirect_to', 'value' => esc_attr($redirect_to)))
+						."</div>"
+						.show_checkbox(array('name' => 'rememberme', 'text' => __("Remember Me", 'lang_login'), 'value' => $user_remember))
+					."</div>
+				</form>";
 			}
 
 			if(get_option('users_can_register') && (is_multisite() == false || get_option('setting_custom_login_allow_registration') == 'yes'))
@@ -635,23 +638,23 @@ class mf_custom_login
 
 					if($display_form == true)
 					{
-						echo "<form".apply_filters('get_form_attr', "").">"
-							.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true));
-
-							do_action('lostpassword_form');
-
-							echo "<div".get_form_button_classes().">"
-								.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login'), 'xtra' => "disabled"))
-							."</div>
-						</form>";
-
 						if(is_user_logged_in())
 						{
-							echo "<p>".__("Are you already logged in?", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
+							echo "<p>".__("You are already logged in.", 'lang_login')." <a href='".admin_url()."'>".__("Go to admin", 'lang_login')."</a></p>";
 						}
 
 						else
 						{
+							echo "<form".apply_filters('get_form_attr', "").">"
+								.show_textfield(array('name' => 'user_login', 'text' => __("E-mail", 'lang_login'), 'value' => $user_login, 'required' => true));
+
+								do_action('lostpassword_form');
+
+								echo "<div".get_form_button_classes().">"
+									.show_button(array('name' => 'btnSendLostPassword', 'text' => __("Get New Password", 'lang_login'), 'xtra' => "disabled"))
+								."</div>
+							</form>";
+
 							echo "<p>".__("Do you already have an account?", 'lang_login')." <a href='".wp_login_url()."'>".__("Log In", 'lang_login')."</a></p>";
 						}
 					}
