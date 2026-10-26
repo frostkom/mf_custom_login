@@ -3,7 +3,7 @@
 Plugin Name: MF Custom Login
 Plugin URI: https://github.com/frostkom/mf_custom_login
 Description: Add support for handling login, lost password, registration etc.
-Version: 3.9.11
+Version: 3.9.12
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -34,11 +34,11 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 		add_filter('display_post_states', array($obj_custom_login, 'display_post_states'), 10, 2);
 		add_filter('filter_base_page_index', array($obj_custom_login, 'filter_base_page_index'));
 
-		add_filter('user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
-		add_action('ms_user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
+		/*add_filter('user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);
+		add_action('ms_user_row_actions', array($obj_custom_login, 'user_row_actions'), 10, 2);*/
 
-		add_action('show_user_profile', array($obj_custom_login, 'edit_user_profile'));
-		add_action('edit_user_profile', array($obj_custom_login, 'edit_user_profile'));
+		/*add_action('show_user_profile', array($obj_custom_login, 'edit_user_profile'));
+		add_action('edit_user_profile', array($obj_custom_login, 'edit_user_profile'));*/
 	}
 
 	else
@@ -85,8 +85,8 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	if(wp_doing_ajax())
 	{
-		add_action('wp_ajax_api_custom_login_direct_create', array($obj_custom_login, 'api_custom_login_direct_create'));
-		add_action('wp_ajax_api_custom_login_direct_revoke', array($obj_custom_login, 'api_custom_login_direct_revoke'));
+		//add_action('wp_ajax_api_custom_login_direct_create', array($obj_custom_login, 'api_custom_login_direct_create'));
+		//add_action('wp_ajax_api_custom_login_direct_revoke', array($obj_custom_login, 'api_custom_login_direct_revoke'));
 
 		add_action('wp_ajax_api_custom_login_direct_link_email', array($obj_custom_login, 'api_custom_login_direct_link_email'));
 		add_action('wp_ajax_nopriv_api_custom_login_direct_link_email', array($obj_custom_login, 'api_custom_login_direct_link_email'));

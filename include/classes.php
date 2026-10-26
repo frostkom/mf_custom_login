@@ -30,7 +30,7 @@ class mf_custom_login
 				'tables' => array('custom_login'),
 			));
 
-			if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+			/*if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 			{
 				$setting_custom_login_direct_link_expire = get_option('setting_custom_login_direct_link_expire');
 
@@ -53,9 +53,7 @@ class mf_custom_login
 						}
 					}
 				}
-			}
-
-			//$wpdb->query("DELETE FROM ".$wpdb->base_prefix."custom_login WHERE loginCreated < DATE_SUB(NOW(), INTERVAL 1 MONTH)");
+			}*/
 		}
 
 		$obj_cron->end();
@@ -166,7 +164,7 @@ class mf_custom_login
 		mf_enqueue_style('style_custom_login_login', $plugin_include_url."style_login.css");
 		mf_enqueue_script('script_custom_login_login', $plugin_include_url."script_login.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
-		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		/*if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
 			mf_enqueue_script('script_custom_login_direct_link', $plugin_include_url."script_direct_link.js", array('ajax_url' => admin_url('admin-ajax.php')));
 
@@ -200,7 +198,7 @@ class mf_custom_login
 					}
 				break;
 			}
-		}
+		}*/
 
 		ob_start();
 
@@ -906,8 +904,11 @@ class mf_custom_login
 			}
 		}
 
-		if(is_plugin_active("mf_auth/index.php") == false || get_option('setting_auth_active') == 'no')
+		/*if(is_plugin_active("mf_auth/index.php") == false || get_option('setting_auth_active') == 'no')
 		{
+			//If your AUTH_SALT ever leaks, logins for any user can be forged.
+			//Fix: generate the token with random_bytes(), store only its hash, make it expire and be single-use, and compare with hash_equals().
+
 			$arr_settings['setting_custom_login_allow_direct_link'] = __("Allow Direct Link to Login", 'lang_login');
 
 			if(get_option('setting_custom_login_allow_direct_link') == 'yes')
@@ -928,7 +929,7 @@ class mf_custom_login
 			delete_option('setting_custom_login_allow_direct_link');
 			delete_option('setting_custom_login_direct_link_expire');
 			delete_option('setting_custom_login_direct_link_expire_after_login');
-		}
+		}*/
 
 		if(substr(get_home_url(), 0, 5) == 'https')
 		{
@@ -1044,7 +1045,7 @@ class mf_custom_login
 			echo get_media_library(array('type' => 'image', 'name' => $setting_key, 'value' => $option));
 		}
 
-		function setting_custom_login_allow_direct_link_callback()
+		/*function setting_custom_login_allow_direct_link_callback()
 		{
 			$setting_key = get_setting_key(__FUNCTION__);
 			$option = get_option($setting_key, 'no');
@@ -1066,7 +1067,7 @@ class mf_custom_login
 			$option = get_option($setting_key, 'yes');
 
 			echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
-		}
+		}*/
 
 		function setting_custom_login_allow_api_callback()
 		{
@@ -1097,7 +1098,7 @@ class mf_custom_login
 		{
 			$tags = array("[first_name]", "[user_login]", "[username]", "[user_email]", "[blog_title]", "[site_name]", "[site_url]", "[confirm_link]", "[login_link]");
 
-			if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+			/*if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 			{
 				$tags[] = "[direct_link]";
 
@@ -1105,7 +1106,7 @@ class mf_custom_login
 				{
 					$tags[] = "[direct_registration_link]";
 				}
-			}
+			}*/
 
 			echo sprintf(__("To take advantage of dynamic data, you can use the following placeholders: %s", 'lang_login'), sprintf('<code>%s</code>', implode('</code>, <code>', $tags)));
 		}
@@ -1240,7 +1241,7 @@ class mf_custom_login
 
 		switch($pagenow)
 		{
-			case 'profile.php':
+			/*case 'profile.php':
 			case 'user-edit.php':
 				if(IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
 				{
@@ -1251,7 +1252,7 @@ class mf_custom_login
 						'loading_animation' => apply_filters('get_loading_animation', ''),
 					));
 				}
-			break;
+			break;*/
 
 			case 'user-new.php':
 				$post_id_registration = apply_filters('get_block_search', 0, 'mf/customregistration');
@@ -1267,12 +1268,12 @@ class mf_custom_login
 	function filter_sites_table_settings($arr_settings)
 	{
 		$arr_settings['settings_custom_login'] = array(
-			'setting_custom_login_allow_direct_link' => array(
+			/*'setting_custom_login_allow_direct_link' => array(
 				'type' => 'bool',
 				'global' => false,
 				'icon' => "fas fa-link",
 				'name' => __("Allow Direct Link to Login", 'lang_login'),
-			),
+			),*/
 			'setting_custom_login_allow_api' => array(
 				'type' => 'bool',
 				'global' => false,
@@ -1318,7 +1319,7 @@ class mf_custom_login
 		return $seo_type;
 	}
 
-	function user_row_actions($arr_actions, $user)
+	/*function user_row_actions($arr_actions, $user)
 	{
 		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && current_user_can('edit_user') && isset($user->roles[0]) && $user->roles[0] != '')
 		{
@@ -1331,9 +1332,9 @@ class mf_custom_login
 		}
 
 		return $arr_actions;
-	}
+	}*/
 
-	function edit_user_profile($user)
+	/*function edit_user_profile($user)
 	{
 		if(IS_ADMINISTRATOR && get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
@@ -1362,7 +1363,7 @@ class mf_custom_login
 				</tr>
 			</table>";
 		}
-	}
+	}*/
 
 	function get_login_redirect($redirect_to, $user_data)
 	{
@@ -1715,7 +1716,7 @@ class mf_custom_login
 		$exclude[] = "[confirm_link]";		$include[] = $lost_password_url.(strpos($lost_password_url, "?") ? "&" : "?").$confirm_link_action;
 		$exclude[] = "[login_link]";		$include[] = $login_url;
 
-		if(get_option('setting_custom_login_allow_direct_link') == 'yes' && preg_match("/\[direct_link]/", $string))
+		/*if(get_option('setting_custom_login_allow_direct_link') == 'yes' && preg_match("/\[direct_link]/", $string))
 		{
 			$direct_link = $this->direct_link_url(array('user_data' => $user_data, 'type' => 'registration'));
 
@@ -1737,7 +1738,7 @@ class mf_custom_login
 			}
 
 			$exclude[] = "[direct_registration_link]";		$include[] = $direct_registration_link;
-		}
+		}*/
 
 		// retrieve_password_message
 		$exclude[] = "[blogname]";			$include[] = $blog_title; // Replace with blog_title
@@ -1806,22 +1807,22 @@ class mf_custom_login
 			$message = $this->email_replace_shortcodes($option, $user, $key);
 		}
 
-		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		/*if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
 			$message .= "\r\n".$this->direct_link_text(array('key' => $key, 'user_data' => $user));
-		}
+		}*/
 
 		return $message;
 	}
 
 	function login_form()
 	{
-		if(get_option('setting_custom_login_allow_direct_link') == 'yes')
+		/*if(get_option('setting_custom_login_allow_direct_link') == 'yes')
 		{
 			echo "<p id='direct_login_link' class='hide'>
 				<a href='#'>".__("Lost Password? Click to get a secure direct link to login instantly", 'lang_login')."</a><br><br>
 			</p>";
-		}
+		}*/
 
 		echo "<div class='api_custom_login_nonce' rel='login'></div>";
 
