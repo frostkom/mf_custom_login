@@ -2058,6 +2058,7 @@ class mf_custom_login
 			$json_output['html'] = get_notification();
 		}
 
+		nocache_headers();
 		header('Content-Type: application/json');
 		echo json_encode($json_output);
 		die();
@@ -2096,6 +2097,7 @@ class mf_custom_login
 
 		$json_output['html'] = get_notification();
 
+		nocache_headers();
 		header('Content-Type: application/json');
 		echo json_encode($json_output);
 		die();
